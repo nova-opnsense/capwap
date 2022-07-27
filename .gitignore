@@ -1,0 +1,81 @@
+# 
+# c
+# 
+*~
+*.o
+*.lo
+*.la
+m4
+.deps
+.libs
+
+# 
+# openwrt
+# 
+.built
+.configured_[y]*
+.gitignore
+.prepared
+.quilt_checked
+.source_dir
+ipkg-ipq/
+
+#
+# binaries
+#
+AC
+WTP
+WUA
+
+#
+# autoconf files
+#
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+compile
+config.guess
+config.h
+config.h.in
+config.log
+config.status
+config.sub
+configure
+depcomp
+install-sh
+libtool
+ltmain.sh
+missing
+stamp-h1
+
+#
+# running
+#
+.work
+
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+.ionide
+
+# Support for Project snippet scope
+.vscode/*.code-snippets
+
+# Ignore code-workspaces
+*.code-workspace
