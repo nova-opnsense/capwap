@@ -38,44 +38,43 @@
 
 
 
-CC = gcc 
+# CC = gcc 
+# RM = /bin/rm -f 
 
 LDFLAGS = -lssl -lcrypto -lpthread -ldl -D_REENTRANT
 
 #Elena Agostini: libnl
 LDFLAGS += -lnl-genl-3 -lnl-3
-LIB_PATH = /usr/local/lib
-INC_PATH = /usr/include/libnl3
- 
+LIB_PATH = ${STAGING_DIR}/usr/lib
+INC_PATH = ${STAGING_DIR}/usr/include/libnl3
+
 #LDFLAGS = /usr/lib/libefence.a ./static/libssl.a ./static/libcrypto.a -lpthread -ldl -D_REENTRANT
 #LDFLAGS = ./static/libssl.a ./static/libcrypto.a -lpthread -ldl -D_REENTRANT
 
-#CFLAGS =  -Wall -g -O0 -D_REENTRANT  
+#CFLAGS =  -Wall -g -O0 -D_REENTRANT
 CFLAGS += -DCW_NO_DTLS -DCW_NO_DTLSCWParseConfigurationUpdateRequest
 #CFLAGS += -DSPLIT_MAC
-
+CFLAGS += -fgnu89-inline
 #DTLS Data Channel
 #CFLAGS += -DCW_DTLS_DATA_CHANNEL
-
-OPENSSL_INCLUDE = -I./include/  #Openssl include files
 
 # Memory leak
 #LDFLAGS += ../dmalloc-5.5.0/libdmallocth.a
 #CFLAGS += -DDMALLOC
 
 # Capwap Debugging
-
-CFLAGS += -DCW_DEBUGGING 
+CFLAGS += -DCW_DEBUGGING
 #CFLAGS += -DWRITE_STD_OUTPUT
 #CFLAGS += -DSOFTMAC
 CFLAGS += -DOPENSSL_NO_KRB5
 
 #OpenSSL inc files path
-#CFLAGS += $(OPENSSL_INCLUDE)  
+# OPENSSL_INCLUDE = -I./include/  #Openssl include files
+OPENSSL_INCLUDE = -I${STAGING_DIR}/usr/include/openssl
+CFLAGS += $(OPENSSL_INCLUDE)
 
-CFLAGS += -I/usr/include/libnl3
+CFLAGS += -I$(INC_PATH)
 CFLAGS += -I./HostapdHeaders/utils/
-RM = /bin/rm -f 
 
 # list of generated object files for AC. 
 AC_OBJS = AC.o ACConfigFile.o ACMainLoop.o ACDiscoveryState.o ACJoinState.o \
@@ -115,12 +114,13 @@ WUA_NAME = WUA
 
 # top-level rule, to compile everything. 
 all: $(AC_NAME) $(WTP_NAME) $(WUA_NAME)
+# all: $(WTP_NAME)
 
 $(AC_NAME): $(AC_OBJS) 
 	$(CC) $(AC_OBJS) $(CC_FLAGS) $(OPENSSL_INCLUDE) $(LDFLAGS) -o $(AC_NAME) 
 #-DSOFTMAC
 $(WTP_NAME): $(WTP_OBJS) 
-	$(CC) -DWRITE_STD_OUTPUT  $(WTP_OBJS) $(CC_FLAGS) -L$(LIB_PATH)  $(LDFLAGS) -o $(WTP_NAME) 
+	$(CC) -DWRITE_STD_OUTPUT  $(WTP_OBJS) $(CC_FLAGS) -L$(LIB_PATH) $(LDFLAGS) -o $(WTP_NAME) 
 
 $(WUA_NAME): $(WUA_OBJS) 
 	$(CC) $(WUA_OBJS) $(CC_FLAGS)  $(LDFLAGS) -o $(WUA_NAME) 
