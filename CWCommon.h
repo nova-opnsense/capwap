@@ -54,17 +54,19 @@
 #include <arpa/inet.h>
 #include <signal.h>
 #include <unistd.h>
-#ifdef MACOSX
-	#include <netinet/if_ether.h>
-#else
-	#include <linux/if_ether.h>
-#endif
+// #ifdef MACOSX
+// 	#include <netinet/if_ether.h>
+// #else
+// 	#include <linux/if_ether.h>
+// #endif
+// #include <linux/if_ether.h>
+#include <netinet/if_ether.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
 #include <sys/file.h>
 #include "wireless_copy.h"
-       #include <netpacket/packet.h>
-      #include <net/ethernet.h> 
+#include <netpacket/packet.h>
+#include <net/ethernet.h> 
        
 /* *********** NL80211 support ************** */
 #include <stdio.h>

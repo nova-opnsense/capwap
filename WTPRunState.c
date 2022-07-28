@@ -38,7 +38,8 @@
  ************************************************************************************************/
 #include <sys/socket.h>
 #include <sys/types.h>  
-#include <linux/if_ether.h>
+// #include <linux/if_ether.h>
+#include <netinet/if_ether.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
 #include <netpacket/packet.h>

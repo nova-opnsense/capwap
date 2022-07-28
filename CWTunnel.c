@@ -1,5 +1,6 @@
 #include "CWCommon.h"
-#include <linux/if_ether.h>
+// #include <linux/if_ether.h>
+#include <netinet/if_ether.h>
 
 //Bridge
 u8 bridge_tunnel_header[] = {0xaa, 0xaa, 0x03, 0x00, 0x00, 0xf8}; 
