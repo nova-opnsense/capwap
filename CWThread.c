@@ -57,8 +57,6 @@ CWBool CWCreateThread(CWThread *newThread, CW_THREAD_FUNCTION threadFunc, void *
 	if (newThread == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Create Thread");
-
 	if (pthread_create(newThread, NULL, threadFunc, arg) != 0)
 	{
 		return CWErrorRaise(CW_ERROR_NEED_RESOURCE, "Can't create thread (maybe there are too many other threads)");

@@ -193,6 +193,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 		if ((n = Readn(sock, &cmd_msg, CMD_TYPE_SIZE)) > 0)
 		{
+			printf("%c", cmd_msg);
 			if (cmd_msg == QUIT_MSG)
 			{
 				/****************************************************
@@ -794,7 +795,9 @@ CW_THREAD_RETURN_TYPE CWInterface(void *arg)
 	 * Setup (Creation and filling) of main socket		*
 	 ****************************************************/
 
-	if ((listen_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+	listen_sock = socket(AF_INET, SOCK_STREAM, 0);
+	CWLog("listen_sock = %d", listen_sock);
+	if (listen_sock < 0)
 	{
 		CWLog("Error on socket creation on Interface");
 		return NULL;
@@ -835,7 +838,9 @@ CW_THREAD_RETURN_TYPE CWInterface(void *arg)
 	CWLog("CW_REPEAT_FOREVER: CWInterface()");
 	CW_REPEAT_FOREVER
 	{
-		if ((conn_sock = accept(listen_sock, (struct sockaddr *)NULL, NULL)) > 0)
+		conn_sock = accept(listen_sock, (struct sockaddr *)NULL, NULL);
+		CWLog("conn_sock = %d", conn_sock);
+		if (conn_sock > 0)
 		{
 
 			/************************************************************************
