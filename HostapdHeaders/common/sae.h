@@ -18,7 +18,8 @@
 #define SAE_COMMIT_MAX_LEN (2 + 3 * SAE_MAX_PRIME_LEN)
 #define SAE_CONFIRM_MAX_LEN (2 + SAE_MAX_PRIME_LEN)
 
-struct sae_temporary_data {
+struct sae_temporary_data
+{
 	u8 kck[SAE_KCK_LEN];
 	struct crypto_bignum *own_commit_scalar;
 	struct crypto_bignum *own_commit_element_ffc;
@@ -37,8 +38,15 @@ struct sae_temporary_data {
 	struct crypto_bignum *order_buf;
 };
 
-struct sae_data {
-	enum { SAE_NOTHING, SAE_COMMITTED, SAE_CONFIRMED, SAE_ACCEPTED } state;
+struct sae_data
+{
+	enum
+	{
+		SAE_NOTHING,
+		SAE_COMMITTED,
+		SAE_CONFIRMED,
+		SAE_ACCEPTED
+	} state;
 	u16 send_confirm;
 	u8 pmk[SAE_PMK_LEN];
 	struct crypto_bignum *peer_commit_scalar;
@@ -51,13 +59,13 @@ void sae_clear_temp_data(struct sae_data *sae);
 void sae_clear_data(struct sae_data *sae);
 
 int sae_prepare_commit(const u8 *addr1, const u8 *addr2,
-		       const u8 *password, size_t password_len,
-		       struct sae_data *sae);
+					   const u8 *password, size_t password_len,
+					   struct sae_data *sae);
 int sae_process_commit(struct sae_data *sae);
 void sae_write_commit(struct sae_data *sae, struct wpabuf *buf,
-		      const struct wpabuf *token);
+					  const struct wpabuf *token);
 u16 sae_parse_commit(struct sae_data *sae, const u8 *data, size_t len,
-		     const u8 **token, size_t *token_len, int *allowed_groups);
+					 const u8 **token, size_t *token_len, int *allowed_groups);
 void sae_write_confirm(struct sae_data *sae, struct wpabuf *buf);
 int sae_check_confirm(struct sae_data *sae, const u8 *data, size_t len);
 

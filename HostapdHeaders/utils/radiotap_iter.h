@@ -8,23 +8,27 @@
  *   implemented in radiotap.c
  */
 
-struct radiotap_override {
+struct radiotap_override
+{
 	uint8_t field;
-	uint8_t align:4, size:4;
+	uint8_t align : 4, size : 4;
 };
 
-struct radiotap_align_size {
-	uint8_t align:4, size:4;
+struct radiotap_align_size
+{
+	uint8_t align : 4, size : 4;
 };
 
-struct ieee80211_radiotap_namespace {
+struct ieee80211_radiotap_namespace
+{
 	const struct radiotap_align_size *align_size;
 	int n_bits;
 	uint32_t oui;
 	uint8_t subns;
 };
 
-struct ieee80211_radiotap_vendor_namespaces {
+struct ieee80211_radiotap_vendor_namespaces
+{
 	const struct ieee80211_radiotap_namespace *ns;
 	int n_ns;
 };
@@ -61,7 +65,8 @@ struct ieee80211_radiotap_vendor_namespaces {
  * must not be used by users of the parser, only by the parser internally.
  */
 
-struct ieee80211_radiotap_iterator {
+struct ieee80211_radiotap_iterator
+{
 	struct ieee80211_radiotap_header *_rtheader;
 	const struct ieee80211_radiotap_vendor_namespaces *_vns;
 	const struct ieee80211_radiotap_namespace *current_namespace;

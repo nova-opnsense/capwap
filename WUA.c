@@ -17,20 +17,20 @@
  *                                                                                         *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
  * so.  If you do not wish to do so, delete this exception statement from your version.    *
  * If you delete this exception statement from all source files in the program, then also  *
  * delete it here.                                                                         *
- * 
+ *
  * --------------------------------------------------------------------------------------- *
  * Project:  Capwap                                                                        *
  *                                                                                         *
  * Author: Donato Capitella (d.capitella@gmail.com)                                        *
  *                                            				                     		   *
- *******************************************************************************************/ 
+ *******************************************************************************************/
 
 #include <unistd.h>
 #include <wait.h>
@@ -40,27 +40,30 @@
 #include "WUM.h"
 
 /* WUA Constants */
-#define BUF_SIZE        1024
-#define CUP_UNPACK_DIR  "/tmp/cup.unpack"
-#define BACKUP_DIR      "/tmp/cup.backup"
-#define CUD_FILE_NAME   "update.cud"
-#define LOG_FILE        "/var/log/wua.log"
+#define BUF_SIZE 1024
+#define CUP_UNPACK_DIR "/tmp/cup.unpack"
+#define BACKUP_DIR "/tmp/cup.backup"
+#define CUD_FILE_NAME "update.cud"
+#define LOG_FILE "/var/log/wua.log"
 
-#define WTP_DIR_VAR     "WTP_DIR"
-#define CUP_DIR_VAR     "CUP_DIR"
+#define WTP_DIR_VAR "WTP_DIR"
+#define CUP_DIR_VAR "CUP_DIR"
 
-/* Execute the system() function 
+/* Execute the system() function
  * and return CW_FALSE in case of failure. */
-#define SYSTEM_ERR(cmd) \
-do {  \
-    int exit_c = system(cmd);  \
-    if (!WIFEXITED(exit_c) || WEXITSTATUS(exit_c) != 0 ) { \
-       return CW_FALSE; \
-    } \
-} while(0)
+#define SYSTEM_ERR(cmd)                                     \
+    do                                                      \
+    {                                                       \
+        int exit_c = system(cmd);                           \
+        if (!WIFEXITED(exit_c) || WEXITSTATUS(exit_c) != 0) \
+        {                                                   \
+            return CW_FALSE;                                \
+        }                                                   \
+    } while (0)
 
 /* CUPWAP Update Descriptor */
-struct CWUpdateDescriptor {
+struct CWUpdateDescriptor
+{
     char version[BUF_SIZE];
     char pre_script[BUF_SIZE];
     char post_script[BUF_SIZE];
@@ -76,7 +79,7 @@ struct CWUpdateDescriptor cud = {
 /* Function prototypes */
 CWBool Unzip(char *filename, char *destdir);
 CWBool MakeDir(char *dirname);
-CWBool BackupCurrentWTP(char *WTPDir); 
+CWBool BackupCurrentWTP(char *WTPDir);
 CWBool CheckCUPIntegrity();
 CWBool ParseCUD();
 
@@ -98,7 +101,8 @@ void WUALogClose();
 
 int main(int argc, char *argv[])
 {
-    if (argc < 2) {
+    if (argc < 2)
+    {
         fprintf(stderr, "Usage: %s cup_file\n", argv[0]);
     }
 
@@ -116,20 +120,21 @@ int main(int argc, char *argv[])
  * This function executes an update session, which is divided
  * into three stages:
  *
- *   - Stage 1: preparation for the update (unpack CUP and 
+ *   - Stage 1: preparation for the update (unpack CUP and
  *     backup current WTP)
  *
- *   - Stage 2: executes pre-update script, copies new files, 
+ *   - Stage 2: executes pre-update script, copies new files,
  *     then executes post-update script
  *
- *   - Final Stage: cleans temp files and start new WTP 
+ *   - Final Stage: cleans temp files and start new WTP
  */
 void WTPUpdateAgent(char *CupPath)
 {
     int exit_status = EXIT_SUCCESS;
     char WTPDir[BUF_SIZE];
-    
-    if ( !WUAInitLog(LOG_FILE) ) {
+
+    if (!WUAInitLog(LOG_FILE))
+    {
         goto quit_wua;
     }
 
@@ -137,24 +142,28 @@ void WTPUpdateAgent(char *CupPath)
 
     WUALog("Update Session Started.");
 
-    if ( !getcwd(WTPDir, BUF_SIZE) ) {
+    if (!getcwd(WTPDir, BUF_SIZE))
+    {
         WUALog("The impossible happened: can't get current working directory!");
         exit_status = EXIT_FAILURE;
-	goto quit_wua;
+        goto quit_wua;
     }
 
-    if ( !WUAStage1(CupPath, WTPDir) ) {
+    if (!WUAStage1(CupPath, WTPDir))
+    {
         exit_status = EXIT_FAILURE;
-	goto quit_wua;
+        goto quit_wua;
     }
-    
-    if ( !WUAStage2(WTPDir) ) {
+
+    if (!WUAStage2(WTPDir))
+    {
         exit_status = EXIT_FAILURE;
-        if ( !RestoreBackupWTP(WTPDir) ) {
-	    WUALog("***CRITICAL ERROR*** -> Can't restore backup WTP!!!");
-	    exit(EXIT_FAILURE);
-	}
-	goto quit_wua;
+        if (!RestoreBackupWTP(WTPDir))
+        {
+            WUALog("***CRITICAL ERROR*** -> Can't restore backup WTP!!!");
+            exit(EXIT_FAILURE);
+        }
+        goto quit_wua;
     }
 
 /* Final Stage */
@@ -167,7 +176,7 @@ quit_wua:
 }
 
 /*
- * WaitForWTPTermination 
+ * WaitForWTPTermination
  * This function returns when the WTP terminates. A lock on a file
  * is used for synchronization purposes.
  */
@@ -175,20 +184,21 @@ void WaitForWTPTermination()
 {
     struct flock fl;
     int fd;
-    
-    /* The following lock in set just for synchronization purposes */
-    fl.l_type   = F_WRLCK;
-    fl.l_whence = SEEK_SET;
-    fl.l_start  = 0;
-    fl.l_len    = 0;
-    fl.l_pid    = getpid();
 
-    if ((fd = open(WTP_LOCK_FILE, O_WRONLY)) < 0) {
-    	WUALog("Error while opening lock file: %s\n", WTP_LOCK_FILE);
+    /* The following lock in set just for synchronization purposes */
+    fl.l_type = F_WRLCK;
+    fl.l_whence = SEEK_SET;
+    fl.l_start = 0;
+    fl.l_len = 0;
+    fl.l_pid = getpid();
+
+    if ((fd = open(WTP_LOCK_FILE, O_WRONLY)) < 0)
+    {
+        WUALog("Error while opening lock file: %s\n", WTP_LOCK_FILE);
     }
 
     fcntl(fd, F_SETLKW, &fl);
-   
+
     close(fd);
     remove(WTP_LOCK_FILE);
 
@@ -199,44 +209,49 @@ void WaitForWTPTermination()
  * State 1 of the update process
  *
  * - Unpack & Check CUP file
- * - Backup current WTP  
+ * - Backup current WTP
  */
 CWBool WUAStage1(char *CupPath, char *WTPDir)
 {
     WUALog("Entering Stage 1...");
 
-    if (!MakeDir(CUP_UNPACK_DIR)) {
+    if (!MakeDir(CUP_UNPACK_DIR))
+    {
         return CW_FALSE;
     }
-    
-    if (!Unzip(CupPath, CUP_UNPACK_DIR)) {
+
+    if (!Unzip(CupPath, CUP_UNPACK_DIR))
+    {
         WUALog("Something wrong happened while unzipping the CUP archive.");
         return CW_FALSE;
     }
-/*
-    if (!CheckCUPIntegrity()) {
-        WUALog("Problems with the CUP archive.");
-        return CW_FALSE;
-    }
-  */ 
-    if (!ParseCUD()) {
+    /*
+        if (!CheckCUPIntegrity()) {
+            WUALog("Problems with the CUP archive.");
+            return CW_FALSE;
+        }
+      */
+    if (!ParseCUD())
+    {
         WUALog("Error while parsing CUD.");
         return CW_FALSE;
     }
 
     WUALog("Update Version: %s", cud.version);
 
-    if (!MakeDir(BACKUP_DIR)) {
+    if (!MakeDir(BACKUP_DIR))
+    {
         return CW_FALSE;
     }
 
-    if (!BackupCurrentWTP(WTPDir)) {
+    if (!BackupCurrentWTP(WTPDir))
+    {
         WUALog("Can't backup current WTP.");
-    	return CW_FALSE;
+        return CW_FALSE;
     }
 
     WUALog("Stage 1 completed successfully...");
-    
+
     return CW_TRUE;
 }
 
@@ -246,9 +261,9 @@ CWBool WUAStage1(char *CupPath, char *WTPDir)
  * - Set scripts variables
  * - Execute preupdate script
  * - Copy new files
- * - Execute postupdate script  
+ * - Execute postupdate script
  */
-CWBool WUAStage2(char *WTPDir) 
+CWBool WUAStage2(char *WTPDir)
 {
     int ret;
     char cmd_buf[BUF_SIZE];
@@ -256,32 +271,37 @@ CWBool WUAStage2(char *WTPDir)
     WUALog("Entering Stage 2...");
 
     /* Prepare env variables for the scripts */
-    ret = setenv(WTP_DIR_VAR, WTPDir, 1);   
-    if (ret != 0) {
+    ret = setenv(WTP_DIR_VAR, WTPDir, 1);
+    if (ret != 0)
+    {
         WUALog("Error while setting env variable.");
         return CW_FALSE;
     }
 
-    ret = setenv(CUP_DIR_VAR, CUP_UNPACK_DIR, 1);   
-    if (ret != 0) {
+    ret = setenv(CUP_DIR_VAR, CUP_UNPACK_DIR, 1);
+    if (ret != 0)
+    {
         WUALog("Error while setting env variable.");
         return CW_FALSE;
     }
 
     /* Execute pre-update script, if any */
-    if (strlen(cud.pre_script) > 0) {
+    if (strlen(cud.pre_script) > 0)
+    {
         SYSTEM_ERR(cud.pre_script);
     }
 
     /* Copy new WTP files */
     ret = snprintf(cmd_buf, BUF_SIZE, "cp -r %s/WTP/* %s/", CUP_UNPACK_DIR, WTPDir);
-    if (ret < 0 || ret >= BUF_SIZE) {
-    	return CW_FALSE;
+    if (ret < 0 || ret >= BUF_SIZE)
+    {
+        return CW_FALSE;
     }
     SYSTEM_ERR(cmd_buf);
-    
+
     /* Execute post-upsate script, if any */
-    if (strlen(cud.post_script) > 0) {
+    if (strlen(cud.post_script) > 0)
+    {
         SYSTEM_ERR(cud.post_script);
     }
 
@@ -292,7 +312,7 @@ CWBool WUAStage2(char *WTPDir)
 /*
  * Unzip - unzips a gzipped archive into the provided directory.
  *
- * Notes: this implementation relies on the tar command. 
+ * Notes: this implementation relies on the tar command.
  */
 CWBool Unzip(char *filename, char *destdir)
 {
@@ -300,10 +320,11 @@ CWBool Unzip(char *filename, char *destdir)
     int ret;
 
     ret = snprintf(cmd_buf, BUF_SIZE, "tar xzf %s -C %s", filename, destdir);
-    if (ret < 0 || ret >= BUF_SIZE) {
-    	return CW_FALSE;
+    if (ret < 0 || ret >= BUF_SIZE)
+    {
+        return CW_FALSE;
     }
-    
+
     SYSTEM_ERR(cmd_buf);
 
     return CW_TRUE;
@@ -320,16 +341,20 @@ CWBool StartWTP(char *WTPDir)
     int pid, ret;
 
     ret = snprintf(cmd_buf, BUF_SIZE, "%s/WTP", WTPDir);
-    if (ret < 0 || ret >= BUF_SIZE) {
-    	return CW_FALSE;
+    if (ret < 0 || ret >= BUF_SIZE)
+    {
+        return CW_FALSE;
     }
 
     pid = fork();
 
-    if (pid == 0) {
+    if (pid == 0)
+    {
         execl(cmd_buf, "WTP", WTPDir, NULL);
-	exit(EXIT_FAILURE);
-    } else if (pid < 0) {
+        exit(EXIT_FAILURE);
+    }
+    else if (pid < 0)
+    {
         WUALog("Error while forking");
         return CW_FALSE;
     }
@@ -337,25 +362,27 @@ CWBool StartWTP(char *WTPDir)
     return CW_TRUE;
 }
 
-CWBool RestoreBackupWTP(char *WTPDir) 
+CWBool RestoreBackupWTP(char *WTPDir)
 {
     char cmd_buf[BUF_SIZE];
     int ret;
 
     WUALog("Restoring old WTP...");
-    
+
     /* Del WTPDir content */
     ret = snprintf(cmd_buf, BUF_SIZE, "rm -rf %s/*", WTPDir);
-    if (ret < 0 || ret >= BUF_SIZE) {
-    	return CW_FALSE;
+    if (ret < 0 || ret >= BUF_SIZE)
+    {
+        return CW_FALSE;
     }
 
     SYSTEM_ERR(cmd_buf);
 
     /* Restore backup */
     ret = snprintf(cmd_buf, BUF_SIZE, "cp -ra %s/* %s/", BACKUP_DIR, WTPDir);
-    if (ret < 0 || ret >= BUF_SIZE) {
-    	return CW_FALSE;
+    if (ret < 0 || ret >= BUF_SIZE)
+    {
+        return CW_FALSE;
     }
     SYSTEM_ERR(cmd_buf);
 
@@ -364,7 +391,7 @@ CWBool RestoreBackupWTP(char *WTPDir)
 
 void StringToLower(char *str)
 {
-    for(; *str != '\0'; str++)
+    for (; *str != '\0'; str++)
         *str = tolower(*str);
 }
 
@@ -376,51 +403,64 @@ CWBool ParseCUD()
     int ret = CW_TRUE;
 
     ret = snprintf(buf, BUF_SIZE, "%s/%s", CUP_UNPACK_DIR, CUD_FILE_NAME);
-    if (ret < 0 || ret >= BUF_SIZE) {
-    	return CW_FALSE;
+    if (ret < 0 || ret >= BUF_SIZE)
+    {
+        return CW_FALSE;
     }
 
     fp = fopen(buf, "r");
-    if (fp == NULL) {
+    if (fp == NULL)
+    {
         WUALog("Error while opening update descriptor.");
         return CW_FALSE;
     }
 
-    while (fgets(buf, BUF_SIZE, fp) != NULL) {
+    while (fgets(buf, BUF_SIZE, fp) != NULL)
+    {
         token = strtok(buf, " ");
-	StringToLower(token);
-	if (strncmp(token, "preupdate", 9) == 0) {
-	    token = strtok(NULL, " ");
-	    if (token == NULL) {
+        StringToLower(token);
+        if (strncmp(token, "preupdate", 9) == 0)
+        {
+            token = strtok(NULL, " ");
+            if (token == NULL)
+            {
                 WUALog("Error while parsing update descriptor.");
                 ret = CW_FALSE;
-		goto exit_parse;;
-	    }
-	    snprintf(cud.pre_script, BUF_SIZE, "%s/scripts/%s", CUP_UNPACK_DIR, token);
-	} else
-        if (strncmp(token, "postupdate", 10) == 0) {
-	    token = strtok(NULL, " ");
-	    if (token == NULL) {
+                goto exit_parse;
+                ;
+            }
+            snprintf(cud.pre_script, BUF_SIZE, "%s/scripts/%s", CUP_UNPACK_DIR, token);
+        }
+        else if (strncmp(token, "postupdate", 10) == 0)
+        {
+            token = strtok(NULL, " ");
+            if (token == NULL)
+            {
                 WUALog("Error while parsing update descriptor.");
                 ret = CW_FALSE;
-		goto exit_parse;;
-	    }
-	    snprintf(cud.post_script, BUF_SIZE, "%s/scripts/%s", CUP_UNPACK_DIR, token);
-	} else
-	if (strncmp(token, "version", 7) == 0) {
-	    token = strtok(NULL, " ");
-	    if (token == NULL) {
+                goto exit_parse;
+                ;
+            }
+            snprintf(cud.post_script, BUF_SIZE, "%s/scripts/%s", CUP_UNPACK_DIR, token);
+        }
+        else if (strncmp(token, "version", 7) == 0)
+        {
+            token = strtok(NULL, " ");
+            if (token == NULL)
+            {
                 WUALog("Error while parsing update descriptor.");
                 ret = CW_FALSE;
-		goto exit_parse;;
-	    }
-	    snprintf(cud.version, BUF_SIZE, "%s", token);
-        }	
+                goto exit_parse;
+                ;
+            }
+            snprintf(cud.version, BUF_SIZE, "%s", token);
+        }
     }
 
-    if (strlen(cud.version) == 0) {
+    if (strlen(cud.version) == 0)
+    {
         WUALog("Error while parsing CUD file, no version specified.");
-	ret = CW_FALSE;
+        ret = CW_FALSE;
     }
 
 exit_parse:
@@ -437,27 +477,29 @@ void CleanTmpFiles(char *cupFile)
 
     /* Remove CUP file */
     remove(cupFile);
-    
+
     /* Remove Unpack and Backup Directory */
     ret = snprintf(cmd_buf, BUF_SIZE, "rm -rf %s %s", CUP_UNPACK_DIR, BACKUP_DIR);
-    if (ret < 0 || ret >= BUF_SIZE) {
-    	return;
+    if (ret < 0 || ret >= BUF_SIZE)
+    {
+        return;
     }
-    
+
     ret = system(cmd_buf);
 }
 
 CWBool BackupCurrentWTP(char *WTPDir)
 {
-	
+
     char cmd_buf[BUF_SIZE];
     int ret;
 
     ret = snprintf(cmd_buf, BUF_SIZE, "cp -ar %s/* %s", WTPDir, BACKUP_DIR);
-    if (ret < 0 || ret >= BUF_SIZE) {
-    	return CW_FALSE;
+    if (ret < 0 || ret >= BUF_SIZE)
+    {
+        return CW_FALSE;
     }
-    
+
     SYSTEM_ERR(cmd_buf);
 
     return CW_TRUE;
@@ -468,9 +510,10 @@ CWBool MakeDir(char *dirname)
     int ret;
 
     ret = mkdir(dirname, 0700);
-    if (ret != 0) {
-    	WUALog("Can't create directory %s", dirname);
-	return CW_FALSE;
+    if (ret != 0)
+    {
+        WUALog("Can't create directory %s", dirname);
+        return CW_FALSE;
     }
 
     return CW_TRUE;
@@ -482,7 +525,8 @@ CWBool MakeDir(char *dirname)
 
 CWBool WUAInitLog(char *logFile)
 {
-    if ((log_file = fopen(logFile, "a")) == NULL) {
+    if ((log_file = fopen(logFile, "a")) == NULL)
+    {
         return CW_FALSE;
     }
     return CW_TRUE;
@@ -490,7 +534,8 @@ CWBool WUAInitLog(char *logFile)
 
 void WUALog(char *msg, ...)
 {
-    if (log_file == NULL) return;
+    if (log_file == NULL)
+        return;
 
     char date_buf[BUF_SIZE] = {'\0'};
     time_t time_s = time(NULL);
@@ -510,7 +555,8 @@ void WUALog(char *msg, ...)
 
 void WUALogClose()
 {
-    if (log_file != NULL) fclose(log_file);
+    if (log_file != NULL)
+        fclose(log_file);
 }
 
 void daemonize()
@@ -519,15 +565,18 @@ void daemonize()
     int sid;
 
     /* already a daemon */
-    if ( getppid() == 1 ) return;
+    if (getppid() == 1)
+        return;
 
     /* Fork off the parent process */
     pid = fork();
-    if (pid < 0) {
+    if (pid < 0)
+    {
         exit(EXIT_FAILURE);
     }
     /* If we got a good PID, then we can exit the parent process. */
-    if (pid > 0) {
+    if (pid > 0)
+    {
         exit(EXIT_SUCCESS);
     }
 
@@ -538,13 +587,13 @@ void daemonize()
 
     /* Create a new SID for the child process */
     sid = setsid();
-        if (sid < 0) {
-       exit(EXIT_FAILURE);
+    if (sid < 0)
+    {
+        exit(EXIT_FAILURE);
     }
 
     /* Redirect standard files to /dev/null */
-    freopen( "/dev/null", "r", stdin);
-    freopen( "/dev/null", "w", stdout);
-    freopen( "/dev/null", "w", stderr);
+    freopen("/dev/null", "r", stdin);
+    freopen("/dev/null", "w", stdout);
+    freopen("/dev/null", "w", stderr);
 }
-

@@ -17,25 +17,24 @@
  *                                                                                         *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
  * so.  If you do not wish to do so, delete this exception statement from your version.    *
  * If you delete this exception statement from all source files in the program, then also  *
  * delete it here.                                                                         *
- * 
+ *
  * --------------------------------------------------------------------------------------- *
  * Project:  Capwap                                                                        *
  *                                                                                         *
- * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *  
+ * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *
  *           Del Moro Andrea (andrea_delmoro@libero.it)                                    *
  *           Giovannini Federica (giovannini.federica@gmail.com)                           *
  *           Massimo Vellucci (m.vellucci@unicampus.it)                                    *
  *           Mauro Bisson (mauro.bis@gmail.com)                                            *
  *******************************************************************************************/
 
- 
 #ifndef __CAPWAP_CWNetwork_HEADER__
 #define __CAPWAP_CWNetwork_HEADER__
 
@@ -52,33 +51,44 @@ typedef int CWSocket;
 
 typedef struct sockaddr_storage CWNetworkLev4Address;
 
-typedef enum {
+typedef enum
+{
 	CW_IPv6,
 	CW_IPv4
 } CWNetworkLev3Service;
 
 extern CWNetworkLev3Service gNetworkPreferredFamily;
 
-#define	CW_COPY_NET_ADDR_PTR(addr1, addr2)  	sock_cpy_addr_port(((struct sockaddr*)(addr1)), ((struct sockaddr*)(addr2)))
-#define	CW_COPY_NET_ADDR(addr1, addr2)		CW_COPY_NET_ADDR_PTR(&(addr1), &(addr2))
+#define CW_COPY_NET_ADDR_PTR(addr1, addr2) sock_cpy_addr_port(((struct sockaddr *)(addr1)), ((struct sockaddr *)(addr2)))
+#define CW_COPY_NET_ADDR(addr1, addr2) CW_COPY_NET_ADDR_PTR(&(addr1), &(addr2))
 
-#define CWUseSockNtop(sa, block) 		{ 						\
-							char __str[128];			\
-							char *str; str = sock_ntop_r(((struct sockaddr*)(sa)), __str);\
-							{block}					\
-						}
+#define CWUseSockNtop(sa, block)                             \
+	{                                                        \
+		char __str[128];                                     \
+		char *str;                                           \
+		str = sock_ntop_r(((struct sockaddr *)(sa)), __str); \
+		{                                                    \
+			block                                            \
+		}                                                    \
+	}
 
-#define CWNetworkRaiseSystemError(error)	{						\
-							char buf[256];				\
-							if(strerror_r(errno, buf, 256) < 0) {	\
-								CWErrorRaise(error, NULL);	\
-								return CW_FALSE;		\
-							}					\
-							CWErrorRaise(error, NULL);		\
-							return CW_FALSE;			\
-						}
+#define CWNetworkRaiseSystemError(error)     \
+	{                                        \
+		char buf[256];                       \
+		if (strerror_r(errno, buf, 256) < 0) \
+		{                                    \
+			CWErrorRaise(error, NULL);       \
+			return CW_FALSE;                 \
+		}                                    \
+		CWErrorRaise(error, NULL);           \
+		return CW_FALSE;                     \
+	}
 
-#define		CWNetworkCloseSocket(x)		{ shutdown(SHUT_RDWR, x); close(x); }
+#define CWNetworkCloseSocket(x) \
+	{                           \
+		shutdown(SHUT_RDWR, x); \
+		close(x);               \
+	}
 
 int CWNetworkGetAddressSize(CWNetworkLev4Address *addrPtr);
 CWBool CWNetworkSendUnsafeConnected(CWSocket sock, const char *buf, int len);
@@ -97,9 +107,8 @@ CWBool CWNetworkInitSocketClientDataChannelWithPort(CWSocket *sockPtr, CWNetwork
 CWBool CWNetworkTimedPollRead(CWSocket sock, struct timeval *timeout);
 CWBool CWNetworkGetAddressForHost(char *host, CWNetworkLev4Address *addrPtr);
 
-
-//CWBool CWNetworkInitLib(void);
-//CWBool CWNetworkInitSocketServer(CWSocket *sockPtr, int port);
-//CWBool CWNetworkSendUnsafeConnected(CWSocket sock, const char *buf, int len);
+// CWBool CWNetworkInitLib(void);
+// CWBool CWNetworkInitSocketServer(CWSocket *sockPtr, int port);
+// CWBool CWNetworkSendUnsafeConnected(CWSocket sock, const char *buf, int len);
 
 #endif

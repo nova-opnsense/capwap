@@ -17,27 +17,26 @@
  *                                                                                         *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
  * so.  If you do not wish to do so, delete this exception statement from your version.    *
  * If you delete this exception statement from all source files in the program, then also  *
  * delete it here.                                                                         *
- * 
+ *
  * --------------------------------------------------------------------------------------- *
  * Project:  Capwap                                                                        *
  *                                                                                         *
- * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *  
+ * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *
  *           Del Moro Andrea (andrea_delmoro@libero.it)                                    *
  *           Giovannini Federica (giovannini.federica@gmail.com)                           *
  *           Massimo Vellucci (m.vellucci@unicampus.it)                                    *
  *           Mauro Bisson (mauro.bis@gmail.com)                                            *
  *******************************************************************************************/
 
-
 #include "CWWTP.h"
- 
+
 #ifdef DMALLOC
 #include "../dmalloc-5.5.0/dmalloc.h"
 #endif
@@ -48,27 +47,30 @@ int gCWSilentInterval = 5;
 int gCWSilentInterval = 30;
 #endif
 
-/* 
+/*
  * WTP enters sulking when no AC is responding to Discovery Request.
  */
-CWStateTransition CWWTPEnterSulking() {
+CWStateTransition CWWTPEnterSulking()
+{
 	struct timeval timeout, before, after, delta, newTimeout;
-	
+
 	CWLog("\n");
 	CWLog("######### Sulking State #########");
-	/* 
-	 * wait for Silent Interval and discard 
-	 * all the packets that are coming 
+	/*
+	 * wait for Silent Interval and discard
+	 * all the packets that are coming
 	 */
 	timeout.tv_sec = newTimeout.tv_sec = gCWSilentInterval;
 	timeout.tv_usec = newTimeout.tv_usec = 0;
-	
+
 	gettimeofday(&before, NULL);
 
-	CW_REPEAT_FOREVER {
+	CW_REPEAT_FOREVER
+	{
 
 		/* check if something is available to read until newTimeout */
-		if(CWNetworkTimedPollRead(gWTPSocket, &newTimeout)) { 
+		if (CWNetworkTimedPollRead(gWTPSocket, &newTimeout))
+		{
 			/*
 			 * success
 			 * if there was no error, raise a "success error", so we can easily handle
@@ -77,46 +79,49 @@ CWStateTransition CWWTPEnterSulking() {
 			CWErrorRaise(CW_ERROR_SUCCESS, NULL);
 		}
 
-		switch(CWErrorGetLastErrorCode()) {
-			case CW_ERROR_TIME_EXPIRED:
-				goto cw_sulk_time_over;
-				break;
-			case CW_ERROR_SUCCESS:
-				/* there's something to read */
+		switch (CWErrorGetLastErrorCode())
+		{
+		case CW_ERROR_TIME_EXPIRED:
+			goto cw_sulk_time_over;
+			break;
+		case CW_ERROR_SUCCESS:
+			/* there's something to read */
+			{
+				CWNetworkLev4Address addr;
+				char buf[CW_BUFFER_SIZE];
+				int readBytes;
+
+				/* read and discard */
+				if (!CWErr(CWNetworkReceiveUnsafe(gWTPSocket, buf, CW_BUFFER_SIZE, 0, &addr, &readBytes)))
 				{
-					CWNetworkLev4Address addr;
-					char buf[CW_BUFFER_SIZE];
-					int readBytes;
-		
-					/* read and discard */
-					if(!CWErr(CWNetworkReceiveUnsafe(gWTPSocket, buf, CW_BUFFER_SIZE, 0, &addr, &readBytes))) {
-						return CW_QUIT;
-					}
+					return CW_QUIT;
 				}
-			case CW_ERROR_INTERRUPTED: 
-				/*
-				 *  something to read OR interrupted by the 
-				 *  system
-				 *  wait for the remaining time (NetworkPoll
-				 *  will be recalled with the remaining time)
-				 */
-				gettimeofday(&after, NULL);
-		
-				CWTimevalSubtract(&delta, &after, &before);
-				if(CWTimevalSubtract(&newTimeout, &timeout, &delta) == 1) {
-					/* negative delta: time is over */
-					goto cw_sulk_time_over;
-				}
-				break;
-				
-			default:
-				CWErrorHandleLast();
-				goto cw_error;
-				break;
+			}
+		case CW_ERROR_INTERRUPTED:
+			/*
+			 *  something to read OR interrupted by the
+			 *  system
+			 *  wait for the remaining time (NetworkPoll
+			 *  will be recalled with the remaining time)
+			 */
+			gettimeofday(&after, NULL);
+
+			CWTimevalSubtract(&delta, &after, &before);
+			if (CWTimevalSubtract(&newTimeout, &timeout, &delta) == 1)
+			{
+				/* negative delta: time is over */
+				goto cw_sulk_time_over;
+			}
+			break;
+
+		default:
+			CWErrorHandleLast();
+			goto cw_error;
+			break;
 		}
 	}
-	cw_sulk_time_over:
-		CWLog("End of Sulking Period");
-	cw_error:
-		return CW_ENTER_DISCOVERY;
+cw_sulk_time_over:
+	CWLog("End of Sulking Period");
+cw_error:
+	return CW_ENTER_DISCOVERY;
 }

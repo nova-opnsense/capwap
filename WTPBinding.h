@@ -14,10 +14,10 @@
  * program; if not, write to the:																*
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,							*
  * MA  02111-1307, USA.																			*
- *											
+ *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
@@ -28,7 +28,7 @@
  * -------------------------------------------------------------------------------------------- *
  * Project:  Capwap																				*
  *																								*
- * Authors : Ludovico Rossi (ludo@bluepixysw.com)												*  
+ * Authors : Ludovico Rossi (ludo@bluepixysw.com)												*
  *           Del Moro Andrea (andrea_delmoro@libero.it)											*
  *           Giovannini Federica (giovannini.federica@gmail.com)								*
  *           Massimo Vellucci (m.vellucci@unicampus.it)											*
@@ -36,21 +36,23 @@
  *	         Antonio Davoli (antonio.davoli@gmail.com)											*
  ************************************************************************************************/
 
-
 #ifndef __CAPWAP_WTPBinding_HEADER__
 #define __CAPWAP_WTPBinding_HEADER__
 
-typedef struct {
+typedef struct
+{
 	unsigned char radioID;
 	WTPQosValues qosValues[NUM_QOS_PROFILES];
 } RadioQosValues;
 
-typedef struct {
+typedef struct
+{
 	int qosCount;
 	RadioQosValues *radioQosValues;
 } CWBindingConfigurationRequestValues;
 
-typedef struct {
+typedef struct
+{
 	int qosCount;
 	RadioQosValues *radioQosValues;
 } CWBindingConfigurationUpdateRequestValues;
@@ -61,11 +63,11 @@ typedef struct {
  *				OFDM Message Element				*
  ****************************************************/
 
-typedef struct {
-  unsigned char radioID;
-  OFDMControlValues *radioOFDMValues;
+typedef struct
+{
+	unsigned char radioID;
+	OFDMControlValues *radioOFDMValues;
 } CWBindingConfigurationUpdateRequestValuesOFDM;
-
 
 /****************************************************
  * 2009 Updates:									*
@@ -78,13 +80,13 @@ typedef struct {
 #define FREQ_SERVER_PORT 1236
 
 CWBool CWWTPInitBinding(int radioIndex);
-CWBool CWBindingSaveConfigureResponse(void* bindingValuesPtr, CWProtocolResultCode* resultCode);
+CWBool CWBindingSaveConfigureResponse(void *bindingValuesPtr, CWProtocolResultCode *resultCode);
 CWBool CWBindingSetQosValues(int qosCount, RadioQosValues *radioQosValues, CWProtocolResultCode *resultCode);
-CWBool CWBindingParseConfigurationUpdateRequest (char *msg, int len, void **valuesPtr);
-CWBool CWBindingParseConfigureResponse (char *msg, int len, void **valuesPtr);
+CWBool CWBindingParseConfigurationUpdateRequest(char *msg, int len, void **valuesPtr);
+CWBool CWBindingParseConfigureResponse(char *msg, int len, void **valuesPtr);
 /****************************************************
- * 2009 Updates: (SaveConfiguration)				*	
+ * 2009 Updates: (SaveConfiguration)				*
  *				Prototype Modification (int * added)*
  ****************************************************/
-CWBool CWBindingSaveConfigurationUpdateRequest(void* bindingValuesPtr, CWProtocolResultCode* resultCode, int *updateRequestType);
+CWBool CWBindingSaveConfigurationUpdateRequest(void *bindingValuesPtr, CWProtocolResultCode *resultCode, int *updateRequestType);
 #endif

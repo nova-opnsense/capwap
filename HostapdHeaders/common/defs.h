@@ -15,8 +15,11 @@
 #ifdef TRUE
 #undef TRUE
 #endif
-typedef enum { FALSE = 0, TRUE = 1 } Boolean;
-
+typedef enum
+{
+	FALSE = 0,
+	TRUE = 1
+} Boolean;
 
 #define WPA_CIPHER_NONE BIT(0)
 #define WPA_CIPHER_WEP40 BIT(1)
@@ -53,46 +56,46 @@ typedef enum { FALSE = 0, TRUE = 1 } Boolean;
 static inline int wpa_key_mgmt_wpa_ieee8021x(int akm)
 {
 	return !!(akm & (WPA_KEY_MGMT_IEEE8021X |
-			 WPA_KEY_MGMT_FT_IEEE8021X |
-			 WPA_KEY_MGMT_CCKM |
-			 WPA_KEY_MGMT_OSEN |
-			 WPA_KEY_MGMT_IEEE8021X_SHA256));
+					 WPA_KEY_MGMT_FT_IEEE8021X |
+					 WPA_KEY_MGMT_CCKM |
+					 WPA_KEY_MGMT_OSEN |
+					 WPA_KEY_MGMT_IEEE8021X_SHA256));
 }
 
 static inline int wpa_key_mgmt_wpa_psk(int akm)
 {
 	return !!(akm & (WPA_KEY_MGMT_PSK |
-			 WPA_KEY_MGMT_FT_PSK |
-			 WPA_KEY_MGMT_PSK_SHA256 |
-			 WPA_KEY_MGMT_SAE |
-			 WPA_KEY_MGMT_FT_SAE));
+					 WPA_KEY_MGMT_FT_PSK |
+					 WPA_KEY_MGMT_PSK_SHA256 |
+					 WPA_KEY_MGMT_SAE |
+					 WPA_KEY_MGMT_FT_SAE));
 }
 
 static inline int wpa_key_mgmt_ft(int akm)
 {
 	return !!(akm & (WPA_KEY_MGMT_FT_PSK |
-			 WPA_KEY_MGMT_FT_IEEE8021X |
-			 WPA_KEY_MGMT_FT_SAE));
+					 WPA_KEY_MGMT_FT_IEEE8021X |
+					 WPA_KEY_MGMT_FT_SAE));
 }
 
 static inline int wpa_key_mgmt_sae(int akm)
 {
 	return !!(akm & (WPA_KEY_MGMT_SAE |
-			 WPA_KEY_MGMT_FT_SAE));
+					 WPA_KEY_MGMT_FT_SAE));
 }
 
 static inline int wpa_key_mgmt_sha256(int akm)
 {
 	return !!(akm & (WPA_KEY_MGMT_PSK_SHA256 |
-			 WPA_KEY_MGMT_IEEE8021X_SHA256 |
-			 WPA_KEY_MGMT_OSEN));
+					 WPA_KEY_MGMT_IEEE8021X_SHA256 |
+					 WPA_KEY_MGMT_OSEN));
 }
 
 static inline int wpa_key_mgmt_wpa(int akm)
 {
 	return wpa_key_mgmt_wpa_ieee8021x(akm) ||
-		wpa_key_mgmt_wpa_psk(akm) ||
-		wpa_key_mgmt_sae(akm);
+		   wpa_key_mgmt_wpa_psk(akm) ||
+		   wpa_key_mgmt_sae(akm);
 }
 
 static inline int wpa_key_mgmt_wpa_any(int akm)
@@ -105,7 +108,6 @@ static inline int wpa_key_mgmt_cckm(int akm)
 	return akm == WPA_KEY_MGMT_CCKM;
 }
 
-
 #define WPA_PROTO_WPA BIT(0)
 #define WPA_PROTO_RSN BIT(1)
 #define WPA_PROTO_WAPI BIT(2)
@@ -117,8 +119,8 @@ static inline int wpa_key_mgmt_cckm(int akm)
 #define WPA_AUTH_ALG_FT BIT(3)
 #define WPA_AUTH_ALG_SAE BIT(4)
 
-
-enum wpa_alg {
+enum wpa_alg
+{
 	WPA_ALG_NONE,
 	WPA_ALG_WEP,
 	WPA_ALG_TKIP,
@@ -145,7 +147,8 @@ enum wpa_alg {
  * wrapper functions wpa_sm_get_state() and wpa_sm_set_state() should be used
  * to access the state variable.
  */
-enum wpa_states {
+enum wpa_states
+{
 	/**
 	 * WPA_DISCONNECTED - Disconnected state
 	 *
@@ -260,11 +263,11 @@ enum wpa_states {
 #define MLME_SETPROTECTION_KEY_TYPE_GROUP 0
 #define MLME_SETPROTECTION_KEY_TYPE_PAIRWISE 1
 
-
 /**
  * enum mfp_options - Management frame protection (IEEE 802.11w) options
  */
-enum mfp_options {
+enum mfp_options
+{
 	NO_MGMT_FRAME_PROTECTION = 0,
 	MGMT_FRAME_PROTECTION_OPTIONAL = 1,
 	MGMT_FRAME_PROTECTION_REQUIRED = 2,
@@ -274,7 +277,8 @@ enum mfp_options {
 /**
  * enum hostapd_hw_mode - Hardware mode
  */
-enum hostapd_hw_mode {
+enum hostapd_hw_mode
+{
 	HOSTAPD_MODE_IEEE80211B,
 	HOSTAPD_MODE_IEEE80211G,
 	HOSTAPD_MODE_IEEE80211A,
@@ -285,7 +289,8 @@ enum hostapd_hw_mode {
 /**
  * enum wpa_ctrl_req_type - Control interface request types
  */
-enum wpa_ctrl_req_type {
+enum wpa_ctrl_req_type
+{
 	WPA_CTRL_REQ_UNKNOWN,
 	WPA_CTRL_REQ_EAP_IDENTITY,
 	WPA_CTRL_REQ_EAP_PASSWORD,

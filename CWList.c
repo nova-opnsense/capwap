@@ -17,24 +17,23 @@
  *                                                                                         *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
  * so.  If you do not wish to do so, delete this exception statement from your version.    *
  * If you delete this exception statement from all source files in the program, then also  *
  * delete it here.                                                                         *
- * 
+ *
  * --------------------------------------------------------------------------------------- *
  * Project:  Capwap                                                                        *
  *                                                                                         *
- * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *  
+ * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *
  *           Del Moro Andrea (andrea_delmoro@libero.it)                                    *
  *           Giovannini Federica (giovannini.federica@gmail.com)                           *
  *           Massimo Vellucci (m.vellucci@unicampus.it)                                    *
  *           Mauro Bisson (mauro.bis@gmail.com)                                            *
  *******************************************************************************************/
-
 
 #include "CWCommon.h"
 
@@ -44,151 +43,177 @@
 
 // adds an element at the head of the list
 // CW_TRUE if the operation is successful, CW_FALSE otherwise
-CWBool CWAddElementToList(CWList *list, void *element) {
+CWBool CWAddElementToList(CWList *list, void *element)
+{
 	CWListElement *newElem;
-	
-	if(element == NULL || list == NULL) return CW_FALSE;
-	
-	if((*list) == NULL) { // first element
+
+	if (element == NULL || list == NULL)
+		return CW_FALSE;
+
+	if ((*list) == NULL)
+	{ // first element
 		CW_CREATE_OBJECT_ERR((*list), CWListElement, return CW_FALSE;);
 		(*list)->data = element;
 		(*list)->next = NULL;
 		return CW_TRUE;
 	}
-	
+
 	CW_CREATE_OBJECT_ERR(newElem, CWListElement, return CW_FALSE;);
 	newElem->data = element;
 	newElem->next = (*list);
-	
+
 	(*list) = newElem;
-	
+
 	return CW_TRUE;
 }
 
 // adds an element at the tail of the list
 // CW_TRUE if the operation is successful, CW_FALSE otherwise
-CWBool CWAddElementToListTail(CWList *list, void *element) {
+CWBool CWAddElementToListTail(CWList *list, void *element)
+{
 	CWListElement *newElem;
-	
-	if(element == NULL || list == NULL) return CW_FALSE;
-	
-	if((*list) == NULL) { // first element
+
+	if (element == NULL || list == NULL)
+		return CW_FALSE;
+
+	if ((*list) == NULL)
+	{ // first element
 		CW_CREATE_OBJECT_ERR((*list), CWListElement, return CW_FALSE;);
 		(*list)->data = element;
 		(*list)->next = NULL;
 		return CW_TRUE;
 	}
-	
-	newElem=*list;
+
+	newElem = *list;
 	while (newElem->next != NULL)
 	{
-		newElem= newElem->next;
+		newElem = newElem->next;
 	}
-	
+
 	CW_CREATE_OBJECT_ERR(newElem->next, CWListElement, return CW_FALSE;);
 	newElem->next->data = element;
 	newElem->next->next = NULL;
-	
+
 	return CW_TRUE;
 }
 
-CWList CWListGetFirstElem(CWList *list){
+CWList CWListGetFirstElem(CWList *list)
+{
 	CWList auxList;
 
-	if (list == NULL || *list == NULL) return NULL;
-	
+	if (list == NULL || *list == NULL)
+		return NULL;
+
 	auxList = *list;
 	*list = (*list)->next;
 	auxList->next = NULL;
-	
+
 	return auxList;
 }
 
 // not thread safe!
-void * CWListGetNext(CWList list, CWListIterateMode mode) {
+void *CWListGetNext(CWList list, CWListIterateMode mode)
+{
 	static CWList l = NULL;
 	void *data;
-	
-	if(list == NULL) return NULL;
-	
-	if(mode == CW_LIST_ITERATE_RESET) {
+
+	if (list == NULL)
+		return NULL;
+
+	if (mode == CW_LIST_ITERATE_RESET)
+	{
 		l = list;
-	} else if(l == NULL) return NULL;
-	
+	}
+	else if (l == NULL)
+		return NULL;
+
 	data = l->data;
 	l = l->next;
-	
+
 	return data;
 }
 
 // search baseElement in list using compareFunc
 // NULL if there was an error, the element otherwise
-void *CWSearchInList(CWList list, void *baseElement, CWBool (*compareFunc) (void *, void*)) {
+void *CWSearchInList(CWList list, void *baseElement, CWBool (*compareFunc)(void *, void *))
+{
 	CWListElement *el = NULL;
-	
-	if (baseElement == NULL || compareFunc == NULL) return NULL;
-	
-	for(el = list; el != NULL; el = el->next) {
-		if(compareFunc(baseElement, el->data)) {
+
+	if (baseElement == NULL || compareFunc == NULL)
+		return NULL;
+
+	for (el = list; el != NULL; el = el->next)
+	{
+		if (compareFunc(baseElement, el->data))
+		{
 			return el->data;
 		}
 	}
-	
+
 	return NULL;
 }
 
 // search baseElement in list using compareFunc, removes the element from the list and returns it
 // NULL if there was an error, the element otherwise
-void *CWDeleteInList(CWList *list, void *baseElement, CWBool (*compareFunc) (void *, void*)) {
+void *CWDeleteInList(CWList *list, void *baseElement, CWBool (*compareFunc)(void *, void *))
+{
 	CWListElement *el = NULL, *oldEl = NULL;
-	
-	if (baseElement == NULL || compareFunc == NULL || list == NULL) return NULL;
-	
-	for(el = (*list); el != NULL; oldEl = el, el = el->next) {
-		if(compareFunc(baseElement, el->data)) {
+
+	if (baseElement == NULL || compareFunc == NULL || list == NULL)
+		return NULL;
+
+	for (el = (*list); el != NULL; oldEl = el, el = el->next)
+	{
+		if (compareFunc(baseElement, el->data))
+		{
 			void *data = el->data;
-			if(oldEl != NULL) {
+			if (oldEl != NULL)
+			{
 				oldEl->next = el->next;
-				
-				CW_FREE_OBJECT(el);
-				return data;
-			} else { // first element
-				(*list) = el->next;
-				
+
 				CW_FREE_OBJECT(el);
 				return data;
 			}
+			else
+			{ // first element
+				(*list) = el->next;
 
+				CW_FREE_OBJECT(el);
+				return data;
+			}
 		}
 	}
-	
+
 	return NULL;
 }
 
 // deletes a list, deleting each element with a call to the given deleteFunc
-void CWDeleteList(CWList *list , void (*deleteFunc) (void *)) {
+void CWDeleteList(CWList *list, void (*deleteFunc)(void *))
+{
 	CWListElement *el = NULL;
-	
-	if (list == NULL || (*list) == NULL || deleteFunc == NULL) return;
-	
-	do {
+
+	if (list == NULL || (*list) == NULL || deleteFunc == NULL)
+		return;
+
+	do
+	{
 		el = (*list);
 		(*list) = (*list)->next;
 		deleteFunc(el->data);
 		CW_FREE_OBJECT(el);
-	} while((*list) != NULL);
+	} while ((*list) != NULL);
 }
 
-int CWCountElementInList (CWList list)
+int CWCountElementInList(CWList list)
 {
 	CWListElement *current;
 	int count = 0;
 
-	current=list;
-	while (current!= NULL)
+	current = list;
+	while (current != NULL)
 	{
 		count++;
-		current= current->next;
+		current = current->next;
 	}
 	return count;
 }
@@ -197,11 +222,9 @@ int CWCountElementInList (CWList list)
 CWList *FindLastElementInList (CWList list)
 {
 	CWListElement *current;
-		
+
 	current=list;
 	while (current!= NULL) {current= current->next;}
 	return &current;
 }
 */
-
-

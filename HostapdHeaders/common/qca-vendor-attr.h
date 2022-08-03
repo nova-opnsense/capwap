@@ -15,14 +15,16 @@
  * compiler dependencies.
  */
 
-struct qca_avoid_freq_range {
+struct qca_avoid_freq_range
+{
 	u32 start_freq;
 	u32 end_freq;
-} __attribute__ ((packed));
+} __attribute__((packed));
 
-struct qca_avoid_freq_list {
+struct qca_avoid_freq_list
+{
 	u32 count;
 	struct qca_avoid_freq_range range[0];
-} __attribute__ ((packed));
+} __attribute__((packed));
 
 #endif /* QCA_VENDOR_ATTR_H */

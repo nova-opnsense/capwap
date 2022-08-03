@@ -21,7 +21,8 @@
 /**
  * enum qca_radiotap_vendor_ids - QCA radiotap vendor namespace IDs
  */
-enum qca_radiotap_vendor_ids {
+enum qca_radiotap_vendor_ids
+{
 	QCA_RADIOTAP_VID_WLANTEST = 0,
 };
 
@@ -44,31 +45,32 @@ enum qca_radiotap_vendor_ids {
  *	NAN Request/Response and NAN Indication messages. These messages are
  *	interpreted between the framework and the firmware component.
  */
-enum qca_nl80211_vendor_subcmds {
+enum qca_nl80211_vendor_subcmds
+{
 	QCA_NL80211_VENDOR_SUBCMD_UNSPEC = 0,
 	QCA_NL80211_VENDOR_SUBCMD_TEST = 1,
 	/* subcmds 2..9 not yet allocated */
 	QCA_NL80211_VENDOR_SUBCMD_AVOID_FREQUENCY = 10,
-	QCA_NL80211_VENDOR_SUBCMD_DFS_CAPABILITY =  11,
-	QCA_NL80211_VENDOR_SUBCMD_NAN =  12,
+	QCA_NL80211_VENDOR_SUBCMD_DFS_CAPABILITY = 11,
+	QCA_NL80211_VENDOR_SUBCMD_NAN = 12,
 	QCA_NL80211_VENDOR_SUBMCD_STATS_EXT = 13,
 	/* 14..33 - reserved for QCA */
 };
 
-
-enum qca_wlan_vendor_attr {
+enum qca_wlan_vendor_attr
+{
 	QCA_WLAN_VENDOR_ATTR_INVALID = 0,
 	/* used by QCA_NL80211_VENDOR_SUBCMD_DFS_CAPABILITY */
-	QCA_WLAN_VENDOR_ATTR_DFS     = 1,
+	QCA_WLAN_VENDOR_ATTR_DFS = 1,
 	/* used by QCA_NL80211_VENDOR_SUBCMD_NAN */
-	QCA_WLAN_VENDOR_ATTR_NAN     = 2,
+	QCA_WLAN_VENDOR_ATTR_NAN = 2,
 	/* used by QCA_NL80211_VENDOR_SUBCMD_STATS_EXT */
-	QCA_WLAN_VENDOR_ATTR_STATS_EXT     = 3,
+	QCA_WLAN_VENDOR_ATTR_STATS_EXT = 3,
 	/* used by QCA_NL80211_VENDOR_SUBCMD_STATS_EXT */
-	QCA_WLAN_VENDOR_ATTR_IFINDEX     = 4,
+	QCA_WLAN_VENDOR_ATTR_IFINDEX = 4,
 	/* keep last */
 	QCA_WLAN_VENDOR_ATTR_AFTER_LAST,
-	QCA_WLAN_VENDOR_ATTR_MAX	= QCA_WLAN_VENDOR_ATTR_AFTER_LAST - 1,
+	QCA_WLAN_VENDOR_ATTR_MAX = QCA_WLAN_VENDOR_ATTR_AFTER_LAST - 1,
 };
 
 #endif /* QCA_VENDOR_H */

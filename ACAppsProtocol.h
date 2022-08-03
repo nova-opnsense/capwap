@@ -1,6 +1,6 @@
 /*
  *  appsToAcProtocol.h
- *  
+ *
  *
  *  Created by Antonio Davoli on 03/03/09.
  *  Copyright 2009 La Sapienza. All rights reserved.
@@ -19,7 +19,7 @@
  *		|    Cmd_msg    |				*
  *		+-+-+-+-+-+-+-+-+				*
  *										*
- ****************************************/ 
+ ****************************************/
 
 /* CMD_MSG Types */
 
@@ -39,7 +39,6 @@
  *	where N is equal to Active# (Number of Active WTPs)																			*
  ********************************************************************************************************************************/
 
-
 /********************************************************************************************************
  * For CONF_UPDATE_MSG type:																			*
  *																										*
@@ -50,18 +49,18 @@
  *																										*
  ********************************************************************************************************/
 
-#define PAYLOAD_START ((sizeof(unsigned char)*2) + sizeof(int)) 
+#define PAYLOAD_START ((sizeof(unsigned char) * 2) + sizeof(int))
 #define ALL_ACTIVE_WTPS -1
 
-#define MSG_ELEMENT_TYPE_OFDM 1 
+#define MSG_ELEMENT_TYPE_OFDM 1
 #define MSG_ELEMENT_TYPE_VENDOR_UCI 2
 #define MSG_ELEMENT_TYPE_VENDOR_WUM 3
-//Elena Agostini - 09/2014: IEEE Binding
+// Elena Agostini - 09/2014: IEEE Binding
 #define MSG_ELEMENT_TYPE_ADD_WLAN 4
 #define MSG_ELEMENT_TYPE_DEL_WLAN 5
 
 /****************************************************************************************
- * Message Specific Payload for MSG_ELEMENT_TYPE_OFDM TYPE (802.11 Binding Version)		* 
+ * Message Specific Payload for MSG_ELEMENT_TYPE_OFDM TYPE (802.11 Binding Version)		*
  *																						*
  *		0                   1                   2                   3					*
  *		0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1					*
@@ -70,11 +69,7 @@
  *		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+				*
  *		|                         TI Threshold                          |				*
  *		+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+				*
- *																						*										
- ****************************************************************************************/ 
+ *																						*
+ ****************************************************************************************/
 
 /* Radio ID is filled in the creation message funcion (inside the AC) */
-
-
-
-

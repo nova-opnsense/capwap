@@ -17,21 +17,20 @@
  *                                                                                         *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
  * so.  If you do not wish to do so, delete this exception statement from your version.    *
  * If you delete this exception statement from all source files in the program, then also  *
  * delete it here.                                                                         *
- * 
+ *
  * --------------------------------------------------------------------------------------- *
  * Project:  Capwap                                                                        *
  *                                                                                         *
  * Author : Antonio Davoli (antonio.davoli@gmail.com)                                      *
  *                                            				                    		   *
  *******************************************************************************************/
-
 
 #ifndef __CAPWAP_WTPFreqStatsReceive_HEADER__
 #define __CAPWAP_WTPFreqStatsReceive_HEADER__
@@ -42,12 +41,12 @@
 #include <sys/un.h>
 
 #define SERVER_PORT 1237
-#define PACKET_SIZE	65536
+#define PACKET_SIZE 65536
 
-
-#define EXIT_THREAD	CWLog("ERROR Handling Frequency Stats: application will be closed!");		\
-				close(recSock);								\
-				exit(1);
+#define EXIT_THREAD                                                       \
+	CWLog("ERROR Handling Frequency Stats: application will be closed!"); \
+	close(recSock);                                                       \
+	exit(1);
 
 /* Structs for frequencies' informations */
 
@@ -57,12 +56,14 @@ typedef unsigned char uint8;
 #define MAX_ESSID_LENGTH 32
 #define MAX_MAC_ADDR_LENGTH 18 /* XX:XX:XX:XX:XX:XX */
 
-typedef struct _quality {
-  uint8 numerator;
-  uint8 denominator;
+typedef struct _quality
+{
+	uint8 numerator;
+	uint8 denominator;
 } quality;
 
-typedef struct _FreqQualityInfo {
+typedef struct _FreqQualityInfo
+{
 	uint8 version;
 	char ESSID[MAX_ESSID_LENGTH];
 	char Address[MAX_MAC_ADDR_LENGTH];
@@ -74,10 +75,10 @@ typedef struct _FreqQualityInfo {
 	int noiseLevel;
 } FreqQualityInfo;
 
-typedef struct _FREQ_MONITOR_DATA {
-  int numberOfCells;
-  FreqQualityInfo *qualityOfCells;
+typedef struct _FREQ_MONITOR_DATA
+{
+	int numberOfCells;
+	FreqQualityInfo *qualityOfCells;
 } FREQ_MONITOR_DATA;
 
 #endif
-

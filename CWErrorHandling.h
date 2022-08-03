@@ -14,10 +14,10 @@
  * program; if not, write to the:                                                          *
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,                    *
  * MA  02111-1307, USA.                                                                    *
- * 
+ *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
@@ -28,18 +28,18 @@
  * --------------------------------------------------------------------------------------- *
  * Project:  Capwap                                                                        *
  *                                                                                         *
- * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *  
+ * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *
  *           Del Moro Andrea (andrea_delmoro@libero.it)                                    *
  *           Giovannini Federica (giovannini.federica@gmail.com)                           *
  *           Massimo Vellucci (m.vellucci@unicampus.it)                                    *
  *           Mauro Bisson (mauro.bis@gmail.com)                                            *
  *******************************************************************************************/
 
-
 #ifndef __CAPWAP_CWErrorHandling_HEADER__
 #define __CAPWAP_CWErrorHandling_HEADER__
 
-typedef enum {
+typedef enum
+{
 	CW_ERROR_SUCCESS = 1,
 	CW_ERROR_OUT_OF_MEMORY,
 	CW_ERROR_WRONG_ARG,
@@ -56,24 +56,25 @@ typedef enum {
 	CW_ERROR_NONE
 } CWErrorCode;
 
-
-typedef struct {
+typedef struct
+{
 	CWErrorCode code;
 	char message[256];
 	int line;
 	char fileName[64];
 } CWErrorHandlingInfo;
 
-#define CWErrorRaiseSystemError(error)		{					\
-							char buf[256];			\
-							strerror_r(errno, buf, 256);	\
-							CWErrorRaise(error, buf);	\
-							return CW_FALSE;		\
-						}
-											
-#define CWErrorRaise(code, msg) 		_CWErrorRaise(code, msg, __FILE__, __LINE__)
-#define CWErr(arg)				((arg) || _CWErrorHandleLast(__FILE__, __LINE__))
-#define CWErrorHandleLast()			_CWErrorHandleLast(__FILE__, __LINE__)
+#define CWErrorRaiseSystemError(error) \
+	{                                  \
+		char buf[256];                 \
+		strerror_r(errno, buf, 256);   \
+		CWErrorRaise(error, buf);      \
+		return CW_FALSE;               \
+	}
+
+#define CWErrorRaise(code, msg) _CWErrorRaise(code, msg, __FILE__, __LINE__)
+#define CWErr(arg) ((arg) || _CWErrorHandleLast(__FILE__, __LINE__))
+#define CWErrorHandleLast() _CWErrorHandleLast(__FILE__, __LINE__)
 
 CWBool _CWErrorRaise(CWErrorCode code, const char *msg, const char *fileName, int line);
 void CWErrorPrint(CWErrorHandlingInfo *infoPtr, const char *desc, const char *fileName, int line);

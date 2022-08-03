@@ -17,25 +17,24 @@
  *                                                                                         *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
  * so.  If you do not wish to do so, delete this exception statement from your version.    *
  * If you delete this exception statement from all source files in the program, then also  *
  * delete it here.                                                                         *
- * 
+ *
  * --------------------------------------------------------------------------------------- *
  * Project:  Capwap                                                                        *
  *                                                                                         *
- * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *  
+ * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *
  *           Del Moro Andrea (andrea_delmoro@libero.it)                                    *
  *           Giovannini Federica (giovannini.federica@gmail.com)                           *
  *           Massimo Vellucci (m.vellucci@unicampus.it)                                    *
  *           Mauro Bisson (mauro.bis@gmail.com)                                            *
  *******************************************************************************************/
 
- 
 #include "CWCommon.h"
 
 #ifdef DMALLOC
@@ -47,38 +46,43 @@ CWNetworkLev3Service gNetworkPreferredFamily = CW_IPv4;
 /*
  * Assume address is valid
  */
-__inline__ int CWNetworkGetAddressSize(CWNetworkLev4Address *addrPtr) {
-	
-	switch ( ((struct sockaddr*)(addrPtr))->sa_family ) {
-		
-	#ifdef	IPV6
-		/* IPv6 is defined in Stevens' library */
-		case AF_INET6:
-			return sizeof(struct sockaddr_in6);
-			break;
-	#endif
-		case AF_INET:
-		default:
-			return sizeof(struct sockaddr_in);
+__inline__ int CWNetworkGetAddressSize(CWNetworkLev4Address *addrPtr)
+{
+
+	switch (((struct sockaddr *)(addrPtr))->sa_family)
+	{
+
+#ifdef IPV6
+	/* IPv6 is defined in Stevens' library */
+	case AF_INET6:
+		return sizeof(struct sockaddr_in6);
+		break;
+#endif
+	case AF_INET:
+	default:
+		return sizeof(struct sockaddr_in);
 	}
 }
 
-/* 
+/*
  * Send buf on an unconnected UDP socket. Unsafe means that we don't use DTLS.
  */
-CWBool CWNetworkSendUnsafeUnconnected(CWSocket sock, 
-				      CWNetworkLev4Address *addrPtr,
-				      const char *buf,
-				      int len) {
+CWBool CWNetworkSendUnsafeUnconnected(CWSocket sock,
+									  CWNetworkLev4Address *addrPtr,
+									  const char *buf,
+									  int len)
+{
 
-	if(buf == NULL || addrPtr == NULL) 
+	if (buf == NULL || addrPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
-	
-	CWUseSockNtop(addrPtr, NULL;/*CWDebugLog(str);*/);
 
-	while(sendto(sock, buf, len, 0, (struct sockaddr*)addrPtr, CWNetworkGetAddressSize(addrPtr)) < 0) {
+	CWUseSockNtop(addrPtr, NULL; /*CWDebugLog(str);*/);
 
-		if(errno == EINTR) continue;
+	while (sendto(sock, buf, len, 0, (struct sockaddr *)addrPtr, CWNetworkGetAddressSize(addrPtr)) < 0)
+	{
+
+		if (errno == EINTR)
+			continue;
 		CWNetworkRaiseSystemError(CW_ERROR_SENDING);
 	}
 	return CW_TRUE;
@@ -87,31 +91,37 @@ CWBool CWNetworkSendUnsafeUnconnected(CWSocket sock,
 /*
  * Send buf on a "connected" UDP socket. Unsafe means that we don't use DTLS.
  */
-CWBool CWNetworkSendUnsafeConnected(CWSocket sock, const char *buf, int len) {
+CWBool CWNetworkSendUnsafeConnected(CWSocket sock, const char *buf, int len)
+{
 
-	if(buf == NULL) 
+	if (buf == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	while(send(sock, buf, len, 0) < 0) {
-	
-		if(errno == EINTR) continue;
+	while (send(sock, buf, len, 0) < 0)
+	{
+
+		if (errno == EINTR)
+			continue;
 		CWNetworkRaiseSystemError(CW_ERROR_SENDING);
 	}
 	return CW_TRUE;
 }
 
-/* 
+/*
  * Receive a datagram on an connected UDP socket (blocking).
  * Unsafe means that we don't use DTLS.
  */
-CWBool CWNetworkReceiveUnsafeConnected(CWSocket sock, char *buf, int len, int *readBytesPtr) {
-	
-	if(buf == NULL) 
-		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
-	
-	while((*readBytesPtr = recv(sock, buf, len, 0)) < 0) {
+CWBool CWNetworkReceiveUnsafeConnected(CWSocket sock, char *buf, int len, int *readBytesPtr)
+{
 
-		if(errno == EINTR) continue;
+	if (buf == NULL)
+		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
+
+	while ((*readBytesPtr = recv(sock, buf, len, 0)) < 0)
+	{
+
+		if (errno == EINTR)
+			continue;
 		CWNetworkRaiseSystemError(CW_ERROR_RECEIVING);
 	}
 	return CW_TRUE;
@@ -122,20 +132,23 @@ CWBool CWNetworkReceiveUnsafeConnected(CWSocket sock, char *buf, int len, int *r
  * Unsafe means that we don't use DTLS.
  */
 CWBool CWNetworkReceiveUnsafe(CWSocket sock,
-			      char *buf,
-			      int len,
-			      int flags,
-			      CWNetworkLev4Address *addrPtr,
-			      int *readBytesPtr) {
+							  char *buf,
+							  int len,
+							  int flags,
+							  CWNetworkLev4Address *addrPtr,
+							  int *readBytesPtr)
+{
 
 	socklen_t addrLen = sizeof(CWNetworkLev4Address);
-	
-	if(buf == NULL || addrPtr == NULL || readBytesPtr == NULL) 
-		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
-	
-	while((*readBytesPtr = recvfrom(sock, buf, len, flags, (struct sockaddr*)addrPtr, &addrLen)) < 0) {
 
-		if(errno == EINTR) continue;
+	if (buf == NULL || addrPtr == NULL || readBytesPtr == NULL)
+		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
+
+	while ((*readBytesPtr = recvfrom(sock, buf, len, flags, (struct sockaddr *)addrPtr, &addrLen)) < 0)
+	{
+
+		if (errno == EINTR)
+			continue;
 		CWNetworkRaiseSystemError(CW_ERROR_RECEIVING);
 	}
 	return CW_TRUE;
@@ -144,24 +157,28 @@ CWBool CWNetworkReceiveUnsafe(CWSocket sock,
 /*
  * Init network for client.
  */
-CWBool CWNetworkInitSocketClient(CWSocket *sockPtr, CWNetworkLev4Address *addrPtr) {
+CWBool CWNetworkInitSocketClient(CWSocket *sockPtr, CWNetworkLev4Address *addrPtr)
+{
 	int yes = 1;
 #ifdef IPv6
 	struct sockaddr_in6 sockaddr;
 #else
 	struct sockaddr_in sockaddr;
 #endif
-	socklen_t addrlen = sizeof(sockaddr); 
-	
-	/* NULL addrPtr means that we don't want to connect to a 
+	socklen_t addrlen = sizeof(sockaddr);
+
+	/* NULL addrPtr means that we don't want to connect to a
 	 * specific address
 	 */
-	if(sockPtr == NULL) return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
-	
+	if (sockPtr == NULL)
+		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
+
 #ifdef IPv6
-	if(((*sockPtr)=socket((gNetworkPreferredFamily == CW_IPv4) ? AF_INET : AF_INET6, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+	if (((*sockPtr) = socket((gNetworkPreferredFamily == CW_IPv4) ? AF_INET : AF_INET6, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+	{
 #else
-	if(((*sockPtr)=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+	if (((*sockPtr) = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+	{
 #endif
 		CWNetworkRaiseSystemError(CW_ERROR_CREATING);
 	}
@@ -173,9 +190,10 @@ CWBool CWNetworkInitSocketClient(CWSocket *sockPtr, CWNetworkLev4Address *addrPt
 	sockaddr.sin_family = AF_INET;
 #endif
 
-	if (bind(*sockPtr, (const struct sockaddr *)&sockaddr, addrlen) < 0) { 
+	if (bind(*sockPtr, (const struct sockaddr *)&sockaddr, addrlen) < 0)
+	{
 		close(*sockPtr);
-		CWDebugLog("failed to bind Client socket in <%s> line:%d.\n", __func__,__LINE__);
+		CWDebugLog("failed to bind Client socket in <%s> line:%d.\n", __func__, __LINE__);
 		return CW_FALSE;
 	}
 
@@ -189,41 +207,47 @@ CWBool CWNetworkInitSocketClient(CWSocket *sockPtr, CWNetworkLev4Address *addrPt
 #endif
 
 	/* NULL addrPtr means that we don't want to connect to a
-	 * specific address */ 
-	if(addrPtr != NULL) {
-		CWUseSockNtop(((struct sockaddr*)addrPtr), CWDebugLog(str););
+	 * specific address */
+	if (addrPtr != NULL)
+	{
+		CWUseSockNtop(((struct sockaddr *)addrPtr), CWDebugLog(str););
 
-		if(connect((*sockPtr), ((struct sockaddr*)addrPtr), CWNetworkGetAddressSize(addrPtr)) < 0) {
+		if (connect((*sockPtr), ((struct sockaddr *)addrPtr), CWNetworkGetAddressSize(addrPtr)) < 0)
+		{
 
 			CWNetworkRaiseSystemError(CW_ERROR_CREATING);
 		}
 	}
 	/* allow sending broadcast packets */
 	setsockopt(*sockPtr, SOL_SOCKET, SO_BROADCAST, &yes, sizeof(yes));
-	
+
 	return CW_TRUE;
 }
 
 /*
  * Init data channel network for client
  */
-CWBool CWNetworkInitSocketClientDataChannel(CWSocket *sockPtr, CWNetworkLev4Address *addrPtr) {
-	
+CWBool CWNetworkInitSocketClientDataChannel(CWSocket *sockPtr, CWNetworkLev4Address *addrPtr)
+{
+
 	int yes = 1;
 #ifdef IPv6
 	struct sockaddr_in6 sockaddr;
 #else
 	struct sockaddr_in sockaddr;
 #endif
-	socklen_t addrlen = sizeof(sockaddr); 
+	socklen_t addrlen = sizeof(sockaddr);
 	CWNetworkLev4Address addrPtrDataChannel;
 
-	if(sockPtr == NULL) return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
-	
+	if (sockPtr == NULL)
+		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
+
 #ifdef IPv6
-	if(((*sockPtr)=socket((gNetworkPreferredFamily == CW_IPv4) ? AF_INET : AF_INET6, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+	if (((*sockPtr) = socket((gNetworkPreferredFamily == CW_IPv4) ? AF_INET : AF_INET6, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+	{
 #else
-	if(((*sockPtr)=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+	if (((*sockPtr) = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+	{
 #endif
 		CWNetworkRaiseSystemError(CW_ERROR_CREATING);
 	}
@@ -238,17 +262,18 @@ CWBool CWNetworkInitSocketClientDataChannel(CWSocket *sockPtr, CWNetworkLev4Addr
 	/*
 	 * Elena Agostini - 04/2014
 	 */
-	//sockaddr.sin_port = WTP_PORT_DATA;
+	// sockaddr.sin_port = WTP_PORT_DATA;
 
-	if (bind(*sockPtr, (const struct sockaddr *)&sockaddr, addrlen) < 0) {
+	if (bind(*sockPtr, (const struct sockaddr *)&sockaddr, addrlen) < 0)
+	{
 		close(*sockPtr);
-		CWDebugLog("failed to bind Client socket in <%s> line:%d.\n", __func__,__LINE__);
+		CWDebugLog("failed to bind Client socket in <%s> line:%d.\n", __func__, __LINE__);
 		return CW_FALSE;
 	}
-	
+
 	if (getsockname(*sockPtr, (struct sockaddr *)&sockaddr, &addrlen) < 0)
 		CWNetworkRaiseSystemError(CW_ERROR_GENERAL);
- 
+
 #ifdef IPv6
 	CWLog("Created Client socket on %s UDP data port %d\n", sockaddr.sin6_family == AF_INET6 ? "IPv6" : "IPv4", sockaddr.sin6_port);
 #else
@@ -256,43 +281,48 @@ CWBool CWNetworkInitSocketClientDataChannel(CWSocket *sockPtr, CWNetworkLev4Addr
 #endif
 
 	/* NULL addrPtr means that we don't want to connect to a
-	 * specific address */ 
-	if(addrPtr != NULL) {
-		CW_COPY_NET_ADDR_PTR(&addrPtrDataChannel,addrPtr);
-		sock_set_port_cw((struct sockaddr*)&addrPtrDataChannel, htons(CW_DATA_PORT));
-		CWUseSockNtop((struct sockaddr*)&addrPtrDataChannel, CWDebugLog(str););
+	 * specific address */
+	if (addrPtr != NULL)
+	{
+		CW_COPY_NET_ADDR_PTR(&addrPtrDataChannel, addrPtr);
+		sock_set_port_cw((struct sockaddr *)&addrPtrDataChannel, htons(CW_DATA_PORT));
+		CWUseSockNtop((struct sockaddr *)&addrPtrDataChannel, CWDebugLog(str););
 
-		if(connect((*sockPtr), (struct sockaddr*)&addrPtrDataChannel, CWNetworkGetAddressSize(&addrPtrDataChannel)) < 0) {
+		if (connect((*sockPtr), (struct sockaddr *)&addrPtrDataChannel, CWNetworkGetAddressSize(&addrPtrDataChannel)) < 0)
+		{
 
 			CWNetworkRaiseSystemError(CW_ERROR_CREATING);
 		}
 	}
 
-	
 	return CW_TRUE;
 }
 
 /*
  * Elena Agostini - 04/2014: specify port number to bind socket
  */
-CWBool CWNetworkInitSocketClientWithPort(CWSocket *sockPtr, CWNetworkLev4Address *addrPtr, int portSocket) {
+CWBool CWNetworkInitSocketClientWithPort(CWSocket *sockPtr, CWNetworkLev4Address *addrPtr, int portSocket)
+{
 	int yes = 1;
 #ifdef IPv6
 	struct sockaddr_in6 sockaddr;
 #else
 	struct sockaddr_in sockaddr;
 #endif
-	socklen_t addrlen = sizeof(sockaddr); 
-	
-	/* NULL addrPtr means that we don't want to connect to a 
+	socklen_t addrlen = sizeof(sockaddr);
+
+	/* NULL addrPtr means that we don't want to connect to a
 	 * specific address
 	 */
-	if(sockPtr == NULL) return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
-	
+	if (sockPtr == NULL)
+		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
+
 #ifdef IPv6
-	if(((*sockPtr)=socket((gNetworkPreferredFamily == CW_IPv4) ? AF_INET : AF_INET6, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+	if (((*sockPtr) = socket((gNetworkPreferredFamily == CW_IPv4) ? AF_INET : AF_INET6, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+	{
 #else
-	if(((*sockPtr)=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+	if (((*sockPtr) = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+	{
 #endif
 		CWNetworkRaiseSystemError(CW_ERROR_CREATING);
 	}
@@ -307,9 +337,10 @@ CWBool CWNetworkInitSocketClientWithPort(CWSocket *sockPtr, CWNetworkLev4Address
 	/* Elena Agostini - 04/2014 */
 	sockaddr.sin_port = ntohs(portSocket);
 	CWLog("portSocket: %d", portSocket);
-	if (bind(*sockPtr, (const struct sockaddr *)&sockaddr, addrlen) < 0) { 
+	if (bind(*sockPtr, (const struct sockaddr *)&sockaddr, addrlen) < 0)
+	{
 		close(*sockPtr);
-		CWDebugLog("failed to bind Client socket in <%s> line:%d.\n", __func__,__LINE__);
+		CWDebugLog("failed to bind Client socket in <%s> line:%d.\n", __func__, __LINE__);
 		return CW_FALSE;
 	}
 
@@ -323,38 +354,44 @@ CWBool CWNetworkInitSocketClientWithPort(CWSocket *sockPtr, CWNetworkLev4Address
 #endif
 
 	/* NULL addrPtr means that we don't want to connect to a
-	 * specific address */ 
-	if(addrPtr != NULL) {
-		CWUseSockNtop(((struct sockaddr*)addrPtr), CWDebugLog(str););
+	 * specific address */
+	if (addrPtr != NULL)
+	{
+		CWUseSockNtop(((struct sockaddr *)addrPtr), CWDebugLog(str););
 
-		if(connect((*sockPtr), ((struct sockaddr*)addrPtr), CWNetworkGetAddressSize(addrPtr)) < 0) {
+		if (connect((*sockPtr), ((struct sockaddr *)addrPtr), CWNetworkGetAddressSize(addrPtr)) < 0)
+		{
 
 			CWNetworkRaiseSystemError(CW_ERROR_CREATING);
 		}
 	}
 	/* allow sending broadcast packets */
 	setsockopt(*sockPtr, SOL_SOCKET, SO_BROADCAST, &yes, sizeof(yes));
-	
+
 	return CW_TRUE;
 }
 
-CWBool CWNetworkInitSocketClientDataChannelWithPort(CWSocket *sockPtr, CWNetworkLev4Address *addrPtr, int portSocket) {
-	
+CWBool CWNetworkInitSocketClientDataChannelWithPort(CWSocket *sockPtr, CWNetworkLev4Address *addrPtr, int portSocket)
+{
+
 	int yes = 1;
 #ifdef IPv6
 	struct sockaddr_in6 sockaddr;
 #else
 	struct sockaddr_in sockaddr;
 #endif
-	socklen_t addrlen = sizeof(sockaddr); 
+	socklen_t addrlen = sizeof(sockaddr);
 	CWNetworkLev4Address addrPtrDataChannel;
 
-	if(sockPtr == NULL) return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
-	
+	if (sockPtr == NULL)
+		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
+
 #ifdef IPv6
-	if(((*sockPtr)=socket((gNetworkPreferredFamily == CW_IPv4) ? AF_INET : AF_INET6, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+	if (((*sockPtr) = socket((gNetworkPreferredFamily == CW_IPv4) ? AF_INET : AF_INET6, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+	{
 #else
-	if(((*sockPtr)=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+	if (((*sockPtr) = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+	{
 #endif
 		CWNetworkRaiseSystemError(CW_ERROR_CREATING);
 	}
@@ -368,15 +405,16 @@ CWBool CWNetworkInitSocketClientDataChannelWithPort(CWSocket *sockPtr, CWNetwork
 
 	/* Elena Agostini - 04/2014 */
 	sockaddr.sin_port = ntohs(portSocket);
-	if (bind(*sockPtr, (const struct sockaddr *)&sockaddr, addrlen) < 0) {
+	if (bind(*sockPtr, (const struct sockaddr *)&sockaddr, addrlen) < 0)
+	{
 		close(*sockPtr);
-		CWDebugLog("failed to bind Client socket in <%s> line:%d.\n", __func__,__LINE__);
+		CWDebugLog("failed to bind Client socket in <%s> line:%d.\n", __func__, __LINE__);
 		return CW_FALSE;
 	}
-	
+
 	if (getsockname(*sockPtr, (struct sockaddr *)&sockaddr, &addrlen) < 0)
 		CWNetworkRaiseSystemError(CW_ERROR_GENERAL);
- 
+
 #ifdef IPv6
 	CWLog("Created Client socket on %s UDP data port %d\n", sockaddr.sin6_family == AF_INET6 ? "IPv6" : "IPv4", sockaddr.sin6_port);
 #else
@@ -384,13 +422,15 @@ CWBool CWNetworkInitSocketClientDataChannelWithPort(CWSocket *sockPtr, CWNetwork
 #endif
 
 	/* NULL addrPtr means that we don't want to connect to a
-	 * specific address */ 
-	if(addrPtr != NULL) {
-		CW_COPY_NET_ADDR_PTR(&addrPtrDataChannel,addrPtr);
-		sock_set_port_cw((struct sockaddr*)&addrPtrDataChannel, htons(CW_DATA_PORT));
-		CWUseSockNtop((struct sockaddr*)&addrPtrDataChannel, CWDebugLog(str););
+	 * specific address */
+	if (addrPtr != NULL)
+	{
+		CW_COPY_NET_ADDR_PTR(&addrPtrDataChannel, addrPtr);
+		sock_set_port_cw((struct sockaddr *)&addrPtrDataChannel, htons(CW_DATA_PORT));
+		CWUseSockNtop((struct sockaddr *)&addrPtrDataChannel, CWDebugLog(str););
 
-		if(connect((*sockPtr), (struct sockaddr*)&addrPtrDataChannel, CWNetworkGetAddressSize(&addrPtrDataChannel)) < 0) {
+		if (connect((*sockPtr), (struct sockaddr *)&addrPtrDataChannel, CWNetworkGetAddressSize(&addrPtrDataChannel)) < 0)
+		{
 
 			CWNetworkRaiseSystemError(CW_ERROR_CREATING);
 		}
@@ -399,37 +439,41 @@ CWBool CWNetworkInitSocketClientDataChannelWithPort(CWSocket *sockPtr, CWNetwork
 	return CW_TRUE;
 }
 
-
 /*
-* Wrapper for select
+ * Wrapper for select
  */
-CWBool CWNetworkTimedPollRead(CWSocket sock, struct timeval *timeout) {
+CWBool CWNetworkTimedPollRead(CWSocket sock, struct timeval *timeout)
+{
 	int r;
-	
+
 	fd_set fset;
-	
-	if(timeout == NULL) return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
-	
+
+	if (timeout == NULL)
+		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
+
 	FD_ZERO(&fset);
 	FD_SET(sock, &fset);
 
-	if((r = select(sock+1, &fset, NULL, NULL, timeout)) == 0) {
+	if ((r = select(sock + 1, &fset, NULL, NULL, timeout)) == 0)
+	{
 
 		CWDebugLog("Select Time Expired");
 		return CWErrorRaise(CW_ERROR_TIME_EXPIRED, NULL);
-	} else 
-		if (r < 0) {
-		
-			CWDebugLog("Select Error");
-			
-			if(errno == EINTR){
-				
-				CWDebugLog("Select Interrupted by signal");
-				return CWErrorRaise(CW_ERROR_INTERRUPTED, NULL);
-			}
+	}
+	else if (r < 0)
+	{
 
-			CWNetworkRaiseSystemError(CW_ERROR_GENERAL);
+		CWDebugLog("Select Error");
+
+		if (errno == EINTR)
+		{
+
+			CWDebugLog("Select Interrupted by signal");
+			return CWErrorRaise(CW_ERROR_INTERRUPTED, NULL);
 		}
+
+		CWNetworkRaiseSystemError(CW_ERROR_GENERAL);
+	}
 
 	return CW_TRUE;
 }
@@ -438,57 +482,65 @@ CWBool CWNetworkTimedPollRead(CWSocket sock, struct timeval *timeout) {
  * Given an host int the form of C string (e.g. "192.168.1.2" or "localhost"),
  * returns the address.
  */
-CWBool CWNetworkGetAddressForHost(char *host, CWNetworkLev4Address *addrPtr) {
+CWBool CWNetworkGetAddressForHost(char *host, CWNetworkLev4Address *addrPtr)
+{
 
 	struct addrinfo hints, *res, *ressave;
 	char serviceName[5];
 	CWSocket sock;
-	
-	if(host == NULL || addrPtr == NULL)
+
+	if (host == NULL || addrPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
-	
+
 	CW_ZERO_MEMORY(&hints, sizeof(struct addrinfo));
-	
+
 #ifdef IPv6
-	if(gNetworkPreferredFamily == CW_IPv6) {
+	if (gNetworkPreferredFamily == CW_IPv6)
+	{
 		hints.ai_family = AF_INET6;
 		hints.ai_flags = AI_V4MAPPED;
-	} else {
+	}
+	else
+	{
 		hints.ai_family = AF_INET;
 	}
 #else
 	hints.ai_family = AF_INET;
 #endif
 	hints.ai_socktype = SOCK_DGRAM;
-	
+
 	/* endianness will be handled by getaddrinfo */
 	snprintf(serviceName, 5, "%d", CW_CONTROL_PORT);
-	
-	if (getaddrinfo(host, serviceName, &hints, &res) !=0 ) {
+
+	if (getaddrinfo(host, serviceName, &hints, &res) != 0)
+	{
 
 		return CWErrorRaise(CW_ERROR_GENERAL, "Can't resolve hostname");
 	}
-	
+
 	ressave = res;
-	
-	do {
-		if((sock = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0) {
+
+	do
+	{
+		if ((sock = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0)
+		{
 			/* try next address */
 			continue;
 		}
 		/* success */
 		break;
-	} while ( (res = res->ai_next) != NULL);
-	
+	} while ((res = res->ai_next) != NULL);
+
 	close(sock);
-	
-	if(res == NULL) { 
+
+	if (res == NULL)
+	{
 		/* error on last iteration */
 		CWNetworkRaiseSystemError(CW_ERROR_CREATING);
 	}
-	
+
 	CW_COPY_NET_ADDR_PTR(addrPtr, (res->ai_addr));
 	freeaddrinfo(ressave);
-	
+
 	return CW_TRUE;
 }

@@ -24,7 +24,8 @@ typedef long os_time_t;
  */
 void os_sleep(os_time_t sec, os_time_t usec);
 
-struct os_time {
+struct os_time
+{
 	os_time_t sec;
 	os_time_t usec;
 };
@@ -36,21 +37,23 @@ struct os_time {
  */
 int os_get_time(struct os_time *t);
 
-
 /* Helper macros for handling struct os_time */
 
 #define os_time_before(a, b) \
-	((a)->sec < (b)->sec || \
+	((a)->sec < (b)->sec ||  \
 	 ((a)->sec == (b)->sec && (a)->usec < (b)->usec))
 
-#define os_time_sub(a, b, res) do { \
-	(res)->sec = (a)->sec - (b)->sec; \
-	(res)->usec = (a)->usec - (b)->usec; \
-	if ((res)->usec < 0) { \
-		(res)->sec--; \
-		(res)->usec += 1000000; \
-	} \
-} while (0)
+#define os_time_sub(a, b, res)               \
+	do                                       \
+	{                                        \
+		(res)->sec = (a)->sec - (b)->sec;    \
+		(res)->usec = (a)->usec - (b)->usec; \
+		if ((res)->usec < 0)                 \
+		{                                    \
+			(res)->sec--;                    \
+			(res)->usec += 1000000;          \
+		}                                    \
+	} while (0)
 
 /**
  * os_mktime - Convert broken-down time into seconds since 1970-01-01
@@ -68,15 +71,16 @@ int os_get_time(struct os_time *t);
  * which is used by POSIX mktime().
  */
 int os_mktime(int year, int month, int day, int hour, int min, int sec,
-	      os_time_t *t);
+			  os_time_t *t);
 
-struct os_tm {
-	int sec; /* 0..59 or 60 for leap seconds */
-	int min; /* 0..59 */
-	int hour; /* 0..23 */
-	int day; /* 1..31 */
+struct os_tm
+{
+	int sec;   /* 0..59 or 60 for leap seconds */
+	int min;   /* 0..59 */
+	int hour;  /* 0..23 */
+	int day;   /* 1..31 */
 	int month; /* 1..12 */
-	int year; /* Four digit year */
+	int year;  /* Four digit year */
 };
 
 int os_gmtime(os_time_t t, struct os_tm *tm);
@@ -121,7 +125,7 @@ unsigned long os_random(void);
  * configuration files when os_daemonize() may have changed the current working
  * directory and relative path would be pointing to a different location.
  */
-char * os_rel2abs_path(const char *rel_path);
+char *os_rel2abs_path(const char *rel_path);
 
 /**
  * os_program_init - Program initialization (called at start)
@@ -175,7 +179,7 @@ int os_unsetenv(const char *name);
  * binary and text files can be read with this function. The caller is
  * responsible for freeing the returned buffer with os_free().
  */
-char * os_readfile(const char *name, size_t *len);
+char *os_readfile(const char *name, size_t *len);
 
 /**
  * os_zalloc - Allocate and zero memory
@@ -184,8 +188,7 @@ char * os_readfile(const char *name, size_t *len);
  *
  * Caller is responsible for freeing the returned buffer with os_free().
  */
-void * os_zalloc(size_t size);
-
+void *os_zalloc(size_t size);
 
 /*
  * The following functions are wrapper for standard ANSI C or POSIX functions.
@@ -212,7 +215,7 @@ void * os_zalloc(size_t size);
  *
  * Caller is responsible for freeing the returned buffer with os_free().
  */
-void * os_malloc(size_t size);
+void *os_malloc(size_t size);
 
 /**
  * os_realloc - Re-allocate dynamic memory
@@ -224,7 +227,7 @@ void * os_malloc(size_t size);
  * If re-allocation fails, %NULL is returned and the original buffer (ptr) is
  * not freed and caller is still responsible for freeing it.
  */
-void * os_realloc(void *ptr, size_t size);
+void *os_realloc(void *ptr, size_t size);
 
 /**
  * os_free - Free dynamic memory
@@ -242,7 +245,7 @@ void os_free(void *ptr);
  * The memory areas src and dst must not overlap. os_memmove() can be used with
  * overlapping memory.
  */
-void * os_memcpy(void *dest, const void *src, size_t n);
+void *os_memcpy(void *dest, const void *src, size_t n);
 
 /**
  * os_memmove - Copy memory area
@@ -253,7 +256,7 @@ void * os_memcpy(void *dest, const void *src, size_t n);
  *
  * The memory areas src and dst may overlap.
  */
-void * os_memmove(void *dest, const void *src, size_t n);
+void *os_memmove(void *dest, const void *src, size_t n);
 
 /**
  * os_memset - Fill memory with a constant byte
@@ -262,7 +265,7 @@ void * os_memmove(void *dest, const void *src, size_t n);
  * @n: Number of bytes started from s to fill with c
  * Returns: s
  */
-void * os_memset(void *s, int c, size_t n);
+void *os_memset(void *s, int c, size_t n);
 
 /**
  * os_memcmp - Compare memory areas
@@ -282,7 +285,7 @@ int os_memcmp(const void *s1, const void *s2, size_t n);
  *
  * Caller is responsible for freeing the returned buffer with os_free().
  */
-char * os_strdup(const char *s);
+char *os_strdup(const char *s);
 
 /**
  * os_strlen - Calculate the length of a string
@@ -317,7 +320,7 @@ int os_strncasecmp(const char *s1, const char *s2, size_t n);
  * @c: Character to search for
  * Returns: Pointer to the matched character or %NULL if not found
  */
-char * os_strchr(const char *s, int c);
+char *os_strchr(const char *s, int c);
 
 /**
  * os_strrchr - Locate the last occurrence of a character in string
@@ -325,7 +328,7 @@ char * os_strchr(const char *s, int c);
  * @c: Character to search for
  * Returns: Pointer to the matched character or %NULL if not found
  */
-char * os_strrchr(const char *s, int c);
+char *os_strrchr(const char *s, int c);
 
 /**
  * os_strcmp - Compare two strings
@@ -354,7 +357,7 @@ int os_strncmp(const char *s1, const char *s2, size_t n);
  * @n: Maximum number of characters to copy
  * Returns: dest
  */
-char * os_strncpy(char *dest, const char *src, size_t n);
+char *os_strncpy(char *dest, const char *src, size_t n);
 
 /**
  * os_strstr - Locate a substring
@@ -362,7 +365,7 @@ char * os_strncpy(char *dest, const char *src, size_t n);
  * @needle: Needle to search from haystack
  * Returns: Pointer to the beginning of the substring or %NULL if not found
  */
-char * os_strstr(const char *haystack, const char *needle);
+char *os_strstr(const char *haystack, const char *needle);
 
 /**
  * os_snprintf - Print to a memory buffer
@@ -390,10 +393,10 @@ int os_snprintf(char *str, size_t size, const char *format, ...);
 #else /* OS_NO_C_LIB_DEFINES */
 
 #ifdef WPA_TRACE
-void * os_malloc(size_t size);
-void * os_realloc(void *ptr, size_t size);
+void *os_malloc(size_t size);
+void *os_realloc(void *ptr, size_t size);
 void os_free(void *ptr);
-char * os_strdup(const char *s);
+char *os_strdup(const char *s);
 #else /* WPA_TRACE */
 #ifndef os_malloc
 #define os_malloc(s) malloc((s))
@@ -472,7 +475,6 @@ char * os_strdup(const char *s);
 
 #endif /* OS_NO_C_LIB_DEFINES */
 
-
 /**
  * os_strlcpy - Copy a string with size bound and NUL-termination
  * @dest: Destination
@@ -484,7 +486,6 @@ char * os_strdup(const char *s);
  * This function matches in behavior with the strlcpy(3) function in OpenBSD.
  */
 size_t os_strlcpy(char *dest, const char *src, size_t siz);
-
 
 #ifdef OS_REJECT_C_LIB_FUNCTIONS
 #define malloc OS_DO_NOT_USE_malloc

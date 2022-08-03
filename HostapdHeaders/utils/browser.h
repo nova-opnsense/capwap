@@ -14,7 +14,7 @@ static inline int hs20_web_browser(const char *url)
 {
 	return -1;
 }
-#else /* CONFIG_NO_BROWSER */
+#else  /* CONFIG_NO_BROWSER */
 int hs20_web_browser(const char *url);
 #endif /* CONFIG_NO_BROWSER */
 

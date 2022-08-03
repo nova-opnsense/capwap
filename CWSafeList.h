@@ -17,56 +17,55 @@
  *                                                                                         *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
  * so.  If you do not wish to do so, delete this exception statement from your version.    *
  * If you delete this exception statement from all source files in the program, then also  *
  * delete it here.                                                                         *
- * 
+ *
  * --------------------------------------------------------------------------------------- *
  * Project:  Capwap                                                                        *
  *                                                                                         *
- * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *  
+ * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *
  *           Del Moro Andrea (andrea_delmoro@libero.it)                                    *
  *           Giovannini Federica (giovannini.federica@gmail.com)                           *
  *           Massimo Vellucci (m.vellucci@unicampus.it)                                    *
  *           Mauro Bisson (mauro.bis@gmail.com)                                            *
  *******************************************************************************************/
 
- 
 #ifndef __CAPWAP_CWSafeList_HEADER__
 #define __CAPWAP_CWSafeList_HEADER__
 
 #include "CWThread.h"
 
-typedef void* CWSafeList;
+typedef void *CWSafeList;
 
 typedef struct _CWPrivateSafeElement
 {
-	void* pData;
+	void *pData;
 	int nSize;
 	CWBool dataFlag;
-	struct _CWPrivateSafeElement* pPrev;
-	struct _CWPrivateSafeElement* pNext;
+	struct _CWPrivateSafeElement *pPrev;
+	struct _CWPrivateSafeElement *pNext;
 } CWPrivateSafeElement;
 
 typedef struct _CWPrivateSafeList
 {
-	CWThreadMutex* pThreadMutex;
-	CWThreadCondition* pThreadCond;
+	CWThreadMutex *pThreadMutex;
+	CWThreadCondition *pThreadCond;
 
 	unsigned long nCount;
-	CWPrivateSafeElement* pFirstElement;
-	CWPrivateSafeElement* pLastElement;
+	CWPrivateSafeElement *pFirstElement;
+	CWPrivateSafeElement *pLastElement;
 } CWPrivateSafeList;
 
-CWBool CWCreateSafeList(CWSafeList* pSafeList);
+CWBool CWCreateSafeList(CWSafeList *pSafeList);
 void CWDestroySafeList(CWSafeList safeList);
 
-void CWSetMutexSafeList(CWSafeList safeList, CWThreadMutex* pThreadMutex);
-void CWSetConditionSafeList(CWSafeList safeList, CWThreadCondition* pThreadCond);
+void CWSetMutexSafeList(CWSafeList safeList, CWThreadMutex *pThreadMutex);
+void CWSetConditionSafeList(CWSafeList safeList, CWThreadCondition *pThreadCond);
 
 CWBool CWLockSafeList(CWSafeList safeList);
 void CWUnlockSafeList(CWSafeList safeList);
@@ -74,14 +73,13 @@ CWBool CWWaitElementFromSafeList(CWSafeList safeList);
 CWBool CWSignalElementSafeList(CWSafeList safeList);
 
 unsigned long CWGetCountElementFromSafeList(CWSafeList safeList);
-CWBool CWAddElementToSafeListHead(CWSafeList safeList, void* pData, int nSize);
-void* CWGetHeadElementFromSafeList(CWSafeList safeList, int* pSize);
-void* CWRemoveHeadElementFromSafeList(CWSafeList safeList, int* pSize);
-void* CWRemoveHeadElementFromSafeListwithDataFlag(CWSafeList safeList, int* pSize,CWBool * dataFlag);
-CWBool CWAddElementToSafeListTail(CWSafeList safeList, void* pData, int nSize);
-CWBool CWAddElementToSafeListTailwitDataFlag(CWSafeList safeList, void* pData, int nSize,CWBool dataFlag);
-void* CWRemoveTailElementFromSafeList(CWSafeList safeList, int* pSize);
+CWBool CWAddElementToSafeListHead(CWSafeList safeList, void *pData, int nSize);
+void *CWGetHeadElementFromSafeList(CWSafeList safeList, int *pSize);
+void *CWRemoveHeadElementFromSafeList(CWSafeList safeList, int *pSize);
+void *CWRemoveHeadElementFromSafeListwithDataFlag(CWSafeList safeList, int *pSize, CWBool *dataFlag);
+CWBool CWAddElementToSafeListTail(CWSafeList safeList, void *pData, int nSize);
+CWBool CWAddElementToSafeListTailwitDataFlag(CWSafeList safeList, void *pData, int nSize, CWBool dataFlag);
+void *CWRemoveTailElementFromSafeList(CWSafeList safeList, int *pSize);
 void CWCleanSafeList(CWSafeList safeList, void (*deleteFunc)(void *));
- 
+
 #endif
- 

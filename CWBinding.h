@@ -13,22 +13,22 @@
  * You should have received a copy of the GNU General Public License along with this			*
  * program; if not, write to the:																*
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,							*
- * MA  02111-1307, USA.										
- * 
+ * MA  02111-1307, USA.
+ *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
  * so.  If you do not wish to do so, delete this exception statement from your version.    *
  * If you delete this exception statement from all source files in the program, then also  *
  * delete it here.                                                                         *
- * 
+ *
  * -------------------------------------------------------------------------------------------- *
  * Project:  Capwap																				*
  *																								*
- * Authors : Ludovico Rossi (ludo@bluepixysw.com)												*  
+ * Authors : Ludovico Rossi (ludo@bluepixysw.com)												*
  *           Del Moro Andrea (andrea_delmoro@libero.it)											*
  *           Giovannini Federica (giovannini.federica@gmail.com)								*
  *           Massimo Vellucci (m.vellucci@unicampus.it)											*
@@ -37,46 +37,45 @@
  *	         Antonio Davoli (antonio.davoli@gmail.com)											*
  ************************************************************************************************/
 
-
 //#include "NL80211.h"
 
 #ifndef __CAPWAP_CWBinding_HEADER__
 #define __CAPWAP_CWBinding_HEADER__
 
-#define CW_BINDING_HLEN				4
-#define CW_BINDING_WIRELESSID			1
-#define CW_BINDING_DATALENGTH			4
+#define CW_BINDING_HLEN 4
+#define CW_BINDING_WIRELESSID 1
+#define CW_BINDING_DATALENGTH 4
 
-#define NUM_QOS_PROFILES			4
-#define UNUSED_QOS_VALUE			255
+#define NUM_QOS_PROFILES 4
+#define UNUSED_QOS_VALUE 255
 
-#define VOICE_QUEUE_INDEX			0
-#define VIDEO_QUEUE_INDEX			1
-#define BESTEFFORT_QUEUE_INDEX			2
-#define BACKGROUND_QUEUE_INDEX			3
+#define VOICE_QUEUE_INDEX 0
+#define VIDEO_QUEUE_INDEX 1
+#define BESTEFFORT_QUEUE_INDEX 2
+#define BACKGROUND_QUEUE_INDEX 3
 
-#define BINDING_MIN_ELEM_TYPE			1024
-#define BINDING_MAX_ELEM_TYPE			2047
+#define BINDING_MIN_ELEM_TYPE 1024
+#define BINDING_MAX_ELEM_TYPE 2047
 
-#define UNUSED_OFDM_VALUE			255
+#define UNUSED_OFDM_VALUE 255
 
 // Wireless ID viene preso dal campo WBID
 //#define CW_TRANSPORT_HEADER_WIRELESS_ID_START	0
 //#define CW_TRANSPORT_HEADER_WIRELESS_ID_LEN	8
 
 //#define CW_TRANSPORT_HEADER_LENGTH_START	8
-#define CW_TRANSPORT_HEADER_LENGTH_START	0
-#define CW_TRANSPORT_HEADER_LENGTH_LEN		8
+#define CW_TRANSPORT_HEADER_LENGTH_START 0
+#define CW_TRANSPORT_HEADER_LENGTH_LEN 8
 
 //#define CW_TRANSPORT_HEADER_RSSI_START		16
-#define CW_TRANSPORT_HEADER_RSSI_START		8
-#define CW_TRANSPORT_HEADER_RSSI_LEN		8
+#define CW_TRANSPORT_HEADER_RSSI_START 8
+#define CW_TRANSPORT_HEADER_RSSI_LEN 8
 
 //#define CW_TRANSPORT_HEADER_SNR_START		24
-#define CW_TRANSPORT_HEADER_SNR_START		16
-#define CW_TRANSPORT_HEADER_SNR_LEN		8
+#define CW_TRANSPORT_HEADER_SNR_START 16
+#define CW_TRANSPORT_HEADER_SNR_LEN 8
 
-// Poiche' nel draft 09 il campo del CAPWAP header Wireless Specific 
+// Poiche' nel draft 09 il campo del CAPWAP header Wireless Specific
 // Information e' stato privato del sottocampo Wireless ID con il
 // conseguente shift a sx di 8 bit dei sottocampi successivi il sottocampo
 // datarate del binding si trova a cavallo tra 2 word da 4 byte quindi
@@ -84,20 +83,20 @@
 //#define CW_TRANSPORT_HEADER_DATARATE_START	0
 //#define CW_TRANSPORT_HEADER_DATARATE_LEN	16
 
-#define CW_TRANSPORT_HEADER_DATARATE_1_START	24
-#define CW_TRANSPORT_HEADER_DATARATE_1_LEN	8
+#define CW_TRANSPORT_HEADER_DATARATE_1_START 24
+#define CW_TRANSPORT_HEADER_DATARATE_1_LEN 8
 
-#define CW_TRANSPORT_HEADER_DATARATE_2_START	0
-#define CW_TRANSPORT_HEADER_DATARATE_2_LEN	8
+#define CW_TRANSPORT_HEADER_DATARATE_2_START 0
+#define CW_TRANSPORT_HEADER_DATARATE_2_LEN 8
 
 //#define CW_TRANSPORT_HEADER_PADDING_START	16
 //#define CW_TRANSPORT_HEADER_PADDING_LEN		16
-#define CW_TRANSPORT_HEADER_PADDING_START	8
-#define CW_TRANSPORT_HEADER_PADDING_LEN		24
+#define CW_TRANSPORT_HEADER_PADDING_START 8
+#define CW_TRANSPORT_HEADER_PADDING_LEN 24
 
-#define BINDING_MSG_ELEMENT_TYPE_OFDM_CONTROL	1033
-#define BINDING_MSG_ELEMENT_TYPE_WTP_QOS	1045
-#define BINDING_MSG_ELEMENT_TYPE_WTP_MULTIDOMAIN_CAPABILITY	1032
+#define BINDING_MSG_ELEMENT_TYPE_OFDM_CONTROL 1033
+#define BINDING_MSG_ELEMENT_TYPE_WTP_QOS 1045
+#define BINDING_MSG_ELEMENT_TYPE_WTP_MULTIDOMAIN_CAPABILITY 1032
 
 /****************************************************
  * 2009 Update:										*
@@ -115,9 +114,9 @@
 
 typedef struct
 {
-  int currentChan; /* 16 Bit Value */
-  unsigned char BandSupport;
-  unsigned int TIThreshold;
+	int currentChan; /* 16 Bit Value */
+	unsigned char BandSupport;
+	unsigned int TIThreshold;
 } OFDMControlValues;
 
 typedef struct WTPQosValues
@@ -126,31 +125,33 @@ typedef struct WTPQosValues
 	/* Elena Agostini - 02/2014: RFC 5415 set cwMin and cwMax 16-bit field */
 	short int cwMin;
 	short int cwMax;
-	unsigned char  AIFS;
+	unsigned char AIFS;
 	unsigned char dot1PTag;
-	unsigned char DSCPTag;	
+	unsigned char DSCPTag;
 } WTPQosValues;
 
 typedef struct
 {
-	WTPQosValues* qosValues;
+	WTPQosValues *qosValues;
 } bindingValues;
 
 /* NL80211Driver.c */
-int nl80211GetTxqParams(struct nl80211SocketUnit *nlSockUnit, WTPQosValues * qosValues, int ifindex);
+int nl80211GetTxqParams(struct nl80211SocketUnit *nlSockUnit, WTPQosValues *qosValues, int ifindex);
 void nl80211GetPhyInfo();
 
 /*---------------------------*/
 
-typedef struct {
+typedef struct
+{
 	char RSSI;
 	char SNR;
 	int dataRate;
 } CWBindingTransportHeaderValues;
 
-typedef struct {
-	CWProtocolMessage* frame;
-	CWBindingTransportHeaderValues* bindingValues;
+typedef struct
+{
+	CWProtocolMessage *frame;
+	CWBindingTransportHeaderValues *bindingValues;
 } CWBindingDataListElement;
 
 extern const int gMaxCAPWAPHeaderSizeBinding;

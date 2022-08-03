@@ -9,8 +9,9 @@
 #ifndef WPA_CTRL_H
 #define WPA_CTRL_H
 
-#ifdef  __cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif
 
 /* wpa_supplicant control interface - fixed message prefixes */
@@ -216,183 +217,175 @@ extern "C" {
 
 #define AP_CSA_FINISHED "AP-CSA-FINISHED "
 
-/* BSS command information masks */
+	/* BSS command information masks */
 
-#define WPA_BSS_MASK_ALL		0xFFFDFFFF
-#define WPA_BSS_MASK_ID			BIT(0)
-#define WPA_BSS_MASK_BSSID		BIT(1)
-#define WPA_BSS_MASK_FREQ		BIT(2)
-#define WPA_BSS_MASK_BEACON_INT		BIT(3)
-#define WPA_BSS_MASK_CAPABILITIES	BIT(4)
-#define WPA_BSS_MASK_QUAL		BIT(5)
-#define WPA_BSS_MASK_NOISE		BIT(6)
-#define WPA_BSS_MASK_LEVEL		BIT(7)
-#define WPA_BSS_MASK_TSF		BIT(8)
-#define WPA_BSS_MASK_AGE		BIT(9)
-#define WPA_BSS_MASK_IE			BIT(10)
-#define WPA_BSS_MASK_FLAGS		BIT(11)
-#define WPA_BSS_MASK_SSID		BIT(12)
-#define WPA_BSS_MASK_WPS_SCAN		BIT(13)
-#define WPA_BSS_MASK_P2P_SCAN		BIT(14)
-#define WPA_BSS_MASK_INTERNETW		BIT(15)
-#define WPA_BSS_MASK_WIFI_DISPLAY	BIT(16)
-#define WPA_BSS_MASK_DELIM		BIT(17)
+#define WPA_BSS_MASK_ALL 0xFFFDFFFF
+#define WPA_BSS_MASK_ID BIT(0)
+#define WPA_BSS_MASK_BSSID BIT(1)
+#define WPA_BSS_MASK_FREQ BIT(2)
+#define WPA_BSS_MASK_BEACON_INT BIT(3)
+#define WPA_BSS_MASK_CAPABILITIES BIT(4)
+#define WPA_BSS_MASK_QUAL BIT(5)
+#define WPA_BSS_MASK_NOISE BIT(6)
+#define WPA_BSS_MASK_LEVEL BIT(7)
+#define WPA_BSS_MASK_TSF BIT(8)
+#define WPA_BSS_MASK_AGE BIT(9)
+#define WPA_BSS_MASK_IE BIT(10)
+#define WPA_BSS_MASK_FLAGS BIT(11)
+#define WPA_BSS_MASK_SSID BIT(12)
+#define WPA_BSS_MASK_WPS_SCAN BIT(13)
+#define WPA_BSS_MASK_P2P_SCAN BIT(14)
+#define WPA_BSS_MASK_INTERNETW BIT(15)
+#define WPA_BSS_MASK_WIFI_DISPLAY BIT(16)
+#define WPA_BSS_MASK_DELIM BIT(17)
 
+	/* VENDOR_ELEM_* frame id values */
+	enum wpa_vendor_elem_frame
+	{
+		VENDOR_ELEM_PROBE_REQ_P2P = 0,
+		VENDOR_ELEM_PROBE_RESP_P2P = 1,
+		VENDOR_ELEM_PROBE_RESP_P2P_GO = 2,
+		VENDOR_ELEM_BEACON_P2P_GO = 3,
+		VENDOR_ELEM_P2P_PD_REQ = 4,
+		VENDOR_ELEM_P2P_PD_RESP = 5,
+		VENDOR_ELEM_P2P_GO_NEG_REQ = 6,
+		VENDOR_ELEM_P2P_GO_NEG_RESP = 7,
+		VENDOR_ELEM_P2P_GO_NEG_CONF = 8,
+		VENDOR_ELEM_P2P_INV_REQ = 9,
+		VENDOR_ELEM_P2P_INV_RESP = 10,
+		VENDOR_ELEM_P2P_ASSOC_REQ = 11,
+		VENDOR_ELEM_P2P_ASSOC_RESP = 12,
+		NUM_VENDOR_ELEM_FRAMES
+	};
 
-/* VENDOR_ELEM_* frame id values */
-enum wpa_vendor_elem_frame {
-	VENDOR_ELEM_PROBE_REQ_P2P = 0,
-	VENDOR_ELEM_PROBE_RESP_P2P = 1,
-	VENDOR_ELEM_PROBE_RESP_P2P_GO = 2,
-	VENDOR_ELEM_BEACON_P2P_GO = 3,
-	VENDOR_ELEM_P2P_PD_REQ = 4,
-	VENDOR_ELEM_P2P_PD_RESP = 5,
-	VENDOR_ELEM_P2P_GO_NEG_REQ = 6,
-	VENDOR_ELEM_P2P_GO_NEG_RESP = 7,
-	VENDOR_ELEM_P2P_GO_NEG_CONF = 8,
-	VENDOR_ELEM_P2P_INV_REQ = 9,
-	VENDOR_ELEM_P2P_INV_RESP = 10,
-	VENDOR_ELEM_P2P_ASSOC_REQ = 11,
-	VENDOR_ELEM_P2P_ASSOC_RESP = 12,
-	NUM_VENDOR_ELEM_FRAMES
-};
+	/* wpa_supplicant/hostapd control interface access */
 
+	/**
+	 * wpa_ctrl_open - Open a control interface to wpa_supplicant/hostapd
+	 * @ctrl_path: Path for UNIX domain sockets; ignored if UDP sockets are used.
+	 * Returns: Pointer to abstract control interface data or %NULL on failure
+	 *
+	 * This function is used to open a control interface to wpa_supplicant/hostapd.
+	 * ctrl_path is usually /var/run/wpa_supplicant or /var/run/hostapd. This path
+	 * is configured in wpa_supplicant/hostapd and other programs using the control
+	 * interface need to use matching path configuration.
+	 */
+	struct wpa_ctrl *wpa_ctrl_open(const char *ctrl_path);
 
-/* wpa_supplicant/hostapd control interface access */
+	/**
+	 * wpa_ctrl_close - Close a control interface to wpa_supplicant/hostapd
+	 * @ctrl: Control interface data from wpa_ctrl_open()
+	 *
+	 * This function is used to close a control interface.
+	 */
+	void wpa_ctrl_close(struct wpa_ctrl *ctrl);
 
-/**
- * wpa_ctrl_open - Open a control interface to wpa_supplicant/hostapd
- * @ctrl_path: Path for UNIX domain sockets; ignored if UDP sockets are used.
- * Returns: Pointer to abstract control interface data or %NULL on failure
- *
- * This function is used to open a control interface to wpa_supplicant/hostapd.
- * ctrl_path is usually /var/run/wpa_supplicant or /var/run/hostapd. This path
- * is configured in wpa_supplicant/hostapd and other programs using the control
- * interface need to use matching path configuration.
- */
-struct wpa_ctrl * wpa_ctrl_open(const char *ctrl_path);
+	/**
+	 * wpa_ctrl_request - Send a command to wpa_supplicant/hostapd
+	 * @ctrl: Control interface data from wpa_ctrl_open()
+	 * @cmd: Command; usually, ASCII text, e.g., "PING"
+	 * @cmd_len: Length of the cmd in bytes
+	 * @reply: Buffer for the response
+	 * @reply_len: Reply buffer length
+	 * @msg_cb: Callback function for unsolicited messages or %NULL if not used
+	 * Returns: 0 on success, -1 on error (send or receive failed), -2 on timeout
+	 *
+	 * This function is used to send commands to wpa_supplicant/hostapd. Received
+	 * response will be written to reply and reply_len is set to the actual length
+	 * of the reply. This function will block for up to two seconds while waiting
+	 * for the reply. If unsolicited messages are received, the blocking time may
+	 * be longer.
+	 *
+	 * msg_cb can be used to register a callback function that will be called for
+	 * unsolicited messages received while waiting for the command response. These
+	 * messages may be received if wpa_ctrl_request() is called at the same time as
+	 * wpa_supplicant/hostapd is sending such a message. This can happen only if
+	 * the program has used wpa_ctrl_attach() to register itself as a monitor for
+	 * event messages. Alternatively to msg_cb, programs can register two control
+	 * interface connections and use one of them for commands and the other one for
+	 * receiving event messages, in other words, call wpa_ctrl_attach() only for
+	 * the control interface connection that will be used for event messages.
+	 */
+	int wpa_ctrl_request(struct wpa_ctrl *ctrl, const char *cmd, size_t cmd_len,
+						 char *reply, size_t *reply_len,
+						 void (*msg_cb)(char *msg, size_t len));
 
+	/**
+	 * wpa_ctrl_attach - Register as an event monitor for the control interface
+	 * @ctrl: Control interface data from wpa_ctrl_open()
+	 * Returns: 0 on success, -1 on failure, -2 on timeout
+	 *
+	 * This function registers the control interface connection as a monitor for
+	 * wpa_supplicant/hostapd events. After a success wpa_ctrl_attach() call, the
+	 * control interface connection starts receiving event messages that can be
+	 * read with wpa_ctrl_recv().
+	 */
+	int wpa_ctrl_attach(struct wpa_ctrl *ctrl);
 
-/**
- * wpa_ctrl_close - Close a control interface to wpa_supplicant/hostapd
- * @ctrl: Control interface data from wpa_ctrl_open()
- *
- * This function is used to close a control interface.
- */
-void wpa_ctrl_close(struct wpa_ctrl *ctrl);
+	/**
+	 * wpa_ctrl_detach - Unregister event monitor from the control interface
+	 * @ctrl: Control interface data from wpa_ctrl_open()
+	 * Returns: 0 on success, -1 on failure, -2 on timeout
+	 *
+	 * This function unregisters the control interface connection as a monitor for
+	 * wpa_supplicant/hostapd events, i.e., cancels the registration done with
+	 * wpa_ctrl_attach().
+	 */
+	int wpa_ctrl_detach(struct wpa_ctrl *ctrl);
 
+	/**
+	 * wpa_ctrl_recv - Receive a pending control interface message
+	 * @ctrl: Control interface data from wpa_ctrl_open()
+	 * @reply: Buffer for the message data
+	 * @reply_len: Length of the reply buffer
+	 * Returns: 0 on success, -1 on failure
+	 *
+	 * This function will receive a pending control interface message. This
+	 * function will block if no messages are available. The received response will
+	 * be written to reply and reply_len is set to the actual length of the reply.
+	 * wpa_ctrl_recv() is only used for event messages, i.e., wpa_ctrl_attach()
+	 * must have been used to register the control interface as an event monitor.
+	 */
+	int wpa_ctrl_recv(struct wpa_ctrl *ctrl, char *reply, size_t *reply_len);
 
-/**
- * wpa_ctrl_request - Send a command to wpa_supplicant/hostapd
- * @ctrl: Control interface data from wpa_ctrl_open()
- * @cmd: Command; usually, ASCII text, e.g., "PING"
- * @cmd_len: Length of the cmd in bytes
- * @reply: Buffer for the response
- * @reply_len: Reply buffer length
- * @msg_cb: Callback function for unsolicited messages or %NULL if not used
- * Returns: 0 on success, -1 on error (send or receive failed), -2 on timeout
- *
- * This function is used to send commands to wpa_supplicant/hostapd. Received
- * response will be written to reply and reply_len is set to the actual length
- * of the reply. This function will block for up to two seconds while waiting
- * for the reply. If unsolicited messages are received, the blocking time may
- * be longer.
- *
- * msg_cb can be used to register a callback function that will be called for
- * unsolicited messages received while waiting for the command response. These
- * messages may be received if wpa_ctrl_request() is called at the same time as
- * wpa_supplicant/hostapd is sending such a message. This can happen only if
- * the program has used wpa_ctrl_attach() to register itself as a monitor for
- * event messages. Alternatively to msg_cb, programs can register two control
- * interface connections and use one of them for commands and the other one for
- * receiving event messages, in other words, call wpa_ctrl_attach() only for
- * the control interface connection that will be used for event messages.
- */
-int wpa_ctrl_request(struct wpa_ctrl *ctrl, const char *cmd, size_t cmd_len,
-		     char *reply, size_t *reply_len,
-		     void (*msg_cb)(char *msg, size_t len));
+	/**
+	 * wpa_ctrl_pending - Check whether there are pending event messages
+	 * @ctrl: Control interface data from wpa_ctrl_open()
+	 * Returns: 1 if there are pending messages, 0 if no, or -1 on error
+	 *
+	 * This function will check whether there are any pending control interface
+	 * message available to be received with wpa_ctrl_recv(). wpa_ctrl_pending() is
+	 * only used for event messages, i.e., wpa_ctrl_attach() must have been used to
+	 * register the control interface as an event monitor.
+	 */
+	int wpa_ctrl_pending(struct wpa_ctrl *ctrl);
 
+	/**
+	 * wpa_ctrl_get_fd - Get file descriptor used by the control interface
+	 * @ctrl: Control interface data from wpa_ctrl_open()
+	 * Returns: File descriptor used for the connection
+	 *
+	 * This function can be used to get the file descriptor that is used for the
+	 * control interface connection. The returned value can be used, e.g., with
+	 * select() while waiting for multiple events.
+	 *
+	 * The returned file descriptor must not be used directly for sending or
+	 * receiving packets; instead, the library functions wpa_ctrl_request() and
+	 * wpa_ctrl_recv() must be used for this.
+	 */
+	int wpa_ctrl_get_fd(struct wpa_ctrl *ctrl);
 
-/**
- * wpa_ctrl_attach - Register as an event monitor for the control interface
- * @ctrl: Control interface data from wpa_ctrl_open()
- * Returns: 0 on success, -1 on failure, -2 on timeout
- *
- * This function registers the control interface connection as a monitor for
- * wpa_supplicant/hostapd events. After a success wpa_ctrl_attach() call, the
- * control interface connection starts receiving event messages that can be
- * read with wpa_ctrl_recv().
- */
-int wpa_ctrl_attach(struct wpa_ctrl *ctrl);
-
-
-/**
- * wpa_ctrl_detach - Unregister event monitor from the control interface
- * @ctrl: Control interface data from wpa_ctrl_open()
- * Returns: 0 on success, -1 on failure, -2 on timeout
- *
- * This function unregisters the control interface connection as a monitor for
- * wpa_supplicant/hostapd events, i.e., cancels the registration done with
- * wpa_ctrl_attach().
- */
-int wpa_ctrl_detach(struct wpa_ctrl *ctrl);
-
-
-/**
- * wpa_ctrl_recv - Receive a pending control interface message
- * @ctrl: Control interface data from wpa_ctrl_open()
- * @reply: Buffer for the message data
- * @reply_len: Length of the reply buffer
- * Returns: 0 on success, -1 on failure
- *
- * This function will receive a pending control interface message. This
- * function will block if no messages are available. The received response will
- * be written to reply and reply_len is set to the actual length of the reply.
- * wpa_ctrl_recv() is only used for event messages, i.e., wpa_ctrl_attach()
- * must have been used to register the control interface as an event monitor.
- */
-int wpa_ctrl_recv(struct wpa_ctrl *ctrl, char *reply, size_t *reply_len);
-
-
-/**
- * wpa_ctrl_pending - Check whether there are pending event messages
- * @ctrl: Control interface data from wpa_ctrl_open()
- * Returns: 1 if there are pending messages, 0 if no, or -1 on error
- *
- * This function will check whether there are any pending control interface
- * message available to be received with wpa_ctrl_recv(). wpa_ctrl_pending() is
- * only used for event messages, i.e., wpa_ctrl_attach() must have been used to
- * register the control interface as an event monitor.
- */
-int wpa_ctrl_pending(struct wpa_ctrl *ctrl);
-
-
-/**
- * wpa_ctrl_get_fd - Get file descriptor used by the control interface
- * @ctrl: Control interface data from wpa_ctrl_open()
- * Returns: File descriptor used for the connection
- *
- * This function can be used to get the file descriptor that is used for the
- * control interface connection. The returned value can be used, e.g., with
- * select() while waiting for multiple events.
- *
- * The returned file descriptor must not be used directly for sending or
- * receiving packets; instead, the library functions wpa_ctrl_request() and
- * wpa_ctrl_recv() must be used for this.
- */
-int wpa_ctrl_get_fd(struct wpa_ctrl *ctrl);
-
-char * wpa_ctrl_get_remote_ifname(struct wpa_ctrl *ctrl);
+	char *wpa_ctrl_get_remote_ifname(struct wpa_ctrl *ctrl);
 
 #ifdef ANDROID
-/**
- * wpa_ctrl_cleanup() - Delete any local UNIX domain socket files that
- * may be left over from clients that were previously connected to
- * wpa_supplicant. This keeps these files from being orphaned in the
- * event of crashes that prevented them from being removed as part
- * of the normal orderly shutdown.
- */
-void wpa_ctrl_cleanup(void);
+	/**
+	 * wpa_ctrl_cleanup() - Delete any local UNIX domain socket files that
+	 * may be left over from clients that were previously connected to
+	 * wpa_supplicant. This keeps these files from being orphaned in the
+	 * event of crashes that prevented them from being removed as part
+	 * of the normal orderly shutdown.
+	 */
+	void wpa_ctrl_cleanup(void);
 #endif /* ANDROID */
 
 #ifdef CONFIG_CTRL_IFACE_UDP
@@ -401,10 +394,9 @@ void wpa_ctrl_cleanup(void);
 #define WPA_CTRL_IFACE_PORT_LIMIT 50 /* decremented from start */
 #define WPA_GLOBAL_CTRL_IFACE_PORT 9878
 #define WPA_GLOBAL_CTRL_IFACE_PORT_LIMIT 20 /* incremented from start */
-#endif /* CONFIG_CTRL_IFACE_UDP */
+#endif										/* CONFIG_CTRL_IFACE_UDP */
 
-
-#ifdef  __cplusplus
+#ifdef __cplusplus
 }
 #endif
 

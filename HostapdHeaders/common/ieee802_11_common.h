@@ -10,7 +10,8 @@
 #define IEEE802_11_COMMON_H
 
 /* Parsed Information Elements */
-struct ieee802_11_elems {
+struct ieee802_11_elems
+{
 	const u8 *ssid;
 	const u8 *supp_rates;
 	const u8 *ds_params;
@@ -73,18 +74,24 @@ struct ieee802_11_elems {
 	u8 osen_len;
 };
 
-typedef enum { ParseOK = 0, ParseUnknown = 1, ParseFailed = -1 } ParseRes;
+typedef enum
+{
+	ParseOK = 0,
+	ParseUnknown = 1,
+	ParseFailed = -1
+} ParseRes;
 
 ParseRes ieee802_11_parse_elems(const u8 *start, size_t len,
-				struct ieee802_11_elems *elems,
-				int show_errors);
+								struct ieee802_11_elems *elems,
+								int show_errors);
 int ieee802_11_ie_count(const u8 *ies, size_t ies_len);
-struct wpabuf * ieee802_11_vendor_ie_concat(const u8 *ies, size_t ies_len,
-					    u32 oui_type);
+struct wpabuf *ieee802_11_vendor_ie_concat(const u8 *ies, size_t ies_len,
+										   u32 oui_type);
 struct ieee80211_hdr;
-const u8 * get_hdr_bssid(const struct ieee80211_hdr *hdr, size_t len);
+const u8 *get_hdr_bssid(const struct ieee80211_hdr *hdr, size_t len);
 
-struct hostapd_wmm_ac_params {
+struct hostapd_wmm_ac_params
+{
 	int cwmin;
 	int cwmax;
 	int aifs;
@@ -93,10 +100,10 @@ struct hostapd_wmm_ac_params {
 };
 
 int hostapd_config_wmm_ac(struct hostapd_wmm_ac_params wmm_ac_params[],
-			  const char *name, const char *val);
+						  const char *name, const char *val);
 enum hostapd_hw_mode ieee80211_freq_to_chan(int freq, u8 *channel);
 
 int supp_rates_11b_only(struct ieee802_11_elems *elems);
 
-const char * fc2str(u16 fc);
+const char *fc2str(u16 fc);
 #endif /* IEEE802_11_COMMON_H */

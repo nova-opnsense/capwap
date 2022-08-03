@@ -9,7 +9,8 @@
 #ifndef PRIVSEP_COMMANDS_H
 #define PRIVSEP_COMMANDS_H
 
-enum privsep_cmd {
+enum privsep_cmd
+{
 	PRIVSEP_CMD_REGISTER,
 	PRIVSEP_CMD_UNREGISTER,
 	PRIVSEP_CMD_SCAN,
@@ -53,7 +54,8 @@ struct privsep_cmd_set_key
 	size_t key_len;
 };
 
-enum privsep_event {
+enum privsep_event
+{
 	PRIVSEP_EVENT_SCAN_RESULTS,
 	PRIVSEP_EVENT_ASSOC,
 	PRIVSEP_EVENT_DISASSOC,

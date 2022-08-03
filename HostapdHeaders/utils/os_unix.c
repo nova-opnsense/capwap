@@ -30,7 +30,8 @@ static struct dl_list alloc_list;
 #define ALLOC_MAGIC 0xa84ef1b2
 #define FREED_MAGIC 0x67fd487a
 
-struct os_alloc_trace {
+struct os_alloc_trace
+{
 	unsigned int magic;
 	struct dl_list list;
 	size_t len;
@@ -39,7 +40,6 @@ struct os_alloc_trace {
 
 #endif /* WPA_TRACE */
 
-
 void os_sleep(os_time_t sec, os_time_t usec)
 {
 	if (sec)
@@ -47,7 +47,6 @@ void os_sleep(os_time_t sec, os_time_t usec)
 	if (usec)
 		usleep(usec);
 }
-
 
 int os_get_time(struct os_time *t)
 {
@@ -98,17 +97,16 @@ int os_get_reltime(struct os_reltime *t)
 }
 */
 
-
 int os_mktime(int year, int month, int day, int hour, int min, int sec,
-	      os_time_t *t)
+			  os_time_t *t)
 {
 	struct tm tm, *tm1;
 	time_t t_local, t1, t2;
 	os_time_t tz_offset;
 
 	if (year < 1970 || month < 1 || month > 12 || day < 1 || day > 31 ||
-	    hour < 0 || hour > 23 || min < 0 || min > 59 || sec < 0 ||
-	    sec > 60)
+		hour < 0 || hour > 23 || min < 0 || min > 59 || sec < 0 ||
+		sec > 60)
 		return -1;
 
 	memset(&tm, 0, sizeof(tm));
@@ -123,21 +121,24 @@ int os_mktime(int year, int month, int day, int hour, int min, int sec,
 
 	/* figure out offset to UTC */
 	tm1 = localtime(&t_local);
-	if (tm1) {
+	if (tm1)
+	{
 		t1 = mktime(tm1);
 		tm1 = gmtime(&t_local);
-		if (tm1) {
+		if (tm1)
+		{
 			t2 = mktime(tm1);
 			tz_offset = t2 - t1;
-		} else
+		}
+		else
 			tz_offset = 0;
-	} else
+	}
+	else
 		tz_offset = 0;
 
-	*t = (os_time_t) t_local - tz_offset;
+	*t = (os_time_t)t_local - tz_offset;
 	return 0;
 }
-
 
 int os_gmtime(os_time_t t, struct os_tm *tm)
 {
@@ -156,7 +157,6 @@ int os_gmtime(os_time_t t, struct os_tm *tm)
 	return 0;
 }
 
-
 #ifdef __APPLE__
 #include <fcntl.h>
 static int os_daemon(int nochdir, int noclose)
@@ -170,17 +170,20 @@ static int os_daemon(int nochdir, int noclose)
 	if (devnull < 0)
 		return -1;
 
-	if (dup2(devnull, STDIN_FILENO) < 0) {
+	if (dup2(devnull, STDIN_FILENO) < 0)
+	{
 		close(devnull);
 		return -1;
 	}
 
-	if (dup2(devnull, STDOUT_FILENO) < 0) {
+	if (dup2(devnull, STDOUT_FILENO) < 0)
+	{
 		close(devnull);
 		return -1;
 	}
 
-	if (dup2(devnull, STDERR_FILENO) < 0) {
+	if (dup2(devnull, STDERR_FILENO) < 0)
+	{
 		close(devnull);
 		return -1;
 	}
@@ -191,20 +194,22 @@ static int os_daemon(int nochdir, int noclose)
 #define os_daemon daemon
 #endif /* __APPLE__ */
 
-
 int os_daemonize(const char *pid_file)
 {
 #if defined(__uClinux__) || defined(__sun__)
 	return -1;
-#else /* defined(__uClinux__) || defined(__sun__) */
-	if (os_daemon(0, 0)) {
+#else  /* defined(__uClinux__) || defined(__sun__) */
+	if (os_daemon(0, 0))
+	{
 		perror("daemon");
 		return -1;
 	}
 
-	if (pid_file) {
+	if (pid_file)
+	{
 		FILE *f = fopen(pid_file, "w");
-		if (f) {
+		if (f)
+		{
 			fprintf(f, "%u\n", getpid());
 			fclose(f);
 		}
@@ -214,13 +219,11 @@ int os_daemonize(const char *pid_file)
 #endif /* defined(__uClinux__) || defined(__sun__) */
 }
 
-
 void os_daemonize_terminate(const char *pid_file)
 {
 	if (pid_file)
 		unlink(pid_file);
 }
-
 
 int os_get_random(unsigned char *buf, size_t len)
 {
@@ -228,7 +231,8 @@ int os_get_random(unsigned char *buf, size_t len)
 	size_t rc;
 
 	f = fopen("/dev/urandom", "rb");
-	if (f == NULL) {
+	if (f == NULL)
+	{
 		printf("Could not open /dev/urandom.\n");
 		return -1;
 	}
@@ -239,14 +243,12 @@ int os_get_random(unsigned char *buf, size_t len)
 	return rc != len ? -1 : 0;
 }
 
-
 unsigned long os_random(void)
 {
 	return random();
 }
 
-
-char * os_rel2abs_path(const char *rel_path)
+char *os_rel2abs_path(const char *rel_path)
 {
 	char *buf = NULL, *cwd, *ret;
 	size_t len = 128, cwd_len, rel_len, ret_len;
@@ -258,12 +260,14 @@ char * os_rel2abs_path(const char *rel_path)
 	if (rel_path[0] == '/')
 		return os_strdup(rel_path);
 
-	for (;;) {
+	for (;;)
+	{
 		buf = os_malloc(len);
 		if (buf == NULL)
 			return NULL;
 		cwd = getcwd(buf, len);
-		if (cwd == NULL) {
+		if (cwd == NULL)
+		{
 			last_errno = errno;
 			os_free(buf);
 			if (last_errno != ERANGE)
@@ -271,7 +275,9 @@ char * os_rel2abs_path(const char *rel_path)
 			len *= 2;
 			if (len > 2000)
 				return NULL;
-		} else {
+		}
+		else
+		{
 			buf[len - 1] = '\0';
 			break;
 		}
@@ -281,7 +287,8 @@ char * os_rel2abs_path(const char *rel_path)
 	rel_len = os_strlen(rel_path);
 	ret_len = cwd_len + 1 + rel_len + 1;
 	ret = os_malloc(ret_len);
-	if (ret) {
+	if (ret)
+	{
 		os_memcpy(ret, cwd, cwd_len);
 		ret[cwd_len] = '/';
 		os_memcpy(ret + cwd_len + 1, rel_path, rel_len);
@@ -291,7 +298,6 @@ char * os_rel2abs_path(const char *rel_path)
 	return ret;
 }
 
-
 int os_program_init(void)
 {
 #ifdef ANDROID
@@ -300,9 +306,9 @@ int os_program_init(void)
 	 * are already running as non-root.
 	 */
 #ifdef ANDROID_SETGROUPS_OVERRIDE
-	gid_t groups[] = { ANDROID_SETGROUPS_OVERRIDE };
-#else /* ANDROID_SETGROUPS_OVERRIDE */
-	gid_t groups[] = { AID_INET, AID_WIFI, AID_KEYSTORE };
+	gid_t groups[] = {ANDROID_SETGROUPS_OVERRIDE};
+#else  /* ANDROID_SETGROUPS_OVERRIDE */
+	gid_t groups[] = {AID_INET, AID_WIFI, AID_KEYSTORE};
 #endif /* ANDROID_SETGROUPS_OVERRIDE */
 	struct __user_cap_header_struct header;
 	struct __user_cap_data_struct cap;
@@ -328,41 +334,40 @@ int os_program_init(void)
 	return 0;
 }
 
-
 void os_program_deinit(void)
 {
 #ifdef WPA_TRACE
 	struct os_alloc_trace *a;
 	unsigned long total = 0;
-	dl_list_for_each(a, &alloc_list, struct os_alloc_trace, list) {
+	dl_list_for_each(a, &alloc_list, struct os_alloc_trace, list)
+	{
 		total += a->len;
-		if (a->magic != ALLOC_MAGIC) {
+		if (a->magic != ALLOC_MAGIC)
+		{
 			wpa_printf(MSG_INFO, "MEMLEAK[%p]: invalid magic 0x%x "
-				   "len %lu",
-				   a, a->magic, (unsigned long) a->len);
+								 "len %lu",
+					   a, a->magic, (unsigned long)a->len);
 			continue;
 		}
 		wpa_printf(MSG_INFO, "MEMLEAK[%p]: len %lu",
-			   a, (unsigned long) a->len);
+				   a, (unsigned long)a->len);
 		wpa_trace_dump("memleak", a);
 	}
 	if (total)
 		wpa_printf(MSG_INFO, "MEMLEAK: total %lu bytes",
-			   (unsigned long) total);
+				   (unsigned long)total);
 #endif /* WPA_TRACE */
 }
-
 
 int os_setenv(const char *name, const char *value, int overwrite)
 {
 	return setenv(name, value, overwrite);
 }
 
-
 int os_unsetenv(const char *name)
 {
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__APPLE__) || \
-    defined(__OpenBSD__)
+	defined(__OpenBSD__)
 	unsetenv(name);
 	return 0;
 #else
@@ -370,8 +375,7 @@ int os_unsetenv(const char *name)
 #endif
 }
 
-
-char * os_readfile(const char *name, size_t *len)
+char *os_readfile(const char *name, size_t *len)
 {
 	FILE *f;
 	char *buf;
@@ -381,23 +385,27 @@ char * os_readfile(const char *name, size_t *len)
 	if (f == NULL)
 		return NULL;
 
-	if (fseek(f, 0, SEEK_END) < 0 || (pos = ftell(f)) < 0) {
+	if (fseek(f, 0, SEEK_END) < 0 || (pos = ftell(f)) < 0)
+	{
 		fclose(f);
 		return NULL;
 	}
 	*len = pos;
-	if (fseek(f, 0, SEEK_SET) < 0) {
+	if (fseek(f, 0, SEEK_SET) < 0)
+	{
 		fclose(f);
 		return NULL;
 	}
 
 	buf = os_malloc(*len);
-	if (buf == NULL) {
+	if (buf == NULL)
+	{
 		fclose(f);
 		return NULL;
 	}
 
-	if (fread(buf, 1, *len, f) != *len) {
+	if (fread(buf, 1, *len, f) != *len)
+	{
 		fclose(f);
 		os_free(buf);
 		return NULL;
@@ -408,7 +416,6 @@ char * os_readfile(const char *name, size_t *len)
 	return buf;
 }
 
-
 int os_file_exists(const char *fname)
 {
 	FILE *f = fopen(fname, "rb");
@@ -418,29 +425,30 @@ int os_file_exists(const char *fname)
 	return 1;
 }
 
-
 #ifndef WPA_TRACE
-void * os_zalloc(size_t size)
+void *os_zalloc(size_t size)
 {
 	return calloc(1, size);
 }
 #endif /* WPA_TRACE */
-
 
 size_t os_strlcpy(char *dest, const char *src, size_t siz)
 {
 	const char *s = src;
 	size_t left = siz;
 
-	if (left) {
+	if (left)
+	{
 		/* Copy string up to the maximum size of the dest buffer */
-		while (--left != 0) {
+		while (--left != 0)
+		{
 			if ((*dest++ = *s++) == '\0')
 				break;
 		}
 	}
 
-	if (left == 0) {
+	if (left == 0)
+	{
 		/* Not enough room for the string; force NUL-termination */
 		if (siz != 0)
 			*dest = '\0';
@@ -451,10 +459,9 @@ size_t os_strlcpy(char *dest, const char *src, size_t siz)
 	return s - src - 1;
 }
 
-
 #ifdef WPA_TRACE
 
-void * os_malloc(size_t size)
+void *os_malloc(size_t size)
 {
 	struct os_alloc_trace *a;
 	a = malloc(sizeof(*a) + size);
@@ -467,8 +474,7 @@ void * os_malloc(size_t size)
 	return a + 1;
 }
 
-
-void * os_realloc(void *ptr, size_t size)
+void *os_realloc(void *ptr, size_t size)
 {
 	struct os_alloc_trace *a;
 	size_t copy_len;
@@ -477,11 +483,12 @@ void * os_realloc(void *ptr, size_t size)
 	if (ptr == NULL)
 		return os_malloc(size);
 
-	a = (struct os_alloc_trace *) ptr - 1;
-	if (a->magic != ALLOC_MAGIC) {
+	a = (struct os_alloc_trace *)ptr - 1;
+	if (a->magic != ALLOC_MAGIC)
+	{
 		wpa_printf(MSG_INFO, "REALLOC[%p]: invalid magic 0x%x%s",
-			   a, a->magic,
-			   a->magic == FREED_MAGIC ? " (already freed)" : "");
+				   a, a->magic,
+				   a->magic == FREED_MAGIC ? " (already freed)" : "");
 		wpa_trace_show("Invalid os_realloc() call");
 		abort();
 	}
@@ -496,18 +503,18 @@ void * os_realloc(void *ptr, size_t size)
 	return n;
 }
 
-
 void os_free(void *ptr)
 {
 	struct os_alloc_trace *a;
 
 	if (ptr == NULL)
 		return;
-	a = (struct os_alloc_trace *) ptr - 1;
-	if (a->magic != ALLOC_MAGIC) {
+	a = (struct os_alloc_trace *)ptr - 1;
+	if (a->magic != ALLOC_MAGIC)
+	{
 		wpa_printf(MSG_INFO, "FREE[%p]: invalid magic 0x%x%s",
-			   a, a->magic,
-			   a->magic == FREED_MAGIC ? " (already freed)" : "");
+				   a, a->magic,
+				   a->magic == FREED_MAGIC ? " (already freed)" : "");
 		wpa_trace_show("Invalid os_free() call");
 		abort();
 	}
@@ -518,8 +525,7 @@ void os_free(void *ptr)
 	free(a);
 }
 
-
-void * os_zalloc(size_t size)
+void *os_zalloc(size_t size)
 {
 	void *ptr = os_malloc(size);
 	if (ptr)
@@ -527,8 +533,7 @@ void * os_zalloc(size_t size)
 	return ptr;
 }
 
-
-char * os_strdup(const char *s)
+char *os_strdup(const char *s)
 {
 	size_t len;
 	char *d;

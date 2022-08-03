@@ -9,9 +9,11 @@
 #ifndef IP_ADDR_H
 #define IP_ADDR_H
 
-struct hostapd_ip_addr {
+struct hostapd_ip_addr
+{
 	int af; /* AF_INET / AF_INET6 */
-	union {
+	union
+	{
 		struct in_addr v4;
 #ifdef CONFIG_IPV6
 		struct in6_addr v6;
@@ -20,8 +22,8 @@ struct hostapd_ip_addr {
 	} u;
 };
 
-const char * hostapd_ip_txt(const struct hostapd_ip_addr *addr, char *buf,
-			    size_t buflen);
+const char *hostapd_ip_txt(const struct hostapd_ip_addr *addr, char *buf,
+						   size_t buflen);
 int hostapd_parse_ip_addr(const char *txt, struct hostapd_ip_addr *addr);
 
 #endif /* IP_ADDR_H */

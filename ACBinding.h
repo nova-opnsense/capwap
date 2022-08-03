@@ -17,7 +17,7 @@
  *                                                                                         *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
@@ -28,14 +28,13 @@
  * -------------------------------------------------------------------------------------------- *
  * Project:  Capwap																				*
  *																								*
- * Authors : Ludovico Rossi (ludo@bluepixysw.com)												*  
+ * Authors : Ludovico Rossi (ludo@bluepixysw.com)												*
  *           Del Moro Andrea (andrea_delmoro@libero.it)											*
  *           Giovannini Federica (giovannini.federica@gmail.com)								*
  *           Massimo Vellucci (m.vellucci@unicampus.it)											*
  *           Mauro Bisson (mauro.bis@gmail.com)													*
  *	         Antonio Davoli (antonio.davoli@gmail.com)											*
  ************************************************************************************************/
-
 
 #ifndef __CAPWAP_ACBinding_HEADER__
 #define __CAPWAP_ACBinding_HEADER__

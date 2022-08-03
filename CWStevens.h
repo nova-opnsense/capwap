@@ -17,44 +17,44 @@
  *                                                                                         *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
  * so.  If you do not wish to do so, delete this exception statement from your version.    *
  * If you delete this exception statement from all source files in the program, then also  *
  * delete it here.                                                                         *
- * 
+ *
  * --------------------------------------------------------------------------------------- *
  * Project:  Capwap                                                                        *
  *                                                                                         *
- * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *  
+ * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *
  *           Del Moro Andrea (andrea_delmoro@libero.it)                                    *
  *           Giovannini Federica (giovannini.federica@gmail.com)                           *
  *           Massimo Vellucci (m.vellucci@unicampus.it)                                    *
  *           Mauro Bisson (mauro.bis@gmail.com)                                            *
  *******************************************************************************************/
 
-
 #ifndef __CAPWAP_CWStevens_HEADER__
 #define __CAPWAP_CWStevens_HEADER__
- 
+
 #include <net/if.h>
 #include <sys/ioctl.h>
 
-#define	IFI_NAME	16			/* same as IFNAMSIZ in <net/if.h> */
-#define	IFI_HADDR	 8			/* allow for 64-bit EUI-64 in future */
+#define IFI_NAME 16 /* same as IFNAMSIZ in <net/if.h> */
+#define IFI_HADDR 8 /* allow for 64-bit EUI-64 in future */
 
-struct ifi_info {
-  char    ifi_name[IFI_NAME];	/* interface name, null-terminated */
-  short   ifi_index;			/* interface index */
-  short   ifi_flags;			/* IFF_xxx constants from <net/if.h> */
-  struct sockaddr  *ifi_addr;	/* primary address */
-  struct sockaddr  *ifi_brdaddr;/* broadcast address */
-  struct ifi_info  *ifi_next;	/* next of these structures */
+struct ifi_info
+{
+  char ifi_name[IFI_NAME];      /* interface name, null-terminated */
+  short ifi_index;              /* interface index */
+  short ifi_flags;              /* IFF_xxx constants from <net/if.h> */
+  struct sockaddr *ifi_addr;    /* primary address */
+  struct sockaddr *ifi_brdaddr; /* broadcast address */
+  struct ifi_info *ifi_next;    /* next of these structures */
 };
 
-struct ifi_info* get_ifi_info(int, int);
+struct ifi_info *get_ifi_info(int, int);
 void free_ifi_info(struct ifi_info *);
 char *sock_ntop_r(const struct sockaddr *sa, char *str);
 int sock_cpy_addr_port(struct sockaddr *sa1, const struct sockaddr *sa2);
@@ -64,4 +64,4 @@ int sock_cmp_addr(const struct sockaddr *sa1, const struct sockaddr *sa2, sockle
 int mcast_join(int sockfd, const struct sockaddr *grp, socklen_t grplen, const char *ifname, u_int ifindex);
 int Writen(int fd, void *ptr, size_t nbytes);
 
-#endif	/* __CAPWAP_CWStevens_HEADER__ */
+#endif /* __CAPWAP_CWStevens_HEADER__ */

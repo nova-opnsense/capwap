@@ -9,11 +9,15 @@
 #ifndef IEEE802_1X_DEFS_H
 #define IEEE802_1X_DEFS_H
 
-#define CS_ID_LEN		8
-#define CS_ID_GCM_AES_128	{0x00, 0x80, 0x02, 0x00, 0x01, 0x00, 0x00, 0x01}
-#define CS_NAME_GCM_AES_128	"GCM-AES-128"
+#define CS_ID_LEN 8
+#define CS_ID_GCM_AES_128                              \
+	{                                                  \
+		0x00, 0x80, 0x02, 0x00, 0x01, 0x00, 0x00, 0x01 \
+	}
+#define CS_NAME_GCM_AES_128 "GCM-AES-128"
 
-enum macsec_policy {
+enum macsec_policy
+{
 	/**
 	 * Should secure sessions.
 	 * This accepts key server's advice to determine whether to secure the
@@ -27,9 +31,9 @@ enum macsec_policy {
 	DO_NOT_SECURE,
 };
 
-
 /* IEEE Std 802.1X-2010 - Table 11-6 - MACsec Capability */
-enum macsec_cap {
+enum macsec_cap
+{
 	/**
 	 * MACsec is not implemented
 	 */
@@ -54,25 +58,27 @@ enum macsec_cap {
 	MACSEC_CAP_INTEG_AND_CONF_0_30_50,
 };
 
-enum validate_frames {
+enum validate_frames
+{
 	Disabled,
 	Checked,
 	Strict,
 };
 
 /* IEEE Std 802.1X-2010 - Table 11-6 - Confidentiality Offset */
-enum confidentiality_offset {
-	CONFIDENTIALITY_NONE      = 0,
-	CONFIDENTIALITY_OFFSET_0  = 1,
+enum confidentiality_offset
+{
+	CONFIDENTIALITY_NONE = 0,
+	CONFIDENTIALITY_OFFSET_0 = 1,
 	CONFIDENTIALITY_OFFSET_30 = 2,
 	CONFIDENTIALITY_OFFSET_50 = 3,
 };
 
 /* IEEE Std 802.1X-2010 - Table 9-2 */
-#define DEFAULT_PRIO_INFRA_PORT        0x10
-#define DEFAULT_PRIO_PRIMRAY_AP        0x30
-#define DEFAULT_PRIO_SECONDARY_AP      0x50
-#define DEFAULT_PRIO_GROUP_CA_MEMBER   0x70
-#define DEFAULT_PRIO_NOT_KEY_SERVER    0xFF
+#define DEFAULT_PRIO_INFRA_PORT 0x10
+#define DEFAULT_PRIO_PRIMRAY_AP 0x30
+#define DEFAULT_PRIO_SECONDARY_AP 0x50
+#define DEFAULT_PRIO_GROUP_CA_MEMBER 0x70
+#define DEFAULT_PRIO_NOT_KEY_SERVER 0xFF
 
 #endif /* IEEE802_1X_DEFS_H */

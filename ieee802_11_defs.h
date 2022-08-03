@@ -18,71 +18,71 @@
 
 /* IEEE 802.11 defines */
 
-#define WLAN_FC_PVER		0x0003
-#define WLAN_FC_TODS		0x0100
-#define WLAN_FC_FROMDS		0x0200
-#define WLAN_FC_MOREFRAG	0x0400
-#define WLAN_FC_RETRY		0x0800
-#define WLAN_FC_PWRMGT		0x1000
-#define WLAN_FC_MOREDATA	0x2000
-#define WLAN_FC_ISWEP		0x4000
-#define WLAN_FC_ORDER		0x8000
+#define WLAN_FC_PVER 0x0003
+#define WLAN_FC_TODS 0x0100
+#define WLAN_FC_FROMDS 0x0200
+#define WLAN_FC_MOREFRAG 0x0400
+#define WLAN_FC_RETRY 0x0800
+#define WLAN_FC_PWRMGT 0x1000
+#define WLAN_FC_MOREDATA 0x2000
+#define WLAN_FC_ISWEP 0x4000
+#define WLAN_FC_ORDER 0x8000
 
-#define WLAN_FC_GET_TYPE(fc)	(((fc) & 0x000c) >> 2)
-#define WLAN_FC_GET_STYPE(fc)	(((fc) & 0x00f0) >> 4)
+#define WLAN_FC_GET_TYPE(fc) (((fc)&0x000c) >> 2)
+#define WLAN_FC_GET_STYPE(fc) (((fc)&0x00f0) >> 4)
 
 #define WLAN_GET_SEQ_FRAG(seq) ((seq) & (BIT(3) | BIT(2) | BIT(1) | BIT(0)))
 #define WLAN_GET_SEQ_SEQ(seq) \
 	(((seq) & (~(BIT(3) | BIT(2) | BIT(1) | BIT(0)))) >> 4)
 
-#define WLAN_FC_TYPE_MGMT		0
-#define WLAN_FC_TYPE_CTRL		1
-#define WLAN_FC_TYPE_DATA		2
+#define WLAN_FC_TYPE_MGMT 0
+#define WLAN_FC_TYPE_CTRL 1
+#define WLAN_FC_TYPE_DATA 2
 
 /* management */
-#define WLAN_FC_STYPE_ASSOC_REQ		0
-#define WLAN_FC_STYPE_ASSOC_RESP	1
-#define WLAN_FC_STYPE_REASSOC_REQ	2
-#define WLAN_FC_STYPE_REASSOC_RESP	3
-#define WLAN_FC_STYPE_PROBE_REQ		4
-#define WLAN_FC_STYPE_PROBE_RESP	5
-#define WLAN_FC_STYPE_BEACON		8
-#define WLAN_FC_STYPE_ATIM		9
-#define WLAN_FC_STYPE_DISASSOC		10
-#define WLAN_FC_STYPE_AUTH		11
-#define WLAN_FC_STYPE_DEAUTH		12
-#define WLAN_FC_STYPE_ACTION		13
+#define WLAN_FC_STYPE_ASSOC_REQ 0
+#define WLAN_FC_STYPE_ASSOC_RESP 1
+#define WLAN_FC_STYPE_REASSOC_REQ 2
+#define WLAN_FC_STYPE_REASSOC_RESP 3
+#define WLAN_FC_STYPE_PROBE_REQ 4
+#define WLAN_FC_STYPE_PROBE_RESP 5
+#define WLAN_FC_STYPE_BEACON 8
+#define WLAN_FC_STYPE_ATIM 9
+#define WLAN_FC_STYPE_DISASSOC 10
+#define WLAN_FC_STYPE_AUTH 11
+#define WLAN_FC_STYPE_DEAUTH 12
+#define WLAN_FC_STYPE_ACTION 13
 
 /* control */
-#define WLAN_FC_STYPE_PSPOLL		10
-#define WLAN_FC_STYPE_RTS		11
-#define WLAN_FC_STYPE_CTS		12
-#define WLAN_FC_STYPE_ACK		13
-#define WLAN_FC_STYPE_CFEND		14
-#define WLAN_FC_STYPE_CFENDACK		15
+#define WLAN_FC_STYPE_PSPOLL 10
+#define WLAN_FC_STYPE_RTS 11
+#define WLAN_FC_STYPE_CTS 12
+#define WLAN_FC_STYPE_ACK 13
+#define WLAN_FC_STYPE_CFEND 14
+#define WLAN_FC_STYPE_CFENDACK 15
 
 /* data */
-#define WLAN_FC_STYPE_DATA		0
-#define WLAN_FC_STYPE_DATA_CFACK	1
-#define WLAN_FC_STYPE_DATA_CFPOLL	2
-#define WLAN_FC_STYPE_DATA_CFACKPOLL	3
-#define WLAN_FC_STYPE_NULLFUNC		4
-#define WLAN_FC_STYPE_CFACK		5
-#define WLAN_FC_STYPE_CFPOLL		6
-#define WLAN_FC_STYPE_CFACKPOLL		7
-#define WLAN_FC_STYPE_QOS_DATA		8
-#define WLAN_FC_STYPE_QOS_DATA_CFACK	9
-#define WLAN_FC_STYPE_QOS_DATA_CFPOLL	10
-#define WLAN_FC_STYPE_QOS_DATA_CFACKPOLL	11
-#define WLAN_FC_STYPE_QOS_NULL		12
-#define WLAN_FC_STYPE_QOS_CFPOLL	14
-#define WLAN_FC_STYPE_QOS_CFACKPOLL	15
+#define WLAN_FC_STYPE_DATA 0
+#define WLAN_FC_STYPE_DATA_CFACK 1
+#define WLAN_FC_STYPE_DATA_CFPOLL 2
+#define WLAN_FC_STYPE_DATA_CFACKPOLL 3
+#define WLAN_FC_STYPE_NULLFUNC 4
+#define WLAN_FC_STYPE_CFACK 5
+#define WLAN_FC_STYPE_CFPOLL 6
+#define WLAN_FC_STYPE_CFACKPOLL 7
+#define WLAN_FC_STYPE_QOS_DATA 8
+#define WLAN_FC_STYPE_QOS_DATA_CFACK 9
+#define WLAN_FC_STYPE_QOS_DATA_CFPOLL 10
+#define WLAN_FC_STYPE_QOS_DATA_CFACKPOLL 11
+#define WLAN_FC_STYPE_QOS_NULL 12
+#define WLAN_FC_STYPE_QOS_CFPOLL 14
+#define WLAN_FC_STYPE_QOS_CFACKPOLL 15
 
 /* Authentication algorithms */
-#define WLAN_AUTH_OPEN			0
-#define WLAN_AUTH_SHARED_KEY		1
-#define WLAN_AUTH_FT			2
-#define WLAN_AUTH_LEAP			128
+#define WLAN_AUTH_OPEN 0
+#define WLAN_AUTH_SHARED_KEY 1
+#define WLAN_AUTH_FT 2
+#define WLAN_AUTH_LEAP 128
 
 #define WLAN_AUTH_CHALLENGE_LEN 128
 
@@ -196,7 +196,6 @@
 /* IEEE 802.11e */
 #define WLAN_REASON_DISASSOC_LOW_ACK 34
 
-
 /* Information Element IDs */
 #define WLAN_EID_SSID 0
 #define WLAN_EID_SUPP_RATES 1
@@ -241,7 +240,6 @@
 #define WLAN_EID_ROAMING_CONSORTIUM 111
 #define WLAN_EID_EXT_CAPAB 127
 #define WLAN_EID_VENDOR_SPECIFIC 221
-
 
 /* Action frame categories (IEEE 802.11-2007, 7.3.1.11, Table 7-24) */
 #define WLAN_ACTION_SPECTRUM_MGMT 0
@@ -308,7 +306,8 @@
 #define INTERWORKING_ANT_WILDCARD 15
 
 /* Advertisement Protocol ID definitions (IEEE Std 802.11u-2011) */
-enum adv_proto_id {
+enum adv_proto_id
+{
 	ACCESS_NETWORK_QUERY_PROTOCOL = 0,
 	MIH_INFO_SERVICE = 1,
 	MIH_CMD_AND_EVENT_DISCOVERY = 2,
@@ -317,7 +316,8 @@ enum adv_proto_id {
 };
 
 /* Access Network Query Protocol info ID definitions (IEEE Std 802.11u-2011) */
-enum anqp_info_id {
+enum anqp_info_id
+{
 	ANQP_QUERY_LIST = 256,
 	ANQP_CAPABILITY_LIST = 257,
 	ANQP_VENUE_NAME = 258,
@@ -337,7 +337,8 @@ enum anqp_info_id {
 };
 
 /* NAI Realm list - EAP Method subfield - Authentication Parameter ID */
-enum nai_realm_eap_auth_param {
+enum nai_realm_eap_auth_param
+{
 	NAI_REALM_EAP_AUTH_EXPANDED_EAP_METHOD = 1,
 	NAI_REALM_EAP_AUTH_NON_EAP_INNER_AUTH = 2,
 	NAI_REALM_EAP_AUTH_INNER_AUTH_EAP_METHOD = 3,
@@ -347,14 +348,16 @@ enum nai_realm_eap_auth_param {
 	NAI_REALM_EAP_AUTH_VENDOR_SPECIFIC = 221
 };
 
-enum nai_realm_eap_auth_inner_non_eap {
+enum nai_realm_eap_auth_inner_non_eap
+{
 	NAI_REALM_INNER_NON_EAP_PAP = 1,
 	NAI_REALM_INNER_NON_EAP_CHAP = 2,
 	NAI_REALM_INNER_NON_EAP_MSCHAP = 3,
 	NAI_REALM_INNER_NON_EAP_MSCHAPV2 = 4
 };
 
-enum nai_realm_eap_cred_type {
+enum nai_realm_eap_cred_type
+{
 	NAI_REALM_CRED_TYPE_SIM = 1,
 	NAI_REALM_CRED_TYPE_USIM = 2,
 	NAI_REALM_CRED_TYPE_NFC_SECURE_ELEMENT = 3,
@@ -371,7 +374,8 @@ enum nai_realm_eap_cred_type {
 #pragma pack(push, 1)
 #endif /* _MSC_VER */
 
-struct ieee80211_hdr {
+struct ieee80211_hdr
+{
 	le16 frame_control;
 	le16 duration_id;
 	u8 addr1[6];
@@ -390,50 +394,59 @@ struct ieee80211_hdr {
 
 #define IEEE80211_FC(type, stype) host_to_le16((type << 2) | (stype << 4))
 
-struct ieee80211_mgmt {
+struct ieee80211_mgmt
+{
 	le16 frame_control;
 	le16 duration;
 	u8 da[6];
 	u8 sa[6];
 	u8 bssid[6];
 	le16 seq_ctrl;
-	union {
-		struct {
+	union
+	{
+		struct
+		{
 			le16 auth_alg;
 			le16 auth_transaction;
 			le16 status_code;
 			/* possibly followed by Challenge text */
 			u8 variable[0];
 		} STRUCT_PACKED auth;
-		struct {
+		struct
+		{
 			le16 reason_code;
 			u8 variable[0];
 		} STRUCT_PACKED deauth;
-		struct {
+		struct
+		{
 			le16 capab_info;
 			le16 listen_interval;
 			/* followed by SSID and Supported rates */
 			u8 variable[0];
 		} STRUCT_PACKED assoc_req;
-		struct {
+		struct
+		{
 			le16 capab_info;
 			le16 status_code;
 			le16 aid;
 			/* followed by Supported rates */
 			u8 variable[0];
 		} STRUCT_PACKED assoc_resp, reassoc_resp;
-		struct {
+		struct
+		{
 			le16 capab_info;
 			le16 listen_interval;
 			u8 current_ap[6];
 			/* followed by SSID and Supported rates */
 			u8 variable[0];
 		} STRUCT_PACKED reassoc_req;
-		struct {
+		struct
+		{
 			le16 reason_code;
 			u8 variable[0];
 		} STRUCT_PACKED disassoc;
-		struct {
+		struct
+		{
 			u8 timestamp[8];
 			le16 beacon_int;
 			le16 capab_info;
@@ -441,11 +454,13 @@ struct ieee80211_mgmt {
 			 * FH Params, DS Params, CF Params, IBSS Params, TIM */
 			u8 variable[0];
 		} STRUCT_PACKED beacon;
-		struct {
+		struct
+		{
 			/* only variable items: SSID, Supported rates */
 			u8 variable[0];
 		} STRUCT_PACKED probe_req;
-		struct {
+		struct
+		{
 			u8 timestamp[8];
 			le16 beacon_int;
 			le16 capab_info;
@@ -453,16 +468,20 @@ struct ieee80211_mgmt {
 			 * FH Params, DS Params, CF Params, IBSS Params */
 			u8 variable[0];
 		} STRUCT_PACKED probe_resp;
-		struct {
+		struct
+		{
 			u8 category;
-			union {
-				struct {
+			union
+			{
+				struct
+				{
 					u8 action_code;
 					u8 dialog_token;
 					u8 status_code;
 					u8 variable[0];
 				} STRUCT_PACKED wmm_action;
-				struct{
+				struct
+				{
 					u8 action_code;
 					u8 element_id;
 					u8 length;
@@ -470,38 +489,45 @@ struct ieee80211_mgmt {
 					u8 new_chan;
 					u8 switch_count;
 				} STRUCT_PACKED chan_switch;
-				struct {
+				struct
+				{
 					u8 action;
 					u8 sta_addr[ETH_ALEN];
 					u8 target_ap_addr[ETH_ALEN];
 					u8 variable[0]; /* FT Request */
 				} STRUCT_PACKED ft_action_req;
-				struct {
+				struct
+				{
 					u8 action;
 					u8 sta_addr[ETH_ALEN];
 					u8 target_ap_addr[ETH_ALEN];
 					le16 status_code;
 					u8 variable[0]; /* FT Request */
 				} STRUCT_PACKED ft_action_resp;
-				struct {
+				struct
+				{
 					u8 action;
 					u8 trans_id[WLAN_SA_QUERY_TR_ID_LEN];
 				} STRUCT_PACKED sa_query_req;
-				struct {
+				struct
+				{
 					u8 action; /* */
 					u8 trans_id[WLAN_SA_QUERY_TR_ID_LEN];
 				} STRUCT_PACKED sa_query_resp;
-				struct {
+				struct
+				{
 					u8 action;
 					u8 variable[0];
 				} STRUCT_PACKED public_action;
-				struct {
+				struct
+				{
 					u8 action; /* 9 */
 					u8 oui[3];
 					/* Vendor-specific content */
 					u8 variable[0];
 				} STRUCT_PACKED vs_public_action;
-				struct {
+				struct
+				{
 					u8 action; /* 7 */
 					u8 dialog_token;
 					u8 req_mode;
@@ -518,8 +544,8 @@ struct ieee80211_mgmt {
 	} u;
 } STRUCT_PACKED;
 
-
-struct ieee80211_ht_capabilities {
+struct ieee80211_ht_capabilities
+{
 	le16 ht_capabilities_info;
 	u8 a_mpdu_params;
 	u8 supported_mcs_set[16];
@@ -528,8 +554,8 @@ struct ieee80211_ht_capabilities {
 	u8 asel_capabilities;
 } STRUCT_PACKED;
 
-
-struct ieee80211_ht_operation {
+struct ieee80211_ht_operation
+{
 	u8 control_chan;
 	u8 ht_param;
 	le16 operation_mode;
@@ -545,46 +571,43 @@ struct ieee80211_ht_operation {
 #define ERP_INFO_USE_PROTECTION BIT(1)
 #define ERP_INFO_BARKER_PREAMBLE_MODE BIT(2)
 
+#define HT_CAP_INFO_LDPC_CODING_CAP ((u16)BIT(0))
+#define HT_CAP_INFO_SUPP_CHANNEL_WIDTH_SET ((u16)BIT(1))
+#define HT_CAP_INFO_SMPS_MASK ((u16)(BIT(2) | BIT(3)))
+#define HT_CAP_INFO_SMPS_STATIC ((u16)0)
+#define HT_CAP_INFO_SMPS_DYNAMIC ((u16)BIT(2))
+#define HT_CAP_INFO_SMPS_DISABLED ((u16)(BIT(2) | BIT(3)))
+#define HT_CAP_INFO_GREEN_FIELD ((u16)BIT(4))
+#define HT_CAP_INFO_SHORT_GI20MHZ ((u16)BIT(5))
+#define HT_CAP_INFO_SHORT_GI40MHZ ((u16)BIT(6))
+#define HT_CAP_INFO_TX_STBC ((u16)BIT(7))
+#define HT_CAP_INFO_RX_STBC_MASK ((u16)(BIT(8) | BIT(9)))
+#define HT_CAP_INFO_RX_STBC_1 ((u16)BIT(8))
+#define HT_CAP_INFO_RX_STBC_12 ((u16)BIT(9))
+#define HT_CAP_INFO_RX_STBC_123 ((u16)(BIT(8) | BIT(9)))
+#define HT_CAP_INFO_DELAYED_BA ((u16)BIT(10))
+#define HT_CAP_INFO_MAX_AMSDU_SIZE ((u16)BIT(11))
+#define HT_CAP_INFO_DSSS_CCK40MHZ ((u16)BIT(12))
+#define HT_CAP_INFO_PSMP_SUPP ((u16)BIT(13))
+#define HT_CAP_INFO_40MHZ_INTOLERANT ((u16)BIT(14))
+#define HT_CAP_INFO_LSIG_TXOP_PROTECT_SUPPORT ((u16)BIT(15))
 
-#define HT_CAP_INFO_LDPC_CODING_CAP		((u16) BIT(0))
-#define HT_CAP_INFO_SUPP_CHANNEL_WIDTH_SET	((u16) BIT(1))
-#define HT_CAP_INFO_SMPS_MASK			((u16) (BIT(2) | BIT(3)))
-#define HT_CAP_INFO_SMPS_STATIC			((u16) 0)
-#define HT_CAP_INFO_SMPS_DYNAMIC		((u16) BIT(2))
-#define HT_CAP_INFO_SMPS_DISABLED		((u16) (BIT(2) | BIT(3)))
-#define HT_CAP_INFO_GREEN_FIELD			((u16) BIT(4))
-#define HT_CAP_INFO_SHORT_GI20MHZ		((u16) BIT(5))
-#define HT_CAP_INFO_SHORT_GI40MHZ		((u16) BIT(6))
-#define HT_CAP_INFO_TX_STBC			((u16) BIT(7))
-#define HT_CAP_INFO_RX_STBC_MASK		((u16) (BIT(8) | BIT(9)))
-#define HT_CAP_INFO_RX_STBC_1			((u16) BIT(8))
-#define HT_CAP_INFO_RX_STBC_12			((u16) BIT(9))
-#define HT_CAP_INFO_RX_STBC_123			((u16) (BIT(8) | BIT(9)))
-#define HT_CAP_INFO_DELAYED_BA			((u16) BIT(10))
-#define HT_CAP_INFO_MAX_AMSDU_SIZE		((u16) BIT(11))
-#define HT_CAP_INFO_DSSS_CCK40MHZ		((u16) BIT(12))
-#define HT_CAP_INFO_PSMP_SUPP			((u16) BIT(13))
-#define HT_CAP_INFO_40MHZ_INTOLERANT		((u16) BIT(14))
-#define HT_CAP_INFO_LSIG_TXOP_PROTECT_SUPPORT	((u16) BIT(15))
+#define EXT_HT_CAP_INFO_PCO ((u16)BIT(0))
+#define EXT_HT_CAP_INFO_TRANS_TIME_OFFSET 1
+#define EXT_HT_CAP_INFO_MCS_FEEDBACK_OFFSET 8
+#define EXT_HT_CAP_INFO_HTC_SUPPORTED ((u16)BIT(10))
+#define EXT_HT_CAP_INFO_RD_RESPONDER ((u16)BIT(11))
 
-
-#define EXT_HT_CAP_INFO_PCO			((u16) BIT(0))
-#define EXT_HT_CAP_INFO_TRANS_TIME_OFFSET	1
-#define EXT_HT_CAP_INFO_MCS_FEEDBACK_OFFSET	8
-#define EXT_HT_CAP_INFO_HTC_SUPPORTED		((u16) BIT(10))
-#define EXT_HT_CAP_INFO_RD_RESPONDER		((u16) BIT(11))
-
-
-#define TX_BEAMFORM_CAP_TXBF_CAP ((u32) BIT(0))
-#define TX_BEAMFORM_CAP_RX_STAGGERED_SOUNDING_CAP ((u32) BIT(1))
-#define TX_BEAMFORM_CAP_TX_STAGGERED_SOUNDING_CAP ((u32) BIT(2))
-#define TX_BEAMFORM_CAP_RX_ZLF_CAP ((u32) BIT(3))
-#define TX_BEAMFORM_CAP_TX_ZLF_CAP ((u32) BIT(4))
-#define TX_BEAMFORM_CAP_IMPLICIT_ZLF_CAP ((u32) BIT(5))
+#define TX_BEAMFORM_CAP_TXBF_CAP ((u32)BIT(0))
+#define TX_BEAMFORM_CAP_RX_STAGGERED_SOUNDING_CAP ((u32)BIT(1))
+#define TX_BEAMFORM_CAP_TX_STAGGERED_SOUNDING_CAP ((u32)BIT(2))
+#define TX_BEAMFORM_CAP_RX_ZLF_CAP ((u32)BIT(3))
+#define TX_BEAMFORM_CAP_TX_ZLF_CAP ((u32)BIT(4))
+#define TX_BEAMFORM_CAP_IMPLICIT_ZLF_CAP ((u32)BIT(5))
 #define TX_BEAMFORM_CAP_CALIB_OFFSET 6
-#define TX_BEAMFORM_CAP_EXPLICIT_CSI_TXBF_CAP ((u32) BIT(8))
-#define TX_BEAMFORM_CAP_EXPLICIT_UNCOMPR_STEERING_MATRIX_CAP ((u32) BIT(9))
-#define TX_BEAMFORM_CAP_EXPLICIT_BF_CSI_FEEDBACK_CAP ((u32) BIT(10))
+#define TX_BEAMFORM_CAP_EXPLICIT_CSI_TXBF_CAP ((u32)BIT(8))
+#define TX_BEAMFORM_CAP_EXPLICIT_UNCOMPR_STEERING_MATRIX_CAP ((u32)BIT(9))
+#define TX_BEAMFORM_CAP_EXPLICIT_BF_CSI_FEEDBACK_CAP ((u32)BIT(10))
 #define TX_BEAMFORM_CAP_EXPLICIT_BF_CSI_FEEDBACK_OFFSET 11
 #define TX_BEAMFORM_CAP_EXPLICIT_UNCOMPR_STEERING_MATRIX_FEEDBACK_OFFSET 13
 #define TX_BEAMFORM_CAP_EXPLICIT_COMPRESSED_STEERING_MATRIX_FEEDBACK_OFFSET 15
@@ -594,47 +617,45 @@ struct ieee80211_ht_operation {
 #define TX_BEAMFORM_CAP_COMPRESSED_STEERING_MATRIX_BEAMFORMER_ANT_OFFSET 23
 #define TX_BEAMFORM_CAP_SCI_MAX_OF_ROWS_BEANFORMER_SUPPORTED_OFFSET 25
 
+#define ASEL_CAPABILITY_ASEL_CAPABLE ((u8)BIT(0))
+#define ASEL_CAPABILITY_EXPLICIT_CSI_FEEDBACK_BASED_TX_AS_CAP ((u8)BIT(1))
+#define ASEL_CAPABILITY_ANT_INDICES_FEEDBACK_BASED_TX_AS_CAP ((u8)BIT(2))
+#define ASEL_CAPABILITY_EXPLICIT_CSI_FEEDBACK_CAP ((u8)BIT(3))
+#define ASEL_CAPABILITY_ANT_INDICES_FEEDBACK_CAP ((u8)BIT(4))
+#define ASEL_CAPABILITY_RX_AS_CAP ((u8)BIT(5))
+#define ASEL_CAPABILITY_TX_SOUND_PPDUS_CAP ((u8)BIT(6))
 
-#define ASEL_CAPABILITY_ASEL_CAPABLE ((u8) BIT(0))
-#define ASEL_CAPABILITY_EXPLICIT_CSI_FEEDBACK_BASED_TX_AS_CAP ((u8) BIT(1))
-#define ASEL_CAPABILITY_ANT_INDICES_FEEDBACK_BASED_TX_AS_CAP ((u8) BIT(2))
-#define ASEL_CAPABILITY_EXPLICIT_CSI_FEEDBACK_CAP ((u8) BIT(3))
-#define ASEL_CAPABILITY_ANT_INDICES_FEEDBACK_CAP ((u8) BIT(4))
-#define ASEL_CAPABILITY_RX_AS_CAP ((u8) BIT(5))
-#define ASEL_CAPABILITY_TX_SOUND_PPDUS_CAP ((u8) BIT(6))
+#define HT_INFO_HT_PARAM_SECONDARY_CHNL_OFF_MASK ((u8)BIT(0) | BIT(1))
+#define HT_INFO_HT_PARAM_SECONDARY_CHNL_ABOVE ((u8)BIT(0))
+#define HT_INFO_HT_PARAM_SECONDARY_CHNL_BELOW ((u8)BIT(0) | BIT(1))
+#define HT_INFO_HT_PARAM_REC_TRANS_CHNL_WIDTH ((u8)BIT(2))
+#define HT_INFO_HT_PARAM_RIFS_MODE ((u8)BIT(3))
+#define HT_INFO_HT_PARAM_CTRL_ACCESS_ONLY ((u8)BIT(4))
+#define HT_INFO_HT_PARAM_SRV_INTERVAL_GRANULARITY ((u8)BIT(5))
 
-#define HT_INFO_HT_PARAM_SECONDARY_CHNL_OFF_MASK	((u8) BIT(0) | BIT(1))
-#define HT_INFO_HT_PARAM_SECONDARY_CHNL_ABOVE		((u8) BIT(0))
-#define HT_INFO_HT_PARAM_SECONDARY_CHNL_BELOW		((u8) BIT(0) | BIT(1))
-#define HT_INFO_HT_PARAM_REC_TRANS_CHNL_WIDTH		((u8) BIT(2))
-#define HT_INFO_HT_PARAM_RIFS_MODE			((u8) BIT(3))
-#define HT_INFO_HT_PARAM_CTRL_ACCESS_ONLY		((u8) BIT(4))
-#define HT_INFO_HT_PARAM_SRV_INTERVAL_GRANULARITY	((u8) BIT(5))
+#define OP_MODE_PURE 0
+#define OP_MODE_MAY_BE_LEGACY_STAS 1
+#define OP_MODE_20MHZ_HT_STA_ASSOCED 2
+#define OP_MODE_MIXED 3
 
+#define HT_INFO_OPERATION_MODE_OP_MODE_MASK \
+	((le16)(0x0001 | 0x0002))
+#define HT_INFO_OPERATION_MODE_OP_MODE_OFFSET 0
+#define HT_INFO_OPERATION_MODE_NON_GF_DEVS_PRESENT ((u8)BIT(2))
+#define HT_INFO_OPERATION_MODE_TRANSMIT_BURST_LIMIT ((u8)BIT(3))
+#define HT_INFO_OPERATION_MODE_NON_HT_STA_PRESENT ((u8)BIT(4))
 
-#define OP_MODE_PURE                    0
-#define OP_MODE_MAY_BE_LEGACY_STAS      1
-#define OP_MODE_20MHZ_HT_STA_ASSOCED    2
-#define OP_MODE_MIXED                   3
-
-#define HT_INFO_OPERATION_MODE_OP_MODE_MASK	\
-		((le16) (0x0001 | 0x0002))
-#define HT_INFO_OPERATION_MODE_OP_MODE_OFFSET		0
-#define HT_INFO_OPERATION_MODE_NON_GF_DEVS_PRESENT	((u8) BIT(2))
-#define HT_INFO_OPERATION_MODE_TRANSMIT_BURST_LIMIT	((u8) BIT(3))
-#define HT_INFO_OPERATION_MODE_NON_HT_STA_PRESENT	((u8) BIT(4))
-
-#define HT_INFO_STBC_PARAM_DUAL_BEACON			((u16) BIT(6))
-#define HT_INFO_STBC_PARAM_DUAL_STBC_PROTECT		((u16) BIT(7))
-#define HT_INFO_STBC_PARAM_SECONDARY_BCN		((u16) BIT(8))
-#define HT_INFO_STBC_PARAM_LSIG_TXOP_PROTECT_ALLOWED	((u16) BIT(9))
-#define HT_INFO_STBC_PARAM_PCO_ACTIVE			((u16) BIT(10))
-#define HT_INFO_STBC_PARAM_PCO_PHASE			((u16) BIT(11))
+#define HT_INFO_STBC_PARAM_DUAL_BEACON ((u16)BIT(6))
+#define HT_INFO_STBC_PARAM_DUAL_STBC_PROTECT ((u16)BIT(7))
+#define HT_INFO_STBC_PARAM_SECONDARY_BCN ((u16)BIT(8))
+#define HT_INFO_STBC_PARAM_LSIG_TXOP_PROTECT_ALLOWED ((u16)BIT(9))
+#define HT_INFO_STBC_PARAM_PCO_ACTIVE ((u16)BIT(10))
+#define HT_INFO_STBC_PARAM_PCO_PHASE ((u16)BIT(11))
 
 #define BSS_MEMBERSHIP_SELECTOR_HT_PHY 127
 
-#define OUI_MICROSOFT 0x0050f2 /* Microsoft (also used in Wi-Fi specs)
-				* 00:50:F2 */
+#define OUI_MICROSOFT 0x0050f2 /* Microsoft (also used in Wi-Fi specs) \
+								* 00:50:F2 */
 #define WPA_IE_VENDOR_TYPE 0x0050f201
 #define WPS_IE_VENDOR_TYPE 0x0050f204
 #define OUI_WFA 0x506f9a
@@ -666,14 +687,15 @@ struct ieee80211_ht_operation {
  * WMM Information Element (used in (Re)Association Request frames; may also be
  * used in Beacon frames)
  */
-struct wmm_information_element {
+struct wmm_information_element
+{
 	/* Element ID: 221 (0xdd); Length: 7 */
 	/* required fields for WMM version 1 */
-	u8 oui[3]; /* 00:50:f2 */
-	u8 oui_type; /* 2 */
+	u8 oui[3];		/* 00:50:f2 */
+	u8 oui_type;	/* 2 */
 	u8 oui_subtype; /* 0 */
-	u8 version; /* 1 for WMM version 1.0 */
-	u8 qos_info; /* AP/STA specific QoS info */
+	u8 version;		/* 1 for WMM version 1.0 */
+	u8 qos_info;	/* AP/STA specific QoS info */
 
 } STRUCT_PACKED;
 
@@ -688,37 +710,40 @@ struct wmm_information_element {
 #define WMM_AC_ECWMAX_MASK 0xf0
 #define WMM_AC_ECWMAX_SHIFT 4
 
-struct wmm_ac_parameter {
+struct wmm_ac_parameter
+{
 	u8 aci_aifsn; /* AIFSN, ACM, ACI */
-	u8 cw; /* ECWmin, ECWmax (CW = 2^ECW - 1) */
+	u8 cw;		  /* ECWmin, ECWmax (CW = 2^ECW - 1) */
 	le16 txop_limit;
-}  STRUCT_PACKED;
+} STRUCT_PACKED;
 
 /*
  * WMM Parameter Element (used in Beacon, Probe Response, and (Re)Association
  * Response frmaes)
  */
-struct wmm_parameter_element {
+struct wmm_parameter_element
+{
 	/* Element ID: 221 (0xdd); Length: 24 */
 	/* required fields for WMM version 1 */
-	u8 oui[3]; /* 00:50:f2 */
-	u8 oui_type; /* 2 */
-	u8 oui_subtype; /* 1 */
-	u8 version; /* 1 for WMM version 1.0 */
-	u8 qos_info; /* AP/STA specific QoS info */
-	u8 reserved; /* 0 */
+	u8 oui[3];					   /* 00:50:f2 */
+	u8 oui_type;				   /* 2 */
+	u8 oui_subtype;				   /* 1 */
+	u8 version;					   /* 1 for WMM version 1.0 */
+	u8 qos_info;				   /* AP/STA specific QoS info */
+	u8 reserved;				   /* 0 */
 	struct wmm_ac_parameter ac[4]; /* AC_BE, AC_BK, AC_VI, AC_VO */
 
 } STRUCT_PACKED;
 
 /* WMM TSPEC Element */
-struct wmm_tspec_element {
-	u8 eid; /* 221 = 0xdd */
-	u8 length; /* 6 + 55 = 61 */
-	u8 oui[3]; /* 00:50:f2 */
-	u8 oui_type; /* 2 */
+struct wmm_tspec_element
+{
+	u8 eid;			/* 221 = 0xdd */
+	u8 length;		/* 6 + 55 = 61 */
+	u8 oui[3];		/* 00:50:f2 */
+	u8 oui_type;	/* 2 */
 	u8 oui_subtype; /* 2 */
-	u8 version; /* 1 */
+	u8 version;		/* 1 */
 	/* WMM TSPEC body (55 octets): */
 	u8 ts_info[3];
 	le16 nominal_msdu_size;
@@ -738,21 +763,21 @@ struct wmm_tspec_element {
 	le16 medium_time;
 } STRUCT_PACKED;
 
-
 /* Access Categories / ACI to AC coding */
-enum {
+enum
+{
 	WMM_AC_BE = 0 /* Best Effort */,
 	WMM_AC_BK = 1 /* Background */,
 	WMM_AC_VI = 2 /* Video */,
 	WMM_AC_VO = 3 /* Voice */
 };
 
-
 /* Wi-Fi Direct (P2P) */
 
 #define P2P_OUI_TYPE 9
 
-enum p2p_attr_id {
+enum p2p_attr_id
+{
 	P2P_ATTR_STATUS = 0,
 	P2P_ATTR_MINOR_REASON_CODE = 1,
 	P2P_ATTR_CAPABILITY = 2,
@@ -802,7 +827,8 @@ enum p2p_attr_id {
 #define P2P_MAN_CROSS_CONNECTION_PERMITTED BIT(1)
 #define P2P_MAN_COEXISTENCE_OPTIONAL BIT(2)
 
-enum p2p_status_code {
+enum p2p_status_code
+{
 	P2P_SC_SUCCESS = 0,
 	P2P_SC_FAIL_INFO_CURRENTLY_UNAVAILABLE = 1,
 	P2P_SC_FAIL_INCOMPATIBLE_PARAMS = 2,
@@ -821,7 +847,8 @@ enum p2p_status_code {
 #define P2P_WILDCARD_SSID_LEN 7
 
 /* P2P action frames */
-enum p2p_act_frame_type {
+enum p2p_act_frame_type
+{
 	P2P_NOA = 0,
 	P2P_PRESENCE_REQ = 1,
 	P2P_PRESENCE_RESP = 2,
@@ -829,7 +856,8 @@ enum p2p_act_frame_type {
 };
 
 /* P2P public action frames */
-enum p2p_action_frame_type {
+enum p2p_action_frame_type
+{
 	P2P_GO_NEG_REQ = 0,
 	P2P_GO_NEG_RESP = 1,
 	P2P_GO_NEG_CONF = 2,
@@ -841,7 +869,8 @@ enum p2p_action_frame_type {
 	P2P_PROV_DISC_RESP = 8
 };
 
-enum p2p_service_protocol_type {
+enum p2p_service_protocol_type
+{
 	P2P_SERV_ALL_SERVICES = 0,
 	P2P_SERV_BONJOUR = 1,
 	P2P_SERV_UPNP = 2,
@@ -849,34 +878,34 @@ enum p2p_service_protocol_type {
 	P2P_SERV_VENDOR_SPECIFIC = 255
 };
 
-enum p2p_sd_status {
+enum p2p_sd_status
+{
 	P2P_SD_SUCCESS = 0,
 	P2P_SD_PROTO_NOT_AVAILABLE = 1,
 	P2P_SD_REQUESTED_INFO_NOT_AVAILABLE = 2,
 	P2P_SD_BAD_REQUEST = 3
 };
 
-
 #define OUI_BROADCOM 0x00904c /* Broadcom (Epigram) */
 
 #define VENDOR_HT_CAPAB_OUI_TYPE 0x33 /* 00-90-4c:0x33 */
 
 /* cipher suite selectors */
-#define WLAN_CIPHER_SUITE_USE_GROUP	0x000FAC00
-#define WLAN_CIPHER_SUITE_WEP40		0x000FAC01
-#define WLAN_CIPHER_SUITE_TKIP		0x000FAC02
+#define WLAN_CIPHER_SUITE_USE_GROUP 0x000FAC00
+#define WLAN_CIPHER_SUITE_WEP40 0x000FAC01
+#define WLAN_CIPHER_SUITE_TKIP 0x000FAC02
 /* reserved: 				0x000FAC03 */
-#define WLAN_CIPHER_SUITE_CCMP		0x000FAC04
-#define WLAN_CIPHER_SUITE_WEP104	0x000FAC05
-#define WLAN_CIPHER_SUITE_AES_CMAC	0x000FAC06
+#define WLAN_CIPHER_SUITE_CCMP 0x000FAC04
+#define WLAN_CIPHER_SUITE_WEP104 0x000FAC05
+#define WLAN_CIPHER_SUITE_AES_CMAC 0x000FAC06
 
 /* AKM suite selectors */
-#define WLAN_AKM_SUITE_8021X		0x000FAC01
-#define WLAN_AKM_SUITE_PSK		0x000FAC02
-
+#define WLAN_AKM_SUITE_8021X 0x000FAC01
+#define WLAN_AKM_SUITE_PSK 0x000FAC02
 
 /* IEEE 802.11v - WNM Action field values */
-enum wnm_action {
+enum wnm_action
+{
 	WNM_EVENT_REQ = 0,
 	WNM_EVENT_REPORT = 1,
 	WNM_DIAGNOSTIC_REQ = 2,

@@ -17,12 +17,12 @@
 #endif /* __linux__ */
 
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__) || \
-    defined(__OpenBSD__)
+	defined(__OpenBSD__)
 #include <sys/types.h>
 #include <sys/endian.h>
-#define __BYTE_ORDER	_BYTE_ORDER
-#define	__LITTLE_ENDIAN	_LITTLE_ENDIAN
-#define	__BIG_ENDIAN	_BIG_ENDIAN
+#define __BYTE_ORDER _BYTE_ORDER
+#define __LITTLE_ENDIAN _LITTLE_ENDIAN
+#define __BIG_ENDIAN _BIG_ENDIAN
 #ifdef __OpenBSD__
 #define bswap_16 swap16
 #define bswap_32 swap32
@@ -32,15 +32,15 @@
 #define bswap_32 bswap32
 #define bswap_64 bswap64
 #endif /* __OpenBSD__ */
-#endif /* defined(__FreeBSD__) || defined(__NetBSD__) ||
-	* defined(__DragonFly__) || defined(__OpenBSD__) */
+#endif /* defined(__FreeBSD__) || defined(__NetBSD__) || \
+		* defined(__DragonFly__) || defined(__OpenBSD__) */
 
 #ifdef __APPLE__
 #include <sys/types.h>
 #include <machine/endian.h>
-#define __BYTE_ORDER	_BYTE_ORDER
-#define __LITTLE_ENDIAN	_LITTLE_ENDIAN
-#define __BIG_ENDIAN	_BIG_ENDIAN
+#define __BYTE_ORDER _BYTE_ORDER
+#define __LITTLE_ENDIAN _LITTLE_ENDIAN
+#define __BIG_ENDIAN _BIG_ENDIAN
 static inline unsigned short bswap_16(unsigned short v)
 {
 	return ((v & 0xff) << 8) | (v >> 8);
@@ -49,7 +49,7 @@ static inline unsigned short bswap_16(unsigned short v)
 static inline unsigned int bswap_32(unsigned int v)
 {
 	return ((v & 0xff) << 24) | ((v & 0xff00) << 8) |
-		((v & 0xff0000) >> 8) | (v >> 24);
+		   ((v & 0xff0000) >> 8) | (v >> 24);
 }
 #endif /* __APPLE__ */
 
@@ -82,7 +82,6 @@ typedef int socklen_t;
 #undef close
 #define close closesocket
 #endif /* _MSC_VER */
-
 
 /* Define platform specific integer types */
 
@@ -143,7 +142,6 @@ typedef int8_t s8;
 #define WPA_TYPES_DEFINED
 #endif /* !WPA_TYPES_DEFINED */
 
-
 /* Define platform specific byte swapping macros */
 
 #if defined(__CYGWIN__) || defined(CONFIG_NATIVE_WINDOWS)
@@ -156,7 +154,7 @@ static inline unsigned short wpa_swap_16(unsigned short v)
 static inline unsigned int wpa_swap_32(unsigned int v)
 {
 	return ((v & 0xff) << 24) | ((v & 0xff00) << 8) |
-		((v & 0xff0000) >> 8) | (v >> 24);
+		   ((v & 0xff0000) >> 8) | (v >> 24);
 }
 
 #define le_to_host16(n) (n)
@@ -170,7 +168,6 @@ static inline unsigned int wpa_swap_32(unsigned int v)
 #define WPA_BYTE_SWAP_DEFINED
 
 #endif /* __CYGWIN__ || CONFIG_NATIVE_WINDOWS */
-
 
 #ifndef WPA_BYTE_SWAP_DEFINED
 
@@ -187,18 +184,18 @@ static inline unsigned int wpa_swap_32(unsigned int v)
 #endif /* __BYTE_ORDER */
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-#define le_to_host16(n) ((__force u16) (le16) (n))
-#define host_to_le16(n) ((__force le16) (u16) (n))
-#define be_to_host16(n) bswap_16((__force u16) (be16) (n))
-#define host_to_be16(n) ((__force be16) bswap_16((n)))
-#define le_to_host32(n) ((__force u32) (le32) (n))
-#define host_to_le32(n) ((__force le32) (u32) (n))
-#define be_to_host32(n) bswap_32((__force u32) (be32) (n))
-#define host_to_be32(n) ((__force be32) bswap_32((n)))
-#define le_to_host64(n) ((__force u64) (le64) (n))
-#define host_to_le64(n) ((__force le64) (u64) (n))
-#define be_to_host64(n) bswap_64((__force u64) (be64) (n))
-#define host_to_be64(n) ((__force be64) bswap_64((n)))
+#define le_to_host16(n) ((__force u16)(le16)(n))
+#define host_to_le16(n) ((__force le16)(u16)(n))
+#define be_to_host16(n) bswap_16((__force u16)(be16)(n))
+#define host_to_be16(n) ((__force be16)bswap_16((n)))
+#define le_to_host32(n) ((__force u32)(le32)(n))
+#define host_to_le32(n) ((__force le32)(u32)(n))
+#define be_to_host32(n) bswap_32((__force u32)(be32)(n))
+#define host_to_be32(n) ((__force be32)bswap_32((n)))
+#define le_to_host64(n) ((__force u64)(le64)(n))
+#define host_to_le64(n) ((__force le64)(u64)(n))
+#define be_to_host64(n) bswap_64((__force u64)(be64)(n))
+#define host_to_be64(n) ((__force be64)bswap_64((n)))
 #elif __BYTE_ORDER == __BIG_ENDIAN
 #define le_to_host16(n) bswap_16(n)
 #define host_to_le16(n) bswap_16(n)
@@ -221,7 +218,6 @@ static inline unsigned int wpa_swap_32(unsigned int v)
 
 #define WPA_BYTE_SWAP_DEFINED
 #endif /* !WPA_BYTE_SWAP_DEFINED */
-
 
 /* Macros for handling unaligned memory accesses */
 
@@ -287,10 +283,10 @@ static inline void WPA_PUT_LE32(u8 *a, u32 val)
 
 static inline u64 WPA_GET_BE64(const u8 *a)
 {
-	return (((u64) a[0]) << 56) | (((u64) a[1]) << 48) |
-		(((u64) a[2]) << 40) | (((u64) a[3]) << 32) |
-		(((u64) a[4]) << 24) | (((u64) a[5]) << 16) |
-		(((u64) a[6]) << 8) | ((u64) a[7]);
+	return (((u64)a[0]) << 56) | (((u64)a[1]) << 48) |
+		   (((u64)a[2]) << 40) | (((u64)a[3]) << 32) |
+		   (((u64)a[4]) << 24) | (((u64)a[5]) << 16) |
+		   (((u64)a[6]) << 8) | ((u64)a[7]);
 }
 
 static inline void WPA_PUT_BE64(u8 *a, u64 val)
@@ -307,10 +303,10 @@ static inline void WPA_PUT_BE64(u8 *a, u64 val)
 
 static inline u64 WPA_GET_LE64(const u8 *a)
 {
-	return (((u64) a[7]) << 56) | (((u64) a[6]) << 48) |
-		(((u64) a[5]) << 40) | (((u64) a[4]) << 32) |
-		(((u64) a[3]) << 24) | (((u64) a[2]) << 16) |
-		(((u64) a[1]) << 8) | ((u64) a[0]);
+	return (((u64)a[7]) << 56) | (((u64)a[6]) << 48) |
+		   (((u64)a[5]) << 40) | (((u64)a[4]) << 32) |
+		   (((u64)a[3]) << 24) | (((u64)a[2]) << 16) |
+		   (((u64)a[1]) << 8) | ((u64)a[0]);
 }
 
 static inline void WPA_PUT_LE64(u8 *a, u64 val)
@@ -324,7 +320,6 @@ static inline void WPA_PUT_LE64(u8 *a, u64 val)
 	a[1] = val >> 8;
 	a[0] = val & 0xff;
 }
-
 
 #ifndef ETH_ALEN
 #define ETH_ALEN 6
@@ -340,7 +335,7 @@ static inline void WPA_PUT_LE64(u8 *a, u64 val)
 #endif
 #ifndef ETH_P_PAE
 #define ETH_P_PAE 0x888E /* Port Access Entity (IEEE 802.1X) */
-#endif /* ETH_P_PAE */
+#endif					 /* ETH_P_PAE */
 #ifndef ETH_P_EAPOL
 #define ETH_P_EAPOL ETH_P_PAE
 #endif /* ETH_P_EAPOL */
@@ -351,15 +346,13 @@ static inline void WPA_PUT_LE64(u8 *a, u64 val)
 #define ETH_P_RRB 0x890D
 #endif /* ETH_P_RRB */
 
-
 #ifdef __GNUC__
-#define PRINTF_FORMAT(a,b) __attribute__ ((format (printf, (a), (b))))
-#define STRUCT_PACKED __attribute__ ((packed))
+#define PRINTF_FORMAT(a, b) __attribute__((format(printf, (a), (b))))
+#define STRUCT_PACKED __attribute__((packed))
 #else
-#define PRINTF_FORMAT(a,b)
+#define PRINTF_FORMAT(a, b)
 #define STRUCT_PACKED
 #endif
-
 
 #ifdef CONFIG_ANSI_C_EXTRA
 
@@ -397,14 +390,14 @@ typedef int socklen_t;
 #endif
 
 #ifndef bswap_16
-#define bswap_16(a) ((((u16) (a) << 8) & 0xff00) | (((u16) (a) >> 8) & 0xff))
+#define bswap_16(a) ((((u16)(a) << 8) & 0xff00) | (((u16)(a) >> 8) & 0xff))
 #endif
 
 #ifndef bswap_32
-#define bswap_32(a) ((((u32) (a) << 24) & 0xff000000) | \
-		     (((u32) (a) << 8) & 0xff0000) | \
-     		     (((u32) (a) >> 8) & 0xff00) | \
-     		     (((u32) (a) >> 24) & 0xff))
+#define bswap_32(a) ((((u32)(a) << 24) & 0xff000000) | \
+					 (((u32)(a) << 8) & 0xff0000) |    \
+					 (((u32)(a) >> 8) & 0xff00) |      \
+					 (((u32)(a) >> 24) & 0xff))
 #endif
 
 #ifndef MSG_DONTWAIT
@@ -476,28 +469,31 @@ void inc_byte_array(u8 *counter, size_t len);
 void wpa_get_ntp_timestamp(u8 *buf);
 int wpa_snprintf_hex(char *buf, size_t buf_size, const u8 *data, size_t len);
 int wpa_snprintf_hex_uppercase(char *buf, size_t buf_size, const u8 *data,
-			       size_t len);
+							   size_t len);
 
 #ifdef CONFIG_NATIVE_WINDOWS
 void wpa_unicode2ascii_inplace(TCHAR *str);
-TCHAR * wpa_strdup_tchar(const char *str);
+TCHAR *wpa_strdup_tchar(const char *str);
 #else /* CONFIG_NATIVE_WINDOWS */
-#define wpa_unicode2ascii_inplace(s) do { } while (0)
+#define wpa_unicode2ascii_inplace(s) \
+	do                               \
+	{                                \
+	} while (0)
 #define wpa_strdup_tchar(s) strdup((s))
 #endif /* CONFIG_NATIVE_WINDOWS */
 
 void printf_encode(char *txt, size_t maxlen, const u8 *data, size_t len);
 size_t printf_decode(u8 *buf, size_t maxlen, const char *str);
 
-const char * wpa_ssid_txt(const u8 *ssid, size_t ssid_len);
+const char *wpa_ssid_txt(const u8 *ssid, size_t ssid_len);
 
-char * wpa_config_parse_string(const char *value, size_t *len);
+char *wpa_config_parse_string(const char *value, size_t *len);
 int is_hex(const u8 *data, size_t len);
 int find_first_bit(u32 value);
 size_t merge_byte_arrays(u8 *res, size_t res_len,
-			 const u8 *src1, size_t src1_len,
-			 const u8 *src2, size_t src2_len);
-char * dup_binstr(const void *src, size_t len);
+						 const u8 *src1, size_t src1_len,
+						 const u8 *src2, size_t src2_len);
+char *dup_binstr(const void *src, size_t len);
 
 static inline int is_zero_ether_addr(const u8 *a)
 {
@@ -509,23 +505,24 @@ static inline int is_broadcast_ether_addr(const u8 *a)
 	return (a[0] & a[1] & a[2] & a[3] & a[4] & a[5]) == 0xff;
 }
 
-#define broadcast_ether_addr (const u8 *) "\xff\xff\xff\xff\xff\xff"
+#define broadcast_ether_addr (const u8 *)"\xff\xff\xff\xff\xff\xff"
 
 #include "wpa_debug.h"
 
-
-struct wpa_freq_range_list {
-	struct wpa_freq_range {
+struct wpa_freq_range_list
+{
+	struct wpa_freq_range
+	{
 		unsigned int min;
 		unsigned int max;
-	} *range;
+	} * range;
 	unsigned int num;
 };
 
 int freq_range_list_parse(struct wpa_freq_range_list *res, const char *value);
 int freq_range_list_includes(const struct wpa_freq_range_list *list,
-			     unsigned int freq);
-char * freq_range_list_str(const struct wpa_freq_range_list *list);
+							 unsigned int freq);
+char *freq_range_list_str(const struct wpa_freq_range_list *list);
 
 int int_array_len(const int *a);
 void int_array_concat(int **res, const int *a);
@@ -534,10 +531,8 @@ void int_array_add_unique(int **res, int a);
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 
-
 void str_clear_free(char *str);
 void bin_clear_free(void *bin, size_t len);
-
 
 /*
  * gcc 4.4 ends up generating strict-aliasing warnings about some very common
@@ -548,8 +543,8 @@ void bin_clear_free(void *bin, size_t len);
  * typecast from aliasing for now. A cleaner solution will hopefully be found
  * in the future to handle these cases.
  */
-void * __hide_aliasing_typecast(void *foo);
-#define aliasing_hide_typecast(a,t) (t *) (a) //__hide_aliasing_typecast((a))
+void *__hide_aliasing_typecast(void *foo);
+#define aliasing_hide_typecast(a, t) (t *)(a) //__hide_aliasing_typecast((a))
 
 //#define aliasing_hide_typecast(a,t) (t *) __hide_aliasing_typecast((a))
 
@@ -557,7 +552,10 @@ void * __hide_aliasing_typecast(void *foo);
 #include <valgrind/memcheck.h>
 #define WPA_MEM_DEFINED(ptr, len) VALGRIND_MAKE_MEM_DEFINED((ptr), (len))
 #else /* CONFIG_VALGRIND */
-#define WPA_MEM_DEFINED(ptr, len) do { } while (0)
+#define WPA_MEM_DEFINED(ptr, len) \
+	do                            \
+	{                             \
+	} while (0)
 #endif /* CONFIG_VALGRIND */
 
 #endif /* COMMON_H */

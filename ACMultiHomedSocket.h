@@ -17,7 +17,7 @@
  *                                                                                         *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
@@ -28,14 +28,13 @@
  * --------------------------------------------------------------------------------------- *
  * Project:  Capwap                                                                        *
  *                                                                                         *
- * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *  
+ * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *
  *           Del Moro Andrea (andrea_delmoro@libero.it)                                    *
  *           Giovannini Federica (giovannini.federica@gmail.com)                           *
  *           Massimo Vellucci (m.vellucci@unicampus.it)                                    *
  *           Mauro Bisson (mauro.bis@gmail.com)                                            *
  *******************************************************************************************/
 
- 
 #ifndef __CAPWAP_CWMultiHomedSocket_HEADER__
 #define __CAPWAP_CWMultiHomedSocket_HEADER__
 
@@ -44,11 +43,13 @@
 /*_____________________________________________________*/
 /*  *******************___TYPES___*******************  */
 
-typedef struct {
+typedef struct
+{
 	CWNetworkLev4Address addr;
 	CWNetworkLev4Address addrIPv4;
 	CWSocket sock;
-	enum {
+	enum
+	{
 		CW_PRIMARY,
 		CW_BROADCAST_OR_ALIAS
 	} kind;
@@ -58,8 +59,8 @@ typedef struct {
 	CWSocket dataSock;
 } CWMultiHomedInterface;
 
-
-typedef struct {
+typedef struct
+{
 	int count;
 	CWMultiHomedInterface *interfaces;
 } CWMultiHomedSocket;
@@ -67,20 +68,20 @@ typedef struct {
 /*_____________________________________________________*/
 /*  *******************___MACRO___*******************  */
 
-#define CW_COPY_MH_INTERFACE_PTR(int1, int2)		CW_COPY_NET_ADDR_PTR( &((int1)->addr), &((int2)->addr));	\
-							CW_COPY_NET_ADDR_PTR( &((int1)->addrIPv4), &((int2)->addrIPv4));\
-							(int1)->sock = (int2)->sock;					\
-							(int1)->dataSock = (int2)->dataSock;				\
-							(int1)->kind = (int2)->kind;	\
-							(int1)->systemIndex = (int2)->systemIndex;
-
+#define CW_COPY_MH_INTERFACE_PTR(int1, int2)                        \
+	CW_COPY_NET_ADDR_PTR(&((int1)->addr), &((int2)->addr));         \
+	CW_COPY_NET_ADDR_PTR(&((int1)->addrIPv4), &((int2)->addrIPv4)); \
+	(int1)->sock = (int2)->sock;                                    \
+	(int1)->dataSock = (int2)->dataSock;                            \
+	(int1)->kind = (int2)->kind;                                    \
+	(int1)->systemIndex = (int2)->systemIndex;
 
 /*__________________________________________________________*/
 /*  *******************___PROTOTYPES___*******************  */
 
 CWBool CWNetworkInitSocketServerMultiHomed(CWMultiHomedSocket *sockPtr, int port, char **multicastGroups, int multicastGroupsCount);
 void CWNetworkCloseMultiHomedSocket(CWMultiHomedSocket *sockPtr);
-CWBool CWNetworkUnsafeMultiHomed(CWMultiHomedSocket *sockPtr, void (*CWManageIncomingPacket) (CWSocket, char *, int, int, CWNetworkLev4Address*,CWBool), CWBool peekRead);
+CWBool CWNetworkUnsafeMultiHomed(CWMultiHomedSocket *sockPtr, void (*CWManageIncomingPacket)(CWSocket, char *, int, int, CWNetworkLev4Address *, CWBool), CWBool peekRead);
 int CWNetworkCountInterfaceAddresses(CWMultiHomedSocket *sockPtr);
 CWBool CWNetworkGetInterfaceAddresses(CWMultiHomedSocket *sockPtr, CWNetworkLev4Address **addressesPtr, struct sockaddr_in **IPv4AddressesPtr);
 
