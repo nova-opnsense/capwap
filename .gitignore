@@ -13,12 +13,14 @@ m4
 # openwrt
 # 
 .built
-.configured_[y]*
+.built_check
+.configured_*
 .gitignore
 .prepared
 .quilt_checked
 .source_dir
-ipkg-ipq/
+ipkg-*/
+.pkgdir/
 
 #
 # binaries

@@ -64,7 +64,7 @@ CFLAGS += -fgnu89-inline
 
 # Capwap Debugging
 CFLAGS += -DCW_DEBUGGING
-#CFLAGS += -DWRITE_STD_OUTPUT
+CFLAGS += -DWRITE_STD_OUTPUT
 #CFLAGS += -DSOFTMAC
 CFLAGS += -DOPENSSL_NO_KRB5
 
@@ -117,13 +117,13 @@ all: $(AC_NAME) $(WTP_NAME) $(WUA_NAME)
 # all: $(WTP_NAME)
 
 $(AC_NAME): $(AC_OBJS) 
-	$(CC) $(AC_OBJS) $(CC_FLAGS) $(OPENSSL_INCLUDE) $(LDFLAGS) -o $(AC_NAME) 
+	$(CC) $(AC_OBJS) $(CFLAGS) $(OPENSSL_INCLUDE) $(LDFLAGS) -o $(AC_NAME) 
 #-DSOFTMAC
 $(WTP_NAME): $(WTP_OBJS) 
-	$(CC) -DWRITE_STD_OUTPUT  $(WTP_OBJS) $(CC_FLAGS) -L$(LIB_PATH) $(LDFLAGS) -o $(WTP_NAME) 
+	$(CC) $(WTP_OBJS) $(CFLAGS) -L$(LIB_PATH) $(LDFLAGS) -o $(WTP_NAME) 
 
 $(WUA_NAME): $(WUA_OBJS) 
-	$(CC) $(WUA_OBJS) $(CC_FLAGS)  $(LDFLAGS) -o $(WUA_NAME) 
+	$(CC) $(WUA_OBJS) $(CFLAGS)  $(LDFLAGS) -o $(WUA_NAME) 
 
 clean: 
 	$(RM) $(AC_NAME) $(WTP_NAME) $(WUA_NAME) $(AC_OBJS) $(WTP_OBJS) $(WUA_OBJS) $(AC_DEPS) $(WTP_DEPS)
@@ -133,7 +133,7 @@ clean_deps:
 	
 deps: $(AC_SRC) $(WTP_SRC)
 	$(CC) -MD -E $(AC_SRCS) $(CFLAGS) >/dev/null
-	$(CC) -MD -E -DWRITE_STD_OUTPUT $(WTP_SRCS) $(CFLAGS) >/dev/null
+	$(CC) -MD -E $(WTP_SRCS) $(CFLAGS) >/dev/null
 
 -include $(AC_DEPS)
 -include $(WTP_DEPS)

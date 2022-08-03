@@ -147,6 +147,7 @@ void CWACEnterMainLoop()
 		exit(1);
 	}
 
+	CWLog("CW_REPEAT_FOREVER: thread_interface");
 	CW_REPEAT_FOREVER
 	{
 		/* CWACManageIncomingPacket will be called
@@ -1210,7 +1211,7 @@ void _CWCloseThread(int i)
 	//-- Elena Agostini: fake method to delete all node about that WTP
 	nodeAVL *tmp;
 
-	CWLog("AVL AC: \n");
+	CWLog("AVL AC:");
 	AVLdisplay_avl(avlTree);
 	CWLog("Now delete all STA of WTP %d", i);
 	CWThreadMutexLock(&(mutexAvlTree));

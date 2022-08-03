@@ -2,7 +2,7 @@
 #
 #
 #
-<CWMIN_VOICE>		2	
+<CWMIN_VOICE>		2
 <CWMAX_VOICE>		3
 <AIFS_VOICE>		1
 #
@@ -20,8 +20,9 @@
 <CWMIN_BACKGROUND>	4
 <CWMAX_BACKGROUND>	10
 <AIFS_BACKGROUND>	7
-
-
-<AC_HOSTAPD_PORT> 5543
-<AC_HOSTAPD_UNIX_PATH> /tmp/ac_ipc_hostapd
-
+#
+#
+<AC_HOSTAPD_PORT>	5543
+<AC_HOSTAPD_UNIX_PATH>	/tmp/ac_ipc_hostapd
+#
+#

@@ -17,7 +17,7 @@
  *                                                                                         *
  * In addition, as a special exception, the copyright holders give permission to link the  *
  * code of portions of this program with the OpenSSL library under certain conditions as   *
- * described in each individual source file, and distribute linked combinations including  * 
+ * described in each individual source file, and distribute linked combinations including  *
  * the two. You must obey the GNU General Public License in all respects for all of the    *
  * code used other than OpenSSL.  If you modify file(s) with this exception, you may       *
  * extend this exception to your version of the file(s), but you are not obligated to do   *
@@ -28,13 +28,12 @@
  * --------------------------------------------------------------------------------------- *
  * Project:  Capwap                                                                        *
  *                                                                                         *
- * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *  
+ * Author :  Ludovico Rossi (ludo@bluepixysw.com)                                          *
  *           Del Moro Andrea (andrea_delmoro@libero.it)                                    *
  *           Giovannini Federica (giovannini.federica@gmail.com)                           *
  *           Massimo Vellucci (m.vellucci@unicampus.it)                                    *
  *           Mauro Bisson (mauro.bis@gmail.com)                                            *
  *******************************************************************************************/
-
 
 #include "CWAC.h"
 
@@ -42,96 +41,107 @@
 #include "../dmalloc-5.5.0/dmalloc.h"
 #endif
 
-/* 
+/*
  * CW_FREE_WTP_MSG_ARRAY - free the array of the messages
  * to be sent relative to the WTP with the specified index.
- *	
+ *
  * ref -> BUG ML12
  * 20/10/2009 - Donato Capitella
  */
-static void inline CW_FREE_WTP_MSG_ARRAY(int WTPIndex) {
-        int i;
-        for(i = 0; i < gWTPs[WTPIndex].messagesCount; i++) {
-                CW_FREE_OBJECT(gWTPs[WTPIndex].messages[i].msg);
-        }
-        CW_FREE_OBJECT(gWTPs[WTPIndex].messages);
-        gWTPs[WTPIndex].messagesCount = 0;
+static void inline CW_FREE_WTP_MSG_ARRAY(int WTPIndex)
+{
+	int i;
+	for (i = 0; i < gWTPs[WTPIndex].messagesCount; i++)
+	{
+		CW_FREE_OBJECT(gWTPs[WTPIndex].messages[i].msg);
+	}
+	CW_FREE_OBJECT(gWTPs[WTPIndex].messages);
+	gWTPs[WTPIndex].messagesCount = 0;
 }
 
-CWBool CWACSendFragments(int WTPIndex) {
-	
+CWBool CWACSendFragments(int WTPIndex)
+{
+
 	int i;
-	
-	if(gWTPs[WTPIndex].messages == NULL) return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
-	
-	for(i = 0; i < gWTPs[WTPIndex].messagesCount; i++) {
+
+	if (gWTPs[WTPIndex].messages == NULL)
+		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
+
+	for (i = 0; i < gWTPs[WTPIndex].messagesCount; i++)
+	{
 #ifdef CW_NO_DTLS
-		if(!CWNetworkSendUnsafeUnconnected(	gWTPs[WTPIndex].socket, 
-							&gWTPs[WTPIndex].address, 
-							gWTPs[WTPIndex].messages[i].msg, 
-							gWTPs[WTPIndex].messages[i].offset)	) {
+		if (!CWNetworkSendUnsafeUnconnected(gWTPs[WTPIndex].socket,
+											&gWTPs[WTPIndex].address,
+											gWTPs[WTPIndex].messages[i].msg,
+											gWTPs[WTPIndex].messages[i].offset))
+		{
 #else
-		if(!(CWSecuritySend(gWTPs[WTPIndex].session, gWTPs[WTPIndex].messages[i].msg, gWTPs[WTPIndex].messages[i].offset))) {
+		if (!(CWSecuritySend(gWTPs[WTPIndex].session, gWTPs[WTPIndex].messages[i].msg, gWTPs[WTPIndex].messages[i].offset)))
+		{
 #endif
 			return CW_FALSE;
 		}
 	}
-	
-	/*
-         * BUG - ML12
-         *
-         * 20/10/2009 - Donato Capitella
-         */
-        CW_FREE_WTP_MSG_ARRAY(WTPIndex);
 
-	CWLog("Message Sent\n");
-	
+	/*
+	 * BUG - ML12
+	 *
+	 * 20/10/2009 - Donato Capitella
+	 */
+	CW_FREE_WTP_MSG_ARRAY(WTPIndex);
+
+	CWLog("Message Sent");
+
 	return CW_TRUE;
 }
 
+CWBool CWACResendAcknowledgedPacket(int WTPIndex)
+{
+	if (!CWACSendFragments(WTPIndex))
+		return CW_FALSE;
 
-CWBool CWACResendAcknowledgedPacket(int WTPIndex) {
-	if(!CWACSendFragments(WTPIndex))
-	   return CW_FALSE;
-	
-	CWThreadSetSignals(SIG_BLOCK, 1, CW_SOFT_TIMER_EXPIRED_SIGNAL);	
-	if(!(CWTimerRequest(gCWRetransmitTimer, &(gWTPs[WTPIndex].thread), &(gWTPs[WTPIndex].currentPacketTimer), CW_SOFT_TIMER_EXPIRED_SIGNAL))) {
+	CWThreadSetSignals(SIG_BLOCK, 1, CW_SOFT_TIMER_EXPIRED_SIGNAL);
+	if (!(CWTimerRequest(gCWRetransmitTimer, &(gWTPs[WTPIndex].thread), &(gWTPs[WTPIndex].currentPacketTimer), CW_SOFT_TIMER_EXPIRED_SIGNAL)))
+	{
 		return CW_FALSE;
 	}
 	CWThreadSetSignals(SIG_UNBLOCK, 1, CW_SOFT_TIMER_EXPIRED_SIGNAL);
-	
+
 	return CW_TRUE;
 }
 
-
-__inline__ CWBool CWACSendAcknowledgedPacket(int WTPIndex, int msgType, int seqNum) {
+__inline__ CWBool CWACSendAcknowledgedPacket(int WTPIndex, int msgType, int seqNum)
+{
 	gWTPs[WTPIndex].retransmissionCount = 0;
 	gWTPs[WTPIndex].isRetransmitting = CW_TRUE;
-	gWTPs[WTPIndex].responseType=msgType;
-	gWTPs[WTPIndex].responseSeqNum=seqNum;
-//	CWDebugLog("~~~~~~seq num in Send: %d~~~~~~", gWTPs[WTPIndex].responseSeqNum);
+	gWTPs[WTPIndex].responseType = msgType;
+	gWTPs[WTPIndex].responseSeqNum = seqNum;
+	//	CWDebugLog("~~~~~~seq num in Send: %d~~~~~~", gWTPs[WTPIndex].responseSeqNum);
 	return CWACResendAcknowledgedPacket(WTPIndex);
 }
 
-
-void CWACStopRetransmission(int WTPIndex) {
-	if(gWTPs[WTPIndex].isRetransmitting) {
+void CWACStopRetransmission(int WTPIndex)
+{
+	if (gWTPs[WTPIndex].isRetransmitting)
+	{
 		int i;
 		CWDebugLog("Stop Retransmission");
 		gWTPs[WTPIndex].isRetransmitting = CW_FALSE;
-		CWThreadSetSignals(SIG_BLOCK, 1, CW_SOFT_TIMER_EXPIRED_SIGNAL);		
-		if(!CWTimerCancel(&(gWTPs[WTPIndex].currentPacketTimer)))
-			{CWDebugLog("Error Cancelling a Timer... possible error!");}
-		CWThreadSetSignals(SIG_UNBLOCK, 1, CW_SOFT_TIMER_EXPIRED_SIGNAL);	
-		gWTPs[WTPIndex].responseType=UNUSED_MSG_TYPE;
-		gWTPs[WTPIndex].responseSeqNum=0;
-		
-		for(i = 0; i < gWTPs[WTPIndex].messagesCount; i++) {
+		CWThreadSetSignals(SIG_BLOCK, 1, CW_SOFT_TIMER_EXPIRED_SIGNAL);
+		if (!CWTimerCancel(&(gWTPs[WTPIndex].currentPacketTimer)))
+		{
+			CWDebugLog("Error Cancelling a Timer... possible error!");
+		}
+		CWThreadSetSignals(SIG_UNBLOCK, 1, CW_SOFT_TIMER_EXPIRED_SIGNAL);
+		gWTPs[WTPIndex].responseType = UNUSED_MSG_TYPE;
+		gWTPs[WTPIndex].responseSeqNum = 0;
+
+		for (i = 0; i < gWTPs[WTPIndex].messagesCount; i++)
+		{
 			CW_FREE_PROTOCOL_MESSAGE(gWTPs[WTPIndex].messages[i]);
 		}
 
 		CW_FREE_OBJECT(gWTPs[WTPIndex].messages);
-//		CWDebugLog("~~~~~~ End of Stop Retransmission");
+		//		CWDebugLog("~~~~~~ End of Stop Retransmission");
 	}
 }
-
