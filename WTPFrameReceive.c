@@ -275,6 +275,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFrame(void *arg)
 		// EXIT_FRAME_THREAD(gRawSock);
 	}
 
+	CWLog("CW_REPEAT_FOREVER: CWWTPReceiveFrame()");
 	CW_REPEAT_FOREVER
 	{
 		n = recvfrom(gRawSock, buffer, sizeof(buffer), 0, NULL, NULL);

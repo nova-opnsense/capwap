@@ -2720,6 +2720,7 @@ CW_THREAD_RETURN_TYPE CWACReceiveDataChannel(void *arg)
 	}
 
 	/* Leggo i dati dalla packetList e li riscrivo decifrati */
+	CWLog("CW_REPEAT_FOREVER: CWACReceiveDataChannel()");
 	CW_REPEAT_FOREVER
 	{
 		countPacketDataList = 0;

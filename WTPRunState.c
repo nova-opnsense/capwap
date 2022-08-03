@@ -145,6 +145,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveDtlsPacket(void *arg)
 
 	CWLog("THREAD Receiver Control channel start");
 
+	CWLog("CW_REPEAT_FOREVER: CWWTPReceiveDtlsPacket()");
 	CW_REPEAT_FOREVER
 	{
 		CWThreadMutexLock(&gInterfaceMutex);
@@ -219,6 +220,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveDataPacket(void *arg)
 
 	CWLog("THREAD Receiver Data channel start on socket %d", sockDTLS);
 
+	CWLog("CW_REPEAT_FOREVER: CWWTPReceiveDataPacket()");
 	CW_REPEAT_FOREVER
 	{
 		CWThreadMutexLock(&gInterfaceMutex);
@@ -322,6 +324,7 @@ CW_THREAD_RETURN_TYPE CWWTPManageDataPacket(void *arg)
 
 	CWWTPKeepAliveDataTimerExpiredHandler(NULL);
 
+	CWLog("CW_REPEAT_FOREVER: CWWTPManageDataPacket()");
 	CW_REPEAT_FOREVER
 	{
 		/*
@@ -657,6 +660,7 @@ CWStateTransition CWWTPEnterRun()
 
 	wtpInRunState = 1;
 
+	CWLog("CW_REPEAT_FOREVER: CWWTPEnterRun()");
 	CW_REPEAT_FOREVER
 	{
 		CWBool bReceivePacket = CW_FALSE;

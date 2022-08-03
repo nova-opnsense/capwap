@@ -474,6 +474,7 @@ CWBool CWThreadTimedSemSetValue(CWThreadTimedSem *semPtr, int value)
 	timeout.tv_usec = 0;
 
 	// first, remove all the pending packets
+	CWLog("CW_REPEAT_FOREVER: CWThreadTimedSemSetValue()");
 	CW_REPEAT_FOREVER
 	{
 		char dummy;

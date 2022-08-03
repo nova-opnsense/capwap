@@ -909,6 +909,7 @@ CWBool CWProtocolParseFragment(char *buf, int readBytes, CWList *fragmentsListPt
 
 			CW_CREATE_PROTOCOL_MESSAGE(*reassembledMsg, (totalSize), return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
+			CWLog("CW_REPEAT_FOREVER: CWProtocolParseFragment()");
 			CW_REPEAT_FOREVER
 			{
 				CWBool found = CW_FALSE;

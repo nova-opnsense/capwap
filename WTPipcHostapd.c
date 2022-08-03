@@ -370,6 +370,7 @@ CW_THREAD_RETURN_TYPE CWWTPThread_read_data_from_hostapd(void *arg)
 	sig_byte += 5;
 #endif
 
+	CWLog("CW_REPEAT_FOREVER: CWWTPThread_read_data_from_hostapd()");
 	CW_REPEAT_FOREVER
 	{
 

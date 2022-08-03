@@ -182,6 +182,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 	 *	 Thread Main Loop	*
 	 ************************/
 
+	CWLog("CW_REPEAT_FOREVER: CWManageApplication()");
 	CW_REPEAT_FOREVER
 	{
 		memset(commandBuffer, 0, COMMAND_BUFFER_SIZE);
@@ -831,6 +832,7 @@ CW_THREAD_RETURN_TYPE CWInterface(void *arg)
 	 *			Main Loop			*
 	 ********************************/
 
+	CWLog("CW_REPEAT_FOREVER: CWInterface()");
 	CW_REPEAT_FOREVER
 	{
 		if ((conn_sock = accept(listen_sock, (struct sockaddr *)NULL, NULL)) > 0)

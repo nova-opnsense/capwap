@@ -152,6 +152,7 @@ CWBool CWReceiveMessage(CWProtocolMessage *msgPtr)
 	char buf[CW_BUFFER_SIZE];
 	CWBool dataFlag = CW_FALSE;
 
+	CWLog("CW_REPEAT_FOREVER: CWReceiveMessage()");
 	CW_REPEAT_FOREVER
 	{
 		CW_ZERO_MEMORY(buf, CW_BUFFER_SIZE);
@@ -281,6 +282,7 @@ CWBool CWReceiveDataMessage(CWProtocolMessage *msgPtr)
 	CWBool dataFlag = CW_TRUE;
 	char *pkt_buffer = NULL;
 
+	CWLog("CW_REPEAT_FOREVER: CWReceiveDataMessage()");
 	CW_REPEAT_FOREVER
 	{
 		CW_ZERO_MEMORY(buf, CW_BUFFER_SIZE);
@@ -448,6 +450,7 @@ CWBool CWWTPSendAcknowledgedPacket(int seqNum,
 		timewait.tv_sec = time(0) + gTimeToSleep;
 		timewait.tv_nsec = 0;
 
+		CWLog("CW_REPEAT_FOREVER: CWWTPSendAcknowledgedPacket()");
 		CW_REPEAT_FOREVER
 		{
 			CWThreadMutexLock(&gInterfaceMutex);
@@ -612,6 +615,7 @@ CWBool CWWTPRequestPacketRetransmissionCustomTimeInterval(int retransmissionTime
 		timewait.tv_sec = time(0) + gTimeToSleep;
 		timewait.tv_nsec = 0;
 
+		CWLog("CW_REPEAT_FOREVER: CWWTPRequestPacketRetransmissionCustomTimeInterval()");
 		CW_REPEAT_FOREVER
 		{
 			CWThreadMutexLock(&gInterfaceMutex);
@@ -883,6 +887,7 @@ int main(int argc, const char *argv[])
 		nextState = CW_ENTER_JOIN;
 
 	/* start CAPWAP state machine */
+	CWLog("CW_REPEAT_FOREVER: CWWTP::main()");
 	CW_REPEAT_FOREVER
 	{
 		switch (nextState)

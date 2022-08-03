@@ -147,7 +147,7 @@ void CWACEnterMainLoop()
 		exit(1);
 	}
 
-	CWLog("CW_REPEAT_FOREVER: thread_interface");
+	CWLog("CW_REPEAT_FOREVER: CWACEnterMainLoop()");
 	CW_REPEAT_FOREVER
 	{
 		/* CWACManageIncomingPacket will be called
@@ -742,6 +742,7 @@ CW_THREAD_RETURN_TYPE CWManageWTP(void *arg)
 
 	CWDebugLog("Path MTU for this Session: %d", gWTPs[i].pathMTU);
 
+	CWLog("CW_REPEAT_FOREVER: CWManageWTP()");
 	CW_REPEAT_FOREVER
 	{
 		int readBytes;
@@ -1408,6 +1409,7 @@ CW_THREAD_RETURN_TYPE CWGenericWTPDataHandshake(void *arg)
 	}
 
 	/* Leggo i dati dalla packetList e li riscrivo decifrati */
+	CWLog("CW_REPEAT_FOREVER: CWGenericWTPDataHandshake()");
 	CW_REPEAT_FOREVER
 	{
 		countPacketDataList = 0;

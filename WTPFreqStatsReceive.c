@@ -72,6 +72,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFreqStats(void *arg)
 		CWExitThread();
 	}
 
+	CWLog("CW_REPEAT_FOREVER: CWWTPReceiveFreqStats()");
 	CW_REPEAT_FOREVER /* Receive data Loop */
 	{
 		memset(buffer, 0, PACKET_SIZE);
@@ -113,7 +114,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFreqStats(void *arg)
 #ifdef CW_NO_DTLS
 									  CW_PACKET_PLAIN
 #else
-									   CW_PACKET_CRYPT
+									  CW_PACKET_CRYPT
 #endif
 									  ,
 									  0) == CW_TRUE)

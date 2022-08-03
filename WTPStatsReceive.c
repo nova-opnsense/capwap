@@ -92,6 +92,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveStats(void *arg)
 	fromlen = sizeof(from);
 
 	/*      Receive data */
+	CWLog("CW_REPEAT_FOREVER: CWWTPReceiveStats()");
 	CW_REPEAT_FOREVER
 	{
 		rlen = recvfrom(sock, buffer, PACKET_SIZE, 0, (struct sockaddr *)&from, (socklen_t *)&fromlen);

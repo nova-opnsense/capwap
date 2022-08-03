@@ -65,6 +65,7 @@ CWStateTransition CWWTPEnterSulking()
 
 	gettimeofday(&before, NULL);
 
+	CWLog("CW_REPEAT_FOREVER: CWWTPEnterSulking()");
 	CW_REPEAT_FOREVER
 	{
 

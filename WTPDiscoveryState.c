@@ -111,6 +111,7 @@ CWStateTransition CWWTPEnterDiscovery()
 	/* wait a random time */
 	sleep(CWRandomIntInRange(gCWDiscoveryInterval, gCWMaxDiscoveryInterval));
 
+	CWLog("CW_REPEAT_FOREVER: CWWTPEnterDiscovery()");
 	CW_REPEAT_FOREVER
 	{
 		CWBool sentSomething = CW_FALSE;
@@ -214,6 +215,7 @@ CWBool CWReadResponses()
 
 	gettimeofday(&before, NULL);
 
+	CWLog("CW_REPEAT_FOREVER: CWReadResponses()");
 	CW_REPEAT_FOREVER
 	{
 		/* check if something is available to read until newTimeout */
