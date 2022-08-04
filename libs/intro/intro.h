@@ -7,9 +7,11 @@
 
 #include <stdio.h>
 #include <time.h>
+#include "../dotenv/dotenv.h"
 
 void intro_noc();
 void intro_nova();
 void intro_now();
+void intro_ver();
 
 #endif

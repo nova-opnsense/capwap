@@ -72,10 +72,11 @@ CFLAGS += $(OPENSSL_INCLUDE)
 CFLAGS += -I$(INC_PATH)
 CFLAGS += -I./HostapdHeaders/utils/
 
-_COM_OBJS = 	timerlib.o \
+_COM_OBJS = timerlib.o \
 	./HostapdHeaders/utils/os_unix.o \
 	./libs/log/log.o \
 	./libs/intro/intro.o \
+	./libs/dotenv/dotenv.o \
 
 _CW_OBJS = CWRandom.o CWCommon.o CWConfigFile.o CWErrorHandling.o \
 	CWList.o CWSafeList.o CWNetwork.o CWProtocol.o \

@@ -127,23 +127,29 @@ int main(int argc, const char *argv[])
 	/* Daemon mode */
 
 	intro_now();
+	intro_ver();
 	intro_noc();
 
 	if (argc <= 1)
 	{
-		printf("Usage: AC working_path\n");
+		log_info("Usage: AC working_path");
+		log_fatal("Bye!");
 		exit(1);
 	}
 
 	int daemon_r = daemon(1, 1);
-	log_debug("daemon (%d)", daemon_r);
 	if (daemon_r < 0)
+	{
+		log_fatal("daemon failed: %d", daemon_r);
 		exit(1);
+	}
 
 	int chdir_r = chdir(argv[1]);
-	log_debug("chdir  (%d)", chdir_r);
 	if (chdir_r != 0)
+	{
+		log_fatal("chdir failed: %d", chdir_r);
 		exit(1);
+	}
 
 	CWACInit();
 	CWACEnterMainLoop();

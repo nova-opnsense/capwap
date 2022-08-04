@@ -56,6 +56,12 @@ void intro_now()
     struct tm *info = localtime(&now);
     char buf[64];
 
-    buf[strftime(buf, sizeof(buf), "[CW] %Y/%m/%d %H:%M:%S", info)] = '\0';
+    buf[strftime(buf, sizeof(buf), "%Y/%m/%d %H:%M:%S", info)] = '\0';
     printf("%s\n", buf);
+}
+
+void intro_ver()
+{
+    env_load("/data/config/capwap", false);
+    printf("%s %s\n", getenv("APP"), getenv("VERSION"));
 }
