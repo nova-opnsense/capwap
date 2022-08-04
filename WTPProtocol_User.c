@@ -179,7 +179,7 @@ __inline__ int CWWTPGetIPv4Address()
 	struct sockaddr_in myAddr;
 	unsigned int len = sizeof(myAddr);
 
-	// CWDebugLog("WTPGetIPv4Address");
+	// log_debug("WTPGetIPv4Address");
 
 	/* assume the socket is connected */
 	getsockname(gWTPSocket, (struct sockaddr *)&myAddr, &len);
@@ -417,7 +417,7 @@ int getInterfaceMacAddr(char *interface, unsigned char *macAddr)
 	sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if (sock < 0)
 	{
-		CWLog("Error Creating Socket for ioctl");
+		log_debug("Error Creating Socket for ioctl");
 		return -1;
 	}
 
@@ -476,13 +476,13 @@ int initWTPSessionID(char *sessionID)
 	CW_COPY_MEMORY(&(sessionID[MAC_ADDR_LEN]), macAddr1, MAC_ADDR_LEN);
 	CW_COPY_MEMORY(&(sessionID[MAC_ADDR_LEN+MAC_ADDR_LEN]),&(randomInteger), 4);
 
-	CWLog("################################ SESSION ID: ");
+	log_debug("################################ SESSION ID: ");
 	for (i=0;i<16;i++)
 	{
-		if (i%16==0) CWLog("\n%04x:   ", i);
-		CWLog("%02x:", sessionID[i]);
+		if (i%16==0) log_debug("\n%04x:   ", i);
+		log_debug("%02x:", sessionID[i]);
 	}
-	CWLog("\n");
+	log_debug("\n");
 
 	return 0;*/
 }

@@ -266,9 +266,9 @@ CWBool CW80211AssembleIESupportedRates(char *frame, int *offset, char *value, in
 	/*int i=0;
 	for(i=0; i<numRates; i++)
 	{
-		//CWLog("value prima: %u %x", value[i],value[i]);
+		//log_debug("value prima: %u %x", value[i],value[i]);
 		value[i] = (char)(((int)value[i])+128);
-		//CWLog("value dopo: %u %x", value[i], value[i]);
+		//log_debug("value dopo: %u %x", value[i], value[i]);
 	}*/
 	CW_COPY_MEMORY((frame + IE_TYPE_LEN + IE_SIZE_LEN), value, numRates);
 	(*offset) += numRates;
@@ -549,10 +549,10 @@ ParseRes ieee802_11_parse_elems(const u8 *start, size_t len,
 		{
 			if (show_errors)
 			{
-				CWLog("IEEE 802.11 element "
-					  "parse failed (id=%d elen=%d "
-					  "left=%lu)",
-					  id, elen, (unsigned long)left);
+				log_debug("IEEE 802.11 element "
+						  "parse failed (id=%d elen=%d "
+						  "left=%lu)",
+						  id, elen, (unsigned long)left);
 				// wpa_hexdump(MSG_MSGDUMP, "IEs", start, len);
 			}
 			return ParseFailed;
@@ -563,12 +563,12 @@ ParseRes ieee802_11_parse_elems(const u8 *start, size_t len,
 		case WLAN_EID_SSID:
 			elems->ssid = pos;
 			elems->ssid_len = elen;
-			CWLog("SSID[0]: %c", elems->ssid[0]);
+			log_debug("SSID[0]: %c", elems->ssid[0]);
 			break;
 		case WLAN_EID_SUPP_RATES:
 			elems->supp_rates = pos;
 			elems->supp_rates_len = elen;
-			CWLog("SUPP RATES[0]: %c", elems->supp_rates[0]);
+			log_debug("SUPP RATES[0]: %c", elems->supp_rates[0]);
 			break;
 		case WLAN_EID_DS_PARAMS:
 			elems->ds_params = pos;
@@ -673,9 +673,9 @@ ParseRes ieee802_11_parse_elems(const u8 *start, size_t len,
 			unknown++;
 			if (!show_errors)
 				break;
-			CWLog("IEEE 802.11 element parse "
-				  "ignored unknown element (id=%d elen=%d)",
-				  id, elen);
+			log_debug("IEEE 802.11 element parse "
+					  "ignored unknown element (id=%d elen=%d)",
+					  id, elen);
 			break;
 		}
 
@@ -745,7 +745,7 @@ char *CW80211AssembleProbeResponse(WTPBSSInfo *WTPBSSInfoPtr, struct CWFrameProb
 	if (request == NULL)
 		return NULL;
 
-	CWLog("[CW80211] Assemble Probe response per SSID: %s", WTPBSSInfoPtr->interfaceInfo->ifName);
+	log_debug("[CW80211] Assemble Probe response per SSID: %s", WTPBSSInfoPtr->interfaceInfo->ifName);
 	(*offset) = 0;
 	/* ***************** PROBE RESPONSE FRAME FIXED ******************** */
 	char *frameProbeResponse;
@@ -809,13 +809,13 @@ char *CW80211AssembleProbeResponse(WTPBSSInfo *WTPBSSInfoPtr, struct CWFrameProb
 			suppRate[indexRates] == 11 ||
 			suppRate[indexRates] == 22)
 			suppRate[indexRates] += 128;
-		CWLog("supp rate1: %d - rate2: %d", request->supportedRates[indexRates], suppRate[indexRates]);
+		log_debug("supp rate1: %d - rate2: %d", request->supportedRates[indexRates], suppRate[indexRates]);
 	}
 
 	if (!CW80211AssembleIESupportedRates(&(frameProbeResponse[(*offset)]), offset, suppRate, indexRates))
 		return NULL;
 
-	CWLog("Ext Rate Len: %d", request->extSupportedRatesLen);
+	log_debug("Ext Rate Len: %d", request->extSupportedRatesLen);
 	if (request->extSupportedRatesLen > 0)
 	{
 		indexRates = 0;
@@ -823,7 +823,7 @@ char *CW80211AssembleProbeResponse(WTPBSSInfo *WTPBSSInfoPtr, struct CWFrameProb
 		for (indexRates = 0; indexRates < WTP_NL80211_BITRATE_NUM && indexRates < CW_80211_MAX_SUPP_RATES && indexRates < request->extSupportedRatesLen; indexRates++)
 		{
 			extSuppRate[indexRates] = (char)request->extSupportedRates[indexRates];
-			CWLog("ext rate1: %d - rate2: %d", request->extSupportedRates[indexRates], extSuppRate[indexRates]);
+			log_debug("ext rate1: %d - rate2: %d", request->extSupportedRates[indexRates], extSuppRate[indexRates]);
 		}
 
 		if (!CW80211AssembleIEExtendedSupportedRates(&(frameProbeResponse[(*offset)]), offset, extSuppRate, indexRates))
@@ -858,7 +858,7 @@ char *CW80211AssembleAuthResponse(char *addrAP, struct CWFrameAuthRequest *reque
 	if (request == NULL)
 		return NULL;
 
-	CWLog("[CW80211] Assemble Auth response");
+	log_debug("[CW80211] Assemble Auth response");
 	(*offset) = 0;
 
 	/* ***************** FRAME FIXED ******************** */
@@ -919,7 +919,7 @@ char *CW80211AssembleAssociationResponse(WTPBSSInfo *WTPBSSInfoPtr, WTPSTAInfo *
 	if (request == NULL)
 		return NULL;
 
-	CWLog("[CW80211] Assemble Association response");
+	log_debug("[CW80211] Assemble Association response");
 
 	(*offset) = 0;
 
@@ -985,7 +985,7 @@ char *CW80211AssembleAssociationResponse(WTPBSSInfo *WTPBSSInfoPtr, WTPSTAInfo *
 			suppRate[indexRates] == 22)
 			suppRate[indexRates] += 128;
 
-		CWLog("sup rate1: %d - rate2: %d", thisSTA->supportedRates[indexRates], suppRate[indexRates]);
+		log_debug("sup rate1: %d - rate2: %d", thisSTA->supportedRates[indexRates], suppRate[indexRates]);
 	}
 	//(char) thisSTA->supportedRates[indexRates];//(char) mapSupportedRatesValues(WTPBSSInfoPtr->phyInfo->phyMbpsSet[indexRates], CW_80211_SUPP_RATES_CONVERT_VALUE_TO_FRAME);
 
@@ -1003,7 +1003,7 @@ char *CW80211AssembleAssociationResponse(WTPBSSInfo *WTPBSSInfoPtr, WTPSTAInfo *
 		for (indexRates = 0; indexRates < WTP_NL80211_BITRATE_NUM && indexRates < CW_80211_MAX_SUPP_RATES && indexRates < thisSTA->extSupportedRatesLen; indexRates++)
 		{
 			extSuppRate[indexRates] = (char)thisSTA->extSupportedRates[indexRates]; //(char) mapSupportedRatesValues(thisSTA->supportedRates[indexRates], CW_80211_SUPP_RATES_CONVERT_VALUE_TO_FRAME);
-			CWLog("ext rate1: %d - rate2: %d", thisSTA->extSupportedRates[indexRates], extSuppRate[indexRates]);
+			log_debug("ext rate1: %d - rate2: %d", thisSTA->extSupportedRates[indexRates], extSuppRate[indexRates]);
 		}
 
 		if (!CW80211AssembleIEExtendedSupportedRates(&(frameAssociationResponse[(*offset)]), offset, extSuppRate, indexRates))
@@ -1025,7 +1025,7 @@ char *CW80211AssembleReassociationResponse(WTPBSSInfo *WTPBSSInfoPtr, WTPSTAInfo
 	if (request == NULL)
 		return NULL;
 
-	CWLog("[CW80211] Assemble Association response");
+	log_debug("[CW80211] Assemble Association response");
 
 	(*offset) = 0;
 
@@ -1090,7 +1090,7 @@ char *CW80211AssembleReassociationResponse(WTPBSSInfo *WTPBSSInfoPtr, WTPSTAInfo
 			suppRate[indexRates] == 22)
 			suppRate[indexRates] += 128;
 
-		CWLog("rate1: %d - rate2: %d", thisSTA->supportedRates[indexRates], suppRate[indexRates]);
+		log_debug("rate1: %d - rate2: %d", thisSTA->supportedRates[indexRates], suppRate[indexRates]);
 	}
 
 	if (!CW80211AssembleIESupportedRates(&(frameAssociationResponse[(*offset)]), offset, suppRate, indexRates))
@@ -1103,7 +1103,7 @@ char *CW80211AssembleReassociationResponse(WTPBSSInfo *WTPBSSInfoPtr, WTPSTAInfo
 		for (indexRates = 0; indexRates < WTP_NL80211_BITRATE_NUM && indexRates < CW_80211_MAX_SUPP_RATES && indexRates < thisSTA->extSupportedRatesLen; indexRates++)
 		{
 			extSuppRate[indexRates] = (char)thisSTA->extSupportedRates[indexRates]; //(char) mapSupportedRatesValues(thisSTA->supportedRates[indexRates], CW_80211_SUPP_RATES_CONVERT_VALUE_TO_FRAME);
-			CWLog("rate1: %d - rate2: %d", thisSTA->extSupportedRates[indexRates], extSuppRate[indexRates]);
+			log_debug("rate1: %d - rate2: %d", thisSTA->extSupportedRates[indexRates], extSuppRate[indexRates]);
 		}
 
 		if (!CW80211AssembleIEExtendedSupportedRates(&(frameAssociationResponse[(*offset)]), offset, extSuppRate, indexRates))
@@ -1118,7 +1118,7 @@ char *CW80211AssembleAssociationResponseAC(unsigned char *MACAddr, unsigned char
 	if (request == NULL || BSSID == NULL || MACAddr == NULL || suppRate == NULL)
 		return NULL;
 
-	CWLog("[CW80211] Assemble Association response AC side");
+	log_debug("[CW80211] Assemble Association response AC side");
 
 	(*offset) = 0;
 
@@ -1177,7 +1177,7 @@ char *CW80211AssembleReassociationResponseAC(unsigned char *MACAddr, unsigned ch
 	if (request == NULL || BSSID == NULL || MACAddr == NULL || suppRate == NULL)
 		return NULL;
 
-	CWLog("[CW80211] Assemble Reassociation response AC side");
+	log_debug("[CW80211] Assemble Reassociation response AC side");
 
 	(*offset) = 0;
 
@@ -1233,7 +1233,7 @@ char *CW80211AssembleACK(WTPBSSInfo *WTPBSSInfoPtr, char *DA, int *offset)
 	if (DA == NULL)
 		return NULL;
 
-	CWLog("[CW80211] Assemble ACK response per SSID: %s", WTPBSSInfoPtr->interfaceInfo->ifName);
+	log_debug("[CW80211] Assemble ACK response per SSID: %s", WTPBSSInfoPtr->interfaceInfo->ifName);
 	(*offset) = 0;
 	/* ***************** PROBE RESPONSE FRAME FIXED ******************** */
 	char *frameACK;
@@ -1259,7 +1259,7 @@ unsigned char *CW80211AssembleDataFrameHdr(unsigned char *SA, unsigned char *DA,
 	if (DA == NULL || SA == NULL)
 		return NULL;
 
-	//	CWLog("****** 802.11 FRAME HDR ******");
+	//	log_debug("****** 802.11 FRAME HDR ******");
 	(*offset) = 0;
 
 	unsigned char *frameACK;
@@ -1279,41 +1279,41 @@ unsigned char *CW80211AssembleDataFrameHdr(unsigned char *SA, unsigned char *DA,
 		if (!CW80211AssembleIEAddr(&(frameACK[(*offset)]), offset, BSSID))
 			return NULL;
 		/*		if(BSSID != NULL)
-					CWLog("** BSSID: %02x:%02x:%02x:%02x:%02x", (int)BSSID[0], (int)BSSID[1], (int)BSSID[2], (int)BSSID[3], (int)BSSID[4], (int)BSSID[5]);
+					log_debug("** BSSID: %02x:%02x:%02x:%02x:%02x", (int)BSSID[0], (int)BSSID[1], (int)BSSID[2], (int)BSSID[3], (int)BSSID[4], (int)BSSID[5]);
 		*/
 		// SA: 6 byte
 		if (!CW80211AssembleIEAddr(&(frameACK[(*offset)]), offset, SA))
 			return NULL;
-		//		CWLog("** SA: %02x:%02x:%02x:%02x:%02x", (int)SA[0], (int)SA[1], (int)SA[2], (int)SA[3], (int)SA[4], (int)SA[5]);
+		//		log_debug("** SA: %02x:%02x:%02x:%02x:%02x", (int)SA[0], (int)SA[1], (int)SA[2], (int)SA[3], (int)SA[4], (int)SA[5]);
 
 		// DA: 6 byte
 		if (!CW80211AssembleIEAddr(&(frameACK[(*offset)]), offset, DA))
 			return NULL;
-		//		CWLog("** DA: %02x:%02x:%02x:%02x:%02x", (int)DA[0], (int)DA[1], (int)DA[2], (int)DA[3], (int)DA[4], (int)DA[5]);
+		//		log_debug("** DA: %02x:%02x:%02x:%02x:%02x", (int)DA[0], (int)DA[1], (int)DA[2], (int)DA[3], (int)DA[4], (int)DA[5]);
 	}
 	else if (fromDS == 1 && toDS == 0)
 	{
 		// DA: 6 byte
 		if (!CW80211AssembleIEAddr(&(frameACK[(*offset)]), offset, DA))
 			return NULL;
-		//		CWLog("** DA: %02x:%02x:%02x:%02x:%02x", (int)DA[0], (int)DA[1], (int)DA[2], (int)DA[3], (int)DA[4], (int)DA[5]);
+		//		log_debug("** DA: %02x:%02x:%02x:%02x:%02x", (int)DA[0], (int)DA[1], (int)DA[2], (int)DA[3], (int)DA[4], (int)DA[5]);
 
 		// BSSID: 6 byte
 		if (!CW80211AssembleIEAddr(&(frameACK[(*offset)]), offset, BSSID))
 			return NULL;
 
 		/*		if(BSSID != NULL)
-					CWLog("** BSSID: %02x:%02x:%02x:%02x:%02x", (int)BSSID[0], (int)BSSID[1], (int)BSSID[2], (int)BSSID[3], (int)BSSID[4], (int)BSSID[5]);
+					log_debug("** BSSID: %02x:%02x:%02x:%02x:%02x", (int)BSSID[0], (int)BSSID[1], (int)BSSID[2], (int)BSSID[3], (int)BSSID[4], (int)BSSID[5]);
 		*/
 		// SA: 6 byte
 		if (!CW80211AssembleIEAddr(&(frameACK[(*offset)]), offset, SA))
 			return NULL;
-		//		CWLog("** SA: %02x:%02x:%02x:%02x:%02x", (int)SA[0], (int)SA[1], (int)SA[2], (int)SA[3], (int)SA[4], (int)SA[5]);
+		//		log_debug("** SA: %02x:%02x:%02x:%02x:%02x", (int)SA[0], (int)SA[1], (int)SA[2], (int)SA[3], (int)SA[4], (int)SA[5]);
 	}
 	else
 		return NULL;
 
-	// CWLog("SeqCtl: %d nhtons: %d", seqctl, ntohs(seqctl));
+	// log_debug("SeqCtl: %d nhtons: %d", seqctl, ntohs(seqctl));
 	// 2 (sequence ctl)
 	if (!CW80211AssembleIESequenceNumber(&(frameACK[(*offset)]), offset, seqctl))
 		return NULL;
@@ -1634,7 +1634,7 @@ CWBool CW80211ParseDataFrameToDS(char *frame, struct CWFrameDataHdr *dataFrame)
 	if (!CW80211ParseFrameIESeqCtrl((frame + offset), &(offset), &(dataFrame->seqCtrl)))
 		return CW_FALSE;
 
-	CWLog("Parse seqctl: %d, ntohs: %d", dataFrame->seqCtrl, ntohs(dataFrame->seqCtrl));
+	log_debug("Parse seqctl: %d, ntohs: %d", dataFrame->seqCtrl, ntohs(dataFrame->seqCtrl));
 
 	return CW_TRUE;
 }

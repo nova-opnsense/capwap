@@ -50,7 +50,7 @@ int tun_alloc(char *dev, int flags)
     /* try to create the device */
     if ((err = ioctl(fd, TUNSETIFF, (void *)&ifr)) < 0)
     {
-        CWLog("Err to creater tap device");
+        log_debug("Err to creater tap device");
         close(fd);
         return err;
     }
@@ -72,7 +72,7 @@ int init_AC_tap_interface(int WTPIndex)
 
     gWTPs[WTPIndex].tap_fd = tun_alloc(gWTPs[WTPIndex].tap_name, IFF_TAP | IFF_NO_PI);
 
-    CWDebugLog("gWTPs[%d].tap_name %s,tap_fd %d", WTPIndex, gWTPs[WTPIndex].tap_name, gWTPs[WTPIndex].tap_fd);
+    log_debug("gWTPs[%d].tap_name %s,tap_fd %d", WTPIndex, gWTPs[WTPIndex].tap_name, gWTPs[WTPIndex].tap_fd);
 
     return 0;
 }
@@ -83,7 +83,7 @@ CWBool CWACTapInterfaceInit()
     CW_CREATE_ARRAY_CALLOC_ERR(ACTap_name, 7, char, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
     sprintf(ACTap_name, "AC_tap", 6);
     ACTap_FD = tun_alloc(ACTap_name, IFF_TAP | IFF_NO_PI);
-    CWLog("ACTap_name:%s, ACTap_FD:%d", ACTap_name, ACTap_FD);
+    log_debug("ACTap_name:%s, ACTap_FD:%d", ACTap_name, ACTap_FD);
 
     return CW_TRUE;
 }

@@ -284,7 +284,7 @@ extern char *wtpLogFile;
 
 #include "CWStevens.h"
 #include "config.h"
-#include "CWLog.h"
+#include "./libs/log/log.h"
 #include "CWErrorHandling.h"
 
 #include "CWRandom.h"

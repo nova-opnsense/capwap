@@ -121,11 +121,11 @@ int CWFindPendingRequestMsgsBox(CWPendingRequestMessage *pendingRequestMsgs,
 
 	if (pendingRequestMsgs == NULL)
 		return -1;
-	/* CWDebugLog("### TYPE = %d   SEQNUM = %d", msgType, seqNum); */
+	/* log_debug("### TYPE = %d   SEQNUM = %d", msgType, seqNum); */
 	int k;
 	for (k = 0; k < length; k++)
 	{
-		/* CWDebugLog("### K = %d   TYPE = %d   SEQNUM = %d", k, pendingRequestMsgs[k].msgType, pendingRequestMsgs[k].seqNum); */
+		/* log_debug("### K = %d   TYPE = %d   SEQNUM = %d", k, pendingRequestMsgs[k].msgType, pendingRequestMsgs[k].seqNum); */
 		if ((pendingRequestMsgs[k].seqNum == seqNum) && (pendingRequestMsgs[k].msgType == msgType))
 		{
 

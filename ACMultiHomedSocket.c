@@ -182,19 +182,19 @@ CWBool CWNetworkInitSocketServerMultiHomed(CWMultiHomedSocket *sockPtr,
 		sock_set_port_cw(ifi->ifi_addr, htons(port));
 
 		struct sockaddr_in *tmpAddr = (struct sockaddr_in *)ifi->ifi_addr;
-		CWLog("ip: %s port: %d", inet_ntoa(tmpAddr->sin_addr), htons(tmpAddr->sin_port));
+		log_debug("ip: %s port: %d", inet_ntoa(tmpAddr->sin_addr), htons(tmpAddr->sin_port));
 
 		if (bind(sock, (struct sockaddr *)ifi->ifi_addr, CWNetworkGetAddressSize((CWNetworkLev4Address *)ifi->ifi_addr)) < 0)
 		{
 
 			close(sock);
-			CWUseSockNtop(ifi->ifi_addr, CWDebugLog("failed %s", str););
+			CWUseSockNtop(ifi->ifi_addr, log_debug("failed %s", str););
 			continue;
 			/* CWNetworkRaiseSystemError(CW_ERROR_CREATING); */
 		}
 
 		CWUseSockNtop(ifi->ifi_addr,
-					  CWLog("bound %s (%d, %s)", str, ifi->ifi_index, ifi->ifi_name););
+					  log_debug("bound %s (%d, %s)", str, ifi->ifi_index, ifi->ifi_name););
 
 		/* store socket inside multihomed socket */
 		CW_CREATE_OBJECT_ERR(p, CWMultiHomedInterface, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
@@ -203,7 +203,7 @@ CWBool CWNetworkInitSocketServerMultiHomed(CWMultiHomedSocket *sockPtr,
 			strncmp(ifi->ifi_name, "lo", 2))
 		{ /* don't consider loopback an interface
 (even if we accept packets from loopback) */
-			CWDebugLog("Primary Address");
+			log_debug("Primary Address");
 			p->kind = CW_PRIMARY;
 		}
 		else
@@ -247,13 +247,13 @@ CWBool CWNetworkInitSocketServerMultiHomed(CWMultiHomedSocket *sockPtr,
 		if (bind(sock, (struct sockaddr *)ifi->ifi_addr, CWNetworkGetAddressSize((CWNetworkLev4Address *)ifi->ifi_addr)) < 0)
 		{
 			close(sock);
-			CWUseSockNtop(ifi->ifi_addr, CWDebugLog("failed %s", str););
+			CWUseSockNtop(ifi->ifi_addr, log_debug("failed %s", str););
 			continue;
 			/* CWNetworkRaiseSystemError(CW_ERROR_CREATING); */
 		}
 
 		CWUseSockNtop(ifi->ifi_addr,
-					  CWLog("Data channel bound %s (%d, %s)", str, ifi->ifi_index, ifi->ifi_name););
+					  log_debug("Data channel bound %s (%d, %s)", str, ifi->ifi_index, ifi->ifi_name););
 
 		CW_COPY_NET_ADDR_PTR(&(p->dataAddr), ifi->ifi_addr);
 
@@ -291,13 +291,13 @@ CWBool CWNetworkInitSocketServerMultiHomed(CWMultiHomedSocket *sockPtr,
 				if (errno == EADDRINUSE)
 				{
 					CWUseSockNtop(ifi->ifi_brdaddr,
-								  CWDebugLog("EADDRINUSE: %s", str););
+								  log_debug("EADDRINUSE: %s", str););
 					continue;
 				}
 				else
 				{
 					CWUseSockNtop(ifi->ifi_brdaddr,
-								  CWDebugLog("failed %s", str););
+								  log_debug("failed %s", str););
 					continue;
 					/* CWDeleteList(&interfaceList, CWNetworkDeleteMHInterface); */
 					/* CWNetworkRaiseSystemError(CW_ERROR_CREATING); */
@@ -305,10 +305,10 @@ CWBool CWNetworkInitSocketServerMultiHomed(CWMultiHomedSocket *sockPtr,
 			}
 
 			CWUseSockNtop(ifi->ifi_brdaddr,
-						  CWLog("bound %s (%d, %s)",
-								str,
-								ifi->ifi_index,
-								ifi->ifi_name););
+						  log_debug("bound %s (%d, %s)",
+									str,
+									ifi->ifi_index,
+									ifi->ifi_name););
 
 			/* store socket inside multihomed socket */
 
@@ -381,7 +381,7 @@ CWBool CWNetworkInitSocketServerMultiHomed(CWMultiHomedSocket *sockPtr,
 			CW_COPY_NET_ADDR_PTR(&(s->addrIPv4), ifi->ifi_addr);
 
 			CWUseSockNtop(&(s->addrIPv4),
-						  CWDebugLog("IPv4 address %s (%d, %s)", str, ifi->ifi_index, ifi->ifi_name););
+						  log_debug("IPv4 address %s (%d, %s)", str, ifi->ifi_index, ifi->ifi_name););
 		}
 		/* get_ifi_info returned an error */
 		if (ifihead == NULL)
@@ -450,7 +450,7 @@ success:
 	}
 
 	CWUseSockNtop(&wildaddr,
-				  CWLog("bound %s", str););
+				  log_debug("bound %s", str););
 
 	CW_CREATE_OBJECT_ERR(p, CWMultiHomedInterface, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 	/*
@@ -490,7 +490,7 @@ success:
 		/* endianness will be handled by getaddrinfo */
 		snprintf(serviceName, 5, "%d", CW_CONTROL_PORT);
 
-		CWLog("Joining Multicast Group: %s...", multicastGroups[i]);
+		log_debug("Joining Multicast Group: %s...", multicastGroups[i]);
 
 		if (getaddrinfo(multicastGroups[i], serviceName, &hints, &res) != 0)
 		{
@@ -526,7 +526,7 @@ success:
 		}
 
 		CWUseSockNtop((res->ai_addr),
-					  CWLog("Joined Multicast Group: %s", str););
+					  log_debug("Joined Multicast Group: %s", str););
 
 		CW_CREATE_OBJECT_ERR(p, CWMultiHomedInterface,
 							 return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
@@ -671,11 +671,11 @@ CWBool CWNetworkUnsafeMultiHomed(CWMultiHomedSocket *sockPtr,
 	if (FD_ISSET(ACTap_FD, &fset))
 	{
 		readBytes = read(ACTap_FD, buf, CW_BUFFER_SIZE); // Todd: read from TAP then forward to WTP through data channel
-		//	CWLog("ACTap_FD:%d is set,data(%d bytes)", i, ACTap_FD, readBytes);
+		//	log_debug("ACTap_FD:%d is set,data(%d bytes)", i, ACTap_FD, readBytes);
 
 		if (readBytes < 0)
 		{
-			CWLog("Reading from tap interface");
+			log_debug("Reading from tap interface");
 			perror("Reading from interface");
 			// Elena: Chiudere l'interfaccia per un errore?
 			//				close(gWTPs[i].tap_fd);
@@ -698,7 +698,7 @@ CWBool CWNetworkUnsafeMultiHomed(CWMultiHomedSocket *sockPtr,
 
 		if (WTPIndexFromSta == -1)
 		{
-			//			CWLog("BROADCAST");
+			//			log_debug("BROADCAST");
 			for (indexWTP = 0; indexWTP < gMaxWTPs; indexWTP++)
 			{
 				for (indexRadio = 0; indexRadio < gWTPs[indexWTP].WTPProtocolManager.radiosInfo.radioCount; indexRadio++)
@@ -710,7 +710,7 @@ CWBool CWNetworkUnsafeMultiHomed(CWMultiHomedSocket *sockPtr,
 							gWTPs[indexWTP].WTPProtocolManager.radiosInfo.radiosInfo[indexRadio].gWTPPhyInfo.interfaces[indexWlan].BSSID != NULL)
 						{
 
-							//				CWLog("Invio a WTP %d radio %d wlan %d bssid: %02x", indexWTP, indexRadio, indexWlan, (int)gWTPs[indexWTP].WTPProtocolManager.radiosInfo.radiosInfo[indexRadio].gWTPPhyInfo.interfaces[indexWlan].BSSID[0]);
+							//				log_debug("Invio a WTP %d radio %d wlan %d bssid: %02x", indexWTP, indexRadio, indexWlan, (int)gWTPs[indexWTP].WTPProtocolManager.radiosInfo.radiosInfo[indexRadio].gWTPPhyInfo.interfaces[indexWlan].BSSID[0]);
 
 							CW_COPY_MEMORY(
 								(buf80211 + LEN_IE_FRAME_CONTROL + LEN_IE_DURATION + ETH_ALEN),
@@ -752,7 +752,7 @@ CWBool CWNetworkUnsafeMultiHomed(CWMultiHomedSocket *sockPtr,
 
 							if (dataSocket == 0)
 							{
-								CWLog("data socket of WTP isn't ready.");
+								log_debug("data socket of WTP isn't ready.");
 								goto after_tap;
 							}
 
@@ -770,7 +770,7 @@ CWBool CWNetworkUnsafeMultiHomed(CWMultiHomedSocket *sockPtr,
 													completeMsgPtr[k].offset)	)
 							*/
 								{
-									CWLog("Failure sending Request");
+									log_debug("Failure sending Request");
 									break;
 								}
 							}
@@ -788,7 +788,7 @@ CWBool CWNetworkUnsafeMultiHomed(CWMultiHomedSocket *sockPtr,
 		}
 		else
 		{
-			//			CWLog("NON BROADCAST. Invio a WTP %d", WTPIndexFromSta);
+			//			log_debug("NON BROADCAST. Invio a WTP %d", WTPIndexFromSta);
 			CW_CREATE_OBJECT_ERR(frame, CWProtocolMessage, return 0;);
 			CW_CREATE_PROTOCOL_MESSAGE(*frame, readByest80211, return 0;);
 			memcpy(frame->msg, buf80211, readByest80211);
@@ -824,7 +824,7 @@ CWBool CWNetworkUnsafeMultiHomed(CWMultiHomedSocket *sockPtr,
 
 			if (dataSocket == 0)
 			{
-				CWLog("data socket of WTP isn't ready.");
+				log_debug("data socket of WTP isn't ready.");
 				goto after_tap;
 			}
 
@@ -836,7 +836,7 @@ CWBool CWNetworkUnsafeMultiHomed(CWMultiHomedSocket *sockPtr,
 				if (!CWNetworkSendUnsafeUnconnected(dataSocket, &(address), completeMsgPtr[k].msg, completeMsgPtr[k].offset))
 #endif
 				{
-					CWLog("Failure sending Request");
+					log_debug("Failure sending Request");
 					break;
 				}
 			}
@@ -856,13 +856,13 @@ after_tap:
 		if (FD_ISSET(sockPtr->interfaces[i].sock, &fset))
 		{
 
-			// CWLog("## Pacchetto CONTROLLO interfaccia %d sock %d*********", i, sockPtr->interfaces[i].sock);
+			// log_debug("## Pacchetto CONTROLLO interfaccia %d sock %d*********", i, sockPtr->interfaces[i].sock);
 
 			int readBytes;
 
 			/*
 			CWUseSockNtop(&(sockPtr->interfaces[i].addr),
-				CWDebugLog("Ready on %s", str);
+				log_debug("Ready on %s", str);
 			);
 			*/
 
@@ -887,7 +887,7 @@ after_tap:
 		{ // Todd: Bridge 802.3 packets of WTPs into AC
 			int readBytes;
 
-			// CWLog("## Pacchetto DATI interfaccia %d sock %d*********", i, sockPtr->interfaces[i].dataSock);
+			// log_debug("## Pacchetto DATI interfaccia %d sock %d*********", i, sockPtr->interfaces[i].dataSock);
 			CW_ZERO_MEMORY(buf, CW_BUFFER_SIZE);
 
 			/* message */
@@ -904,7 +904,7 @@ after_tap:
 								   CWNetworkGetInterfaceIndexFromSystemIndex(sockPtr, sockPtr->interfaces[i].systemIndex),
 								   &addr, CW_TRUE);
 		}
-		/* else {CWDebugLog("~~~~~~~Non Ready on....~~~~~~");} */
+		/* else {log_debug("~~~~~~~Non Ready on....~~~~~~");} */
 	}
 	return CW_TRUE;
 }

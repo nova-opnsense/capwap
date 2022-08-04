@@ -136,7 +136,7 @@ static int memory_read(BIO *b, char *out, int outl)
 	CWUnlockSafeList(pData->pRecvAddress);
 
 	if ((buf == NULL) || (size <= 0))
-		CWLog("Warning empty buffer");
+		log_debug("Warning empty buffer");
 	else
 	{
 		ret = ((size < outl) ? size : outl) - 4;

@@ -10,7 +10,7 @@ u8 rfc1042_header[] = {0xaa, 0xaa, 0x03, 0x00, 0x00, 0x00};
 int CWConvertDataFrame_8023_to_80211(unsigned char *frameReceived, int frameLen, unsigned char *outbuffer, int *WTPIndex)
 {
 
-	// CWLog("Ricevuto frame, devo convertire");
+	// log_debug("Ricevuto frame, devo convertire");
 	int offset = 0;
 	unsigned char *hdr80211;
 	unsigned char SA[ETH_ALEN];
@@ -36,32 +36,32 @@ int CWConvertDataFrame_8023_to_80211(unsigned char *frameReceived, int frameLen,
 		CWThreadMutexUnlock(&mutexAvlTree);
 		if (tmpNode == NULL)
 		{
-			// CWLog("STA[%02x:%02x:%02x:%02x:%02x:%02x] non associata. Ignoro", (int) DA[0], (int) DA[1], (int) DA[2], (int) DA[3], (int) DA[4], (int) DA[5]);
+			// log_debug("STA[%02x:%02x:%02x:%02x:%02x:%02x] non associata. Ignoro", (int) DA[0], (int) DA[1], (int) DA[2], (int) DA[3], (int) DA[4], (int) DA[5]);
 			return -1;
 		}
 		else
 		{
-			// CWLog("STA trovata[%02x:%02x:%02x:%02x:%02x:%02x]", (int) DA[0], (int) DA[1], (int) DA[2], (int) DA[3], (int) DA[4], (int) DA[5]);
+			// log_debug("STA trovata[%02x:%02x:%02x:%02x:%02x:%02x]", (int) DA[0], (int) DA[1], (int) DA[2], (int) DA[3], (int) DA[4], (int) DA[5]);
 			CW_COPY_MEMORY(BSSID, tmpNode->BSSID, ETH_ALEN);
-			//			CWLog("Trovato BSSID[%02x:%02x:%02x:%02x:%02x:%02x]", (int) BSSID[0], (int) BSSID[1], (int) BSSID[2], (int) BSSID[3], (int) BSSID[4], (int) BSSID[5]);
+			//			log_debug("Trovato BSSID[%02x:%02x:%02x:%02x:%02x:%02x]", (int) BSSID[0], (int) BSSID[1], (int) BSSID[2], (int) BSSID[3], (int) BSSID[4], (int) BSSID[5]);
 			*(WTPIndex) = tmpNode->index;
 		}
 		//----
 	}
 	/*
-		CWLog("FRAME ETHERNET RICEVUTO");
-		CWLog("DA[%02x:%02x:%02x:%02x:%02x:%02x]", (int) DA[0], (int) DA[1], (int) DA[2], (int) DA[3], (int) DA[4], (int) DA[5]);
-		CWLog("SA[%02x:%02x:%02x:%02x:%02x:%02x]", (int) SA[0], (int) SA[1], (int) SA[2], (int) SA[3], (int) SA[4], (int) SA[5]);
+		log_debug("FRAME ETHERNET RICEVUTO");
+		log_debug("DA[%02x:%02x:%02x:%02x:%02x:%02x]", (int) DA[0], (int) DA[1], (int) DA[2], (int) DA[3], (int) DA[4], (int) DA[5]);
+		log_debug("SA[%02x:%02x:%02x:%02x:%02x:%02x]", (int) SA[0], (int) SA[1], (int) SA[2], (int) SA[3], (int) SA[4], (int) SA[5]);
 	*/
 	hdr80211 = CW80211AssembleDataFrameHdr(SA, DA, BSSID, 0, &(offset), 0, 1);
 
-	//	CWLog("Byte dopo eth addr: %02x %02x", (int)(frameReceived+ETH_ALEN+ETH_ALEN)[0], (int)(frameReceived+ETH_ALEN+ETH_ALEN)[1]);
+	//	log_debug("Byte dopo eth addr: %02x %02x", (int)(frameReceived+ETH_ALEN+ETH_ALEN)[0], (int)(frameReceived+ETH_ALEN+ETH_ALEN)[1]);
 
 	int ethertype = (frameReceived[12] << 8) | frameReceived[13];
 
 	CW_COPY_MEMORY(outbuffer, hdr80211, HLEN_80211);
 	// Encaps header
-	//	CWLog("ETHERTYPE: %02x", ethertype);
+	//	log_debug("ETHERTYPE: %02x", ethertype);
 	if (ethertype == ETH_P_AARP || ethertype == ETH_P_IPX)
 	{
 		CW_COPY_MEMORY((outbuffer + HLEN_80211), bridge_tunnel_header, sizeof(bridge_tunnel_header));
@@ -82,8 +82,8 @@ int CWConvertDataFrame_8023_to_80211(unsigned char *frameReceived, int frameLen,
 
 	CW_COPY_MEMORY((outbuffer + HLEN_80211 + sizeEncapsHdr), (frameReceived + ETH_HLEN - skipBytes), frameLen - ETH_HLEN + skipBytes);
 
-	//	CWLog("Byte dopo llc: %02x %02x", (int)(outbuffer+HLEN_80211+sizeEncapsHdr)[0], (int)(outbuffer+HLEN_80211+sizeEncapsHdr)[1]);
-	//	CWLog("DIMENSIONE NUOVO 80211 frame: %d WTPIndex: %d", (frameLen-ETH_HLEN+skipBytes+HLEN_80211+sizeEncapsHdr), *(WTPIndex));
+	//	log_debug("Byte dopo llc: %02x %02x", (int)(outbuffer+HLEN_80211+sizeEncapsHdr)[0], (int)(outbuffer+HLEN_80211+sizeEncapsHdr)[1]);
+	//	log_debug("DIMENSIONE NUOVO 80211 frame: %d WTPIndex: %d", (frameLen-ETH_HLEN+skipBytes+HLEN_80211+sizeEncapsHdr), *(WTPIndex));
 	return (frameLen - ETH_HLEN + skipBytes + HLEN_80211 + sizeEncapsHdr);
 }
 
@@ -99,7 +99,7 @@ CWBool CWConvertDataFrame_80211_to_8023(unsigned char *frameReceived, int frameL
 
 	if (!CW80211ParseDataFrameToDS(frameReceived, &(dataFrame)))
 	{
-		CWLog("CW80211: Error parsing data frame");
+		log_debug("CW80211: Error parsing data frame");
 		return CW_FALSE;
 	}
 
@@ -114,13 +114,13 @@ CWBool CWConvertDataFrame_80211_to_8023(unsigned char *frameReceived, int frameL
 	{
 		sizeEthFrame = ETH_HLEN + (frameLen - HLEN_80211 - ENCAPS_HDR_LEN);
 		offsetEthPayload = HLEN_80211 + ENCAPS_HDR_LEN;
-		//	CWLog("Con ENCAPS. EthPayload Len: %d. EthType: %d", offsetEthPayload, etherType);
+		//	log_debug("Con ENCAPS. EthPayload Len: %d. EthType: %d", offsetEthPayload, etherType);
 	}
 	else
 	{
 		sizeEthFrame = ETH_HLEN + (frameLen - HLEN_80211);
 		offsetEthPayload = HLEN_80211;
-		//	CWLog("Senza LLC. EthPayload Len: %d", offsetEthPayload);
+		//	log_debug("Senza LLC. EthPayload Len: %d", offsetEthPayload);
 	}
 
 	/* SET Eth vX Frame */
@@ -144,12 +144,12 @@ CWBool CWConvertDataFrame_80211_to_8023(unsigned char *frameReceived, int frameL
 
 	CW_COPY_MEMORY((frame8023 + offsetFrame8023), (frameReceived + offsetEthPayload), (frameLen - offsetEthPayload));
 	/*
-			CWLog("****** ETHERNET FRAME ******* ");
+			log_debug("****** ETHERNET FRAME ******* ");
 			if(flagEncaps == CW_TRUE)
-				CWLog("** ENCAPS: %d bytes", ENCAPS_HDR_LEN);
-			CWLog("** DA[%02x:%02x:%02x:%02x:%02x:%02x]: %d bytes", (int)dataFrame.DA[0], (int)dataFrame.DA[1], (int)dataFrame.DA[2], (int)dataFrame.DA[3], (int)dataFrame.DA[4], (int)dataFrame.DA[5], ETH_ALEN);
-			CWLog("** SA[%02x:%02x:%02x:%02x:%02x:%02x]: %d bytes", (int)dataFrame.SA[0], (int)dataFrame.SA[1], (int)dataFrame.SA[2], (int)dataFrame.SA[3], (int)dataFrame.SA[4], (int)dataFrame.SA[5], ETH_ALEN);
-			CWLog("** TOT LEN 802.3 Frame: %d", (ETH_HLEN+(frameLen - offsetEthPayload)));
+				log_debug("** ENCAPS: %d bytes", ENCAPS_HDR_LEN);
+			log_debug("** DA[%02x:%02x:%02x:%02x:%02x:%02x]: %d bytes", (int)dataFrame.DA[0], (int)dataFrame.DA[1], (int)dataFrame.DA[2], (int)dataFrame.DA[3], (int)dataFrame.DA[4], (int)dataFrame.DA[5], ETH_ALEN);
+			log_debug("** SA[%02x:%02x:%02x:%02x:%02x:%02x]: %d bytes", (int)dataFrame.SA[0], (int)dataFrame.SA[1], (int)dataFrame.SA[2], (int)dataFrame.SA[3], (int)dataFrame.SA[4], (int)dataFrame.SA[5], ETH_ALEN);
+			log_debug("** TOT LEN 802.3 Frame: %d", (ETH_HLEN+(frameLen - offsetEthPayload)));
 		*/
 	*(frame8023Len) = (ETH_HLEN + (frameLen - offsetEthPayload));
 

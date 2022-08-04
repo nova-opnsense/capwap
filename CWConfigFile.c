@@ -167,7 +167,7 @@ CWBool CWParseTheFile(CWBool isCount)
 
 		int i, j;
 
-		CWDebugLog("*** Parsing (%s) ***", line);
+		log_debug("*** Parsing (%s) ***", line);
 
 		for (i = 0; i < gConfigValuesCount; i++)
 		{
@@ -203,14 +203,14 @@ CWBool CWParseTheFile(CWBool isCount)
 					break;
 				case CW_STRING_ARRAY:
 #ifdef CW_DEBUGGING
-					CWDebugLog("*** Parsing String Array... ***");
+					log_debug("*** Parsing String Array... ***");
 #endif
 					j = 0;
 					CW_FREE_OBJECT(line);
 					while ((line = CWGetCommand(gCWConfigFile)) != NULL && strcmp(line, gConfigValues[i].endCode))
 					{
 #ifdef CW_DEBUGGING
-						CWDebugLog("*** Parsing String (%s) *** \n", line);
+						log_debug("*** Parsing String (%s) *** \n", line);
 #endif
 
 						if (isCount)
@@ -232,7 +232,7 @@ CWBool CWParseTheFile(CWBool isCount)
 		CW_FREE_OBJECT(line);
 	}
 
-	CWDebugLog("*** Config File Parsed ***");
+	log_debug("*** Config File Parsed ***");
 	fclose(gCWConfigFile);
 
 	return CW_TRUE;
@@ -262,13 +262,13 @@ CWBool CWParseConfigFile()
 			if (gConfigValues[i].type == CW_INTEGER)
 			{
 
-				CWLog("%s%d",
-					  gConfigValues[i].code,
-					  gConfigValues[i].value.int_value);
+				log_debug("%s%d",
+						  gConfigValues[i].code,
+						  gConfigValues[i].value.int_value);
 			}
 		}
 	}
-	CWDebugLog("*** Config File END ***");
+	log_debug("*** Config File END ***");
 #endif
 
 	return CWConfigFileDestroyLib();

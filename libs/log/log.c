@@ -54,7 +54,7 @@ static const char *level_colors[] = {
 static void stdout_callback(log_Event *ev)
 {
     char buf[32];
-    buf[strftime(buf, sizeof(buf), "[CW] %H:%M:%S", ev->time)] = '\0';
+    buf[strftime(buf, sizeof(buf), "[CW] %Y-%m-%d %H:%M:%S", ev->time)] = '\0';
 #ifdef LOG_USE_COLOR
     fprintf(
         ev->udata, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
@@ -164,13 +164,13 @@ void log_log(int level, const char *file, int line, const char *fmt, ...)
         struct tm *info = localtime(&now);
         char buf[128];
 
-        buf[strftime(buf, sizeof(buf), "/var/log/cw-ac-%Y%m%d-%H%M%S.log", info)] = '\0';
+        buf[strftime(buf, sizeof(buf), "/var/log/cw-%Y%m%d-%H%M%S.log", info)] = '\0';
 
         logFile = fopen(buf, "w");
 
         if (logFile != NULL)
         {
-            log_add_fp(logFile, 0);
+            log_add_fp(logFile, LOG_DEBUG);
         }
         else
         {

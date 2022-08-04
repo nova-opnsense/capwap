@@ -53,7 +53,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFreqStats(void *arg)
 
 	if ((recSock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
 	{
-		CWDebugLog("Thread Frequency Receive Stats: Error creating socket");
+		log_debug("Thread Frequency Receive Stats: Error creating socket");
 		CWExitThread();
 	}
 
@@ -67,12 +67,12 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFreqStats(void *arg)
 
 	if (bind(recSock, (struct sockaddr *)&servaddr, sizeof(struct sockaddr_in)) < 0)
 	{
-		CWDebugLog("Thread Frequency Receive Stats: Binding Socket Error");
+		log_debug("Thread Frequency Receive Stats: Binding Socket Error");
 		close(recSock);
 		CWExitThread();
 	}
 
-	CWLog("CW_REPEAT_FOREVER: CWWTPReceiveFreqStats()");
+	log_debug("CW_REPEAT_FOREVER: CWWTPReceiveFreqStats()");
 	CW_REPEAT_FOREVER /* Receive data Loop */
 	{
 		memset(buffer, 0, PACKET_SIZE);
@@ -130,7 +130,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFreqStats(void *arg)
 					if (!CWSecuritySend(gWTPSession, completeMsgPtr[k].msg, completeMsgPtr[k].offset))
 					{
 #endif
-						CWDebugLog("Failure sending Request");
+						log_debug("Failure sending Request");
 					}
 				}
 			}
@@ -149,7 +149,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFreqStats(void *arg)
 		}
 		else
 		{
-			CWDebugLog("Thread Frequency Receive Stats: Error on recvfrom");
+			log_debug("Thread Frequency Receive Stats: Error on recvfrom");
 			close(recSock);
 		}
 	}

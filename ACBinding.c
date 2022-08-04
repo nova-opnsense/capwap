@@ -127,7 +127,7 @@ CWBool CWAssembleWTPOFDM(CWProtocolMessage *msgPtr, int radioID)
 	int *iPtr;
 	OFDMControlValues *valuesPtr;
 
-	CWLog("Assembling Binding Configuration Update Request [OFDM CASE]...");
+	log_debug("Assembling Binding Configuration Update Request [OFDM CASE]...");
 
 	if (msgPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
@@ -152,7 +152,7 @@ CWBool CWAssembleWTPOFDM(CWProtocolMessage *msgPtr, int radioID)
 	CWProtocolStore8(msgPtr, valuesPtr->BandSupport);
 	CWProtocolStore32(msgPtr, valuesPtr->TIThreshold);
 
-	CWLog("Assembling Binding Configuration Update Request [OFDM CASE]: Message Assembled.");
+	log_debug("Assembling Binding Configuration Update Request [OFDM CASE]: Message Assembled.");
 
 	return CWAssembleMsgElem(msgPtr, BINDING_MSG_ELEMENT_TYPE_OFDM_CONTROL);
 }
@@ -241,14 +241,14 @@ CWBool CWBindingAssembleConfigureResponse(CWProtocolMessage **msgElems, int *msg
 	// Elena Agostini: QoS + MultidomainCapability
 	*msgElemCountPtr = radioCount * 2;
 
-	CWLog("Assembling Binding Configuration Response...");
+	log_debug("Assembling Binding Configuration Response...");
 
 	// Reserve memory for msg Elements
 	CW_CREATE_PROTOCOL_MSG_ARRAY_ERR(*msgElems, *msgElemCountPtr, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
 	if (!CWThreadMutexLock(&(gWTPs[*iPtr].interfaceMutex)))
 	{
-		CWLog("Error locking a mutex");
+		log_debug("Error locking a mutex");
 		CWCloseThread();
 	}
 	// Fill gWTPs[*iPtr].qosValues with default settings
@@ -294,7 +294,7 @@ CWBool CWBindingAssembleConfigureResponse(CWProtocolMessage **msgElems, int *msg
 
 	CWThreadMutexUnlock(&(gWTPs[*iPtr].interfaceMutex));
 
-	CWLog("Binding Configuration Response Assembled");
+	log_debug("Binding Configuration Response Assembled");
 
 	return CW_TRUE;
 }
@@ -325,7 +325,7 @@ CWBool CWBindingAssembleConfigurationUpdateRequest(CWProtocolMessage **msgElems,
 	radioCount = radiosInfo.radioCount;
 	*msgElemCountPtr = radioCount;
 
-	CWLog("Assembling Binding Configuration Update Request...");
+	log_debug("Assembling Binding Configuration Update Request...");
 
 	CW_CREATE_PROTOCOL_MSG_ARRAY_ERR(*msgElems, *msgElemCountPtr, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
@@ -379,7 +379,7 @@ CWBool CWBindingAssembleConfigurationUpdateRequest(CWProtocolMessage **msgElems,
 	}
 	}
 
-	CWLog("Binding Configuration Update Request Assembled");
+	log_debug("Binding Configuration Update Request Assembled");
 
 	return CW_TRUE;
 }

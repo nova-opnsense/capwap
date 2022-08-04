@@ -62,13 +62,13 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveStats(void *arg)
 	sock = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
 	if (sock < 0)
 	{
-		CWDebugLog("THR STATS: Error creating socket");
+		log_debug("THR STATS: Error creating socket");
 		CWExitThread();
 	}
 	/*
 		if ((sock = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0)
 		{
-			CWDebugLog("THR STATS: Error creating socket");
+			log_debug("THR STATS: Error creating socket");
 			CWExitThread();
 		}
 	  */
@@ -84,7 +84,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveStats(void *arg)
 
 	if (bind(sock, (const struct sockaddr *)&servaddr, len) < 0)
 	{
-		CWDebugLog("THR STATS: Error binding socket");
+		log_debug("THR STATS: Error binding socket");
 		CWExitThread();
 	}
 
@@ -92,13 +92,13 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveStats(void *arg)
 	fromlen = sizeof(from);
 
 	/*      Receive data */
-	CWLog("CW_REPEAT_FOREVER: CWWTPReceiveStats()");
+	log_debug("CW_REPEAT_FOREVER: CWWTPReceiveStats()");
 	CW_REPEAT_FOREVER
 	{
 		rlen = recvfrom(sock, buffer, PACKET_SIZE, 0, (struct sockaddr *)&from, (socklen_t *)&fromlen);
 		if (rlen == -1)
 		{
-			CWDebugLog("THR STATS: Error receiving from unix socket");
+			log_debug("THR STATS: Error receiving from unix socket");
 			CWExitThread();
 		}
 		else
@@ -107,7 +107,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveStats(void *arg)
 
 			if (!create_data_Frame(&data, buffer, rlen))
 			{
-				CWDebugLog("Error extracting a data stats frame");
+				log_debug("Error extracting a data stats frame");
 				CWExitThread();
 			};
 
@@ -138,7 +138,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveStats(void *arg)
 					if (!CWSecuritySend(gWTPSession, completeMsgPtr[k].msg, completeMsgPtr[k].offset))
 					{
 #endif
-						CWDebugLog("Failure sending Request");
+						log_debug("Failure sending Request");
 						break;
 					}
 				}

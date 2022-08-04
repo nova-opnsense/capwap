@@ -76,7 +76,7 @@ This stuff """should""" now work the way is intended below...Please don't be har
 			
 						if (CWErrorGetLastErrorCode() == CW_ERROR_TIME_EXPIRED)	{
 
-							CWLog("No Message from AC for a long time... restart Discovery State");
+							log_debug("No Message from AC for a long time... restart Discovery State");
 							break;
 						}
 						continue;

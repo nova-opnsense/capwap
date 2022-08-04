@@ -43,9 +43,9 @@
 #include "../dmalloc-5.5.0/dmalloc.h"
 #endif
 
-#define EXIT_FRAME_THREAD(sock)                                  \
-	CWLog("ERROR Handling Frames: application will be closed!"); \
-	close(sock);                                                 \
+#define EXIT_FRAME_THREAD(sock)                                      \
+	log_debug("ERROR Handling Frames: application will be closed!"); \
+	close(sock);                                                     \
 	exit(1);
 
 int CWWTPSendFrame(unsigned char *buf, int len)
@@ -56,7 +56,7 @@ int CWWTPSendFrame(unsigned char *buf, int len)
 
 	if ((gRawSockLocal = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) < 0)
 	{
-		CWDebugLog("THR FRAME: Error creating socket");
+		log_debug("THR FRAME: Error creating socket");
 		CWExitThread();
 	}
 
@@ -68,16 +68,16 @@ int CWWTPSendFrame(unsigned char *buf, int len)
 
 	if ((bind(gRawSockLocal, (struct sockaddr *)&addr, sizeof(addr))) < 0)
 	{
-		CWDebugLog("THR FRAME: Error binding socket");
+		log_debug("THR FRAME: Error binding socket");
 		CWExitThread();
 	}
 
 	if (send(gRawSockLocal, buf + FRAME_80211_LEN, len - FRAME_80211_LEN, 0) < 1)
 	{
-		CWDebugLog("Error to send frame on raw socket");
+		log_debug("Error to send frame on raw socket");
 		return -1;
 	}
-	CWDebugLog("Send (%d) bytes on raw socket", len - FRAME_80211_LEN);
+	log_debug("Send (%d) bytes on raw socket", len - FRAME_80211_LEN);
 
 	return 1;
 }
@@ -91,7 +91,7 @@ int getMacAddr(int sock, char *interface, unsigned char *macAddr)
 	if (!ioctl(fd, SIOCGIFHWADDR, &s))
 		memcpy(macAddr, s.ifr_addr.sa_data, MAC_ADDR_LEN);
 
-	CWDebugLog("\n");
+	log_debug("\n");
 
 	return 1;
 }
@@ -155,11 +155,11 @@ int macAddrCmp(unsigned char *addr1, unsigned char *addr2)
 
 	if (ok == 1)
 	{
-		CWDebugLog("MAC Address test: OK\n");
+		log_debug("MAC Address test: OK\n");
 	}
 	else
 	{
-		CWDebugLog("MAC Address test: Failed\n");
+		log_debug("MAC Address test: Failed\n");
 	}
 
 	return ok;
@@ -219,7 +219,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFrame(void *arg)
 
 	if ((gRawSock = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) < 0)
 	{
-		CWDebugLog("THR FRAME: Error creating socket");
+		log_debug("THR FRAME: Error creating socket");
 		CWExitThread();
 	}
 
@@ -231,13 +231,13 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFrame(void *arg)
 
 	if ((bind(gRawSock, (struct sockaddr *)&addr, sizeof(addr))) < 0)
 	{
-		CWDebugLog("THR FRAME: Error binding socket");
+		log_debug("THR FRAME: Error binding socket");
 		CWExitThread();
 	}
 
 	if (!getMacAddr(gRawSock, "monitor0", macAddr))
 	{
-		CWDebugLog("THR FRAME: Ioctl error");
+		log_debug("THR FRAME: Ioctl error");
 		EXIT_FRAME_THREAD(gRawSock);
 	}
 
@@ -246,8 +246,8 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFrame(void *arg)
 	optval = 20;
 	if (setsockopt(gRawSock, SOL_SOCKET, SO_PRIORITY, &optval, optlen))
 	{
-		CWLog("nl80211: Failed to set socket priority: %s",
-			  strerror(errno));
+		log_debug("nl80211: Failed to set socket priority: %s",
+				  strerror(errno));
 	}
 
 	nodeAVL *tmpNodeSta = NULL;
@@ -255,7 +255,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFrame(void *arg)
 	/* RAW SOCKET on monitor interface to Inject packets */
 	if ((rawInjectSocket = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) < 0)
 	{
-		CWLog("THR FRAME: Error creating socket");
+		log_debug("THR FRAME: Error creating socket");
 		// CWExitThread();
 	}
 
@@ -265,17 +265,17 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFrame(void *arg)
 
 	if ((bind(rawInjectSocket, (struct sockaddr *)&addr_inject, sizeof(addr_inject))) < 0)
 	{
-		CWLog("THR FRAME: Error binding socket");
+		log_debug("THR FRAME: Error binding socket");
 		// CWExitThread();
 	}
 
 	if (!getMacAddr(rawInjectSocket, "monitor0", macAddrInject))
 	{
-		CWLog("THR FRAME: Ioctl error");
+		log_debug("THR FRAME: Ioctl error");
 		// EXIT_FRAME_THREAD(gRawSock);
 	}
 
-	CWLog("CW_REPEAT_FOREVER: CWWTPReceiveFrame()");
+	log_debug("CW_REPEAT_FOREVER: CWWTPReceiveFrame()");
 	CW_REPEAT_FOREVER
 	{
 		n = recvfrom(gRawSock, buffer, sizeof(buffer), 0, NULL, NULL);
@@ -301,7 +301,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFrame(void *arg)
 
 		if (!CW80211ParseDataFrameToDS((buffer + radiotapHeader->it_len), &(dataFrame)))
 		{
-			CWLog("CW80211: Error parsing data frame");
+			log_debug("CW80211: Error parsing data frame");
 			continue;
 		}
 
@@ -317,18 +317,18 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFrame(void *arg)
 			CWThreadMutexUnlock(&mutexAvlTree);
 			if (tmpNodeSta == NULL)
 			{
-				//			CWLog("STA[%02x:%02x:%02x:%02x:%02x:%02x] non associata. Ignoro", (int) dataFrame.SA[0], (int) dataFrame.SA[1], (int) dataFrame.SA[2], (int) dataFrame.SA[3], (int) dataFrame.SA[4], (int) dataFrame.SA[5]);
+				//			log_debug("STA[%02x:%02x:%02x:%02x:%02x:%02x] non associata. Ignoro", (int) dataFrame.SA[0], (int) dataFrame.SA[1], (int) dataFrame.SA[2], (int) dataFrame.SA[3], (int) dataFrame.SA[4], (int) dataFrame.SA[5]);
 				continue;
 			}
 			//	else
-			//		CWLog("STA trovata [%02x:%02x:%02x:%02x:%02x:%02x]", (int) tmpNodeSta->staAddr[0], (int) tmpNodeSta->staAddr[1], (int) tmpNodeSta->staAddr[2], (int) tmpNodeSta->staAddr[3], (int) tmpNodeSta->staAddr[4], (int) tmpNodeSta->staAddr[5]);
+			//		log_debug("STA trovata [%02x:%02x:%02x:%02x:%02x:%02x]", (int) tmpNodeSta->staAddr[0], (int) tmpNodeSta->staAddr[1], (int) tmpNodeSta->staAddr[2], (int) tmpNodeSta->staAddr[3], (int) tmpNodeSta->staAddr[4], (int) tmpNodeSta->staAddr[5]);
 			//----
 
 			encaps_len = n - radiotapHeader->it_len;
-			//	CWLog("[80211] Pure frame data. %d byte letti, %d byte data frame", n, encaps_len);
+			//	log_debug("[80211] Pure frame data. %d byte letti, %d byte data frame", n, encaps_len);
 			if (!extract802_11_Frame(&frame, (buffer + radiotapHeader->it_len), encaps_len))
 			{
-				CWLog("THR FRAME: Error extracting a frame");
+				log_debug("THR FRAME: Error extracting a frame");
 				EXIT_FRAME_THREAD(gRawSock);
 			}
 
@@ -346,7 +346,7 @@ CW_THREAD_RETURN_TYPE CWWTPReceiveFrame(void *arg)
 		// Puo inviarlo la STA per fare richiesta di power saving. Rispondere con ACK sse indica che vuole stare UP
 		else if (WLAN_FC_GET_STYPE(dataFrame.frameControl) == WLAN_FC_STYPE_NULLFUNC)
 		{
-			//		CWLog("[80211] Pure frame null func");
+			//		log_debug("[80211] Pure frame null func");
 			//	frameResponse = CW80211AssembleACK(WTPBSSInfoPtr, tb[NL80211_ATTR_MAC], &frameRespLen);
 		}
 		// Altri casi?

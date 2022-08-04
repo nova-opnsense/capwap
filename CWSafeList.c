@@ -330,7 +330,7 @@ void CWCleanSafeList(CWSafeList safeList, void (*deleteFunc)(void *))
 {
 	void *pData;
 
-	CWLog("CW_REPEAT_FOREVER: CWCleanSafeList()");
+	log_debug("CW_REPEAT_FOREVER: CWCleanSafeList()");
 	CW_REPEAT_FOREVER
 	{
 		pData = CWRemoveHeadElementFromSafeList(safeList, NULL);

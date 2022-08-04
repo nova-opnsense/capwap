@@ -77,7 +77,7 @@ CWBool CWAssembleDiscoveryResponse(CWProtocolMessage **messagesPtr, int seqNum, 
 		msgElemCount++;
 	}
 
-	CWLog("Send Discovery Response");
+	log_debug("Send Discovery Response");
 	CW_CREATE_PROTOCOL_MSG_ARRAY_ERR(msgElems,
 									 msgElemCount,
 									 return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
@@ -149,7 +149,7 @@ CWBool CWParseDiscoveryRequestMessage(char *msg,
 	if (msg == NULL || seqNumPtr == NULL || valuesPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Parse Discovery Request");
+	log_debug("Parse Discovery Request");
 
 	completeMsg.msg = msg;
 	completeMsg.offset = 0;
@@ -184,7 +184,7 @@ CWBool CWParseDiscoveryRequestMessage(char *msg,
 
 		CWParseFormatMsgElem(&completeMsg, &elemType, &elemLen);
 
-		/* CWDebugLog("Parsing Message Element: %u, elemLen: %u", elemType, elemLen); */
+		/* log_debug("Parsing Message Element: %u, elemLen: %u", elemType, elemLen); */
 
 		switch (elemType)
 		{
@@ -233,7 +233,7 @@ CWBool CWParseDiscoveryRequestMessage(char *msg,
 								"Unrecognized Message Element");
 		}
 
-		/*CWDebugLog("bytes: %d/%d", (completeMsg.offset-offsetTillMessages), controlVal.msgElemsLen);*/
+		/*log_debug("bytes: %d/%d", (completeMsg.offset-offsetTillMessages), controlVal.msgElemsLen);*/
 	}
 
 	if (completeMsg.offset != len)

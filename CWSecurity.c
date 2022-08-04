@@ -100,7 +100,7 @@ int psk_key2bn(const char *psk_key, unsigned char *psk, unsigned int max_psk_len
 		if ((r = (arg)) <= 0)                                                                 \
 		{                                                                                     \
 			{stuff} ERR_error_string(/*SSL_get_error((session),r)*/ ERR_get_error(), ___buf); \
-			CWDebugLog(strerror(errno));                                                      \
+			log_debug(strerror(errno));                                                       \
 			CWErrorRaise(CW_ERROR_GENERAL, ___buf);                                           \
 			return CW_FALSE;                                                                  \
 		}                                                                                     \
@@ -231,7 +231,7 @@ CWBool CWSecurityInitSessionClient(CWSocket sock,
 	}
 
 #ifdef CW_DEBUGGING
-	CWDebugLog("My Certificate");
+	log_debug("My Certificate");
 	PEM_write_X509(stdout, SSL_get_certificate(*sessionPtr));
 #endif
 
@@ -269,27 +269,27 @@ CWBool CWSecurityInitSessionClient(CWSocket sock,
 	SSL_set_bio((*sessionPtr), sbio, sbio);
 	SSL_set_connect_state((*sessionPtr));
 
-	CWDebugLog("Making Handshake...");
+	log_debug("Making Handshake...");
 	CWSecurityManageSSLError(SSL_do_handshake(*sessionPtr),
 							 *sessionPtr,
 							 SSL_free(*sessionPtr););
-	CWDebugLog("SSL Handshake OK!");
+	log_debug("SSL Handshake OK!");
 
 	if (SSL_get_verify_result(*sessionPtr) == X509_V_OK)
 	{
 
-		CWDebugLog("Certificate Verified");
+		log_debug("Certificate Verified");
 	}
 	else
 	{
 
-		CWDebugLog("Certificate Error (%d)",
-				   SSL_get_verify_result(*sessionPtr));
+		log_debug("Certificate Error (%d)",
+				  SSL_get_verify_result(*sessionPtr));
 	}
 
 	*PMTUPtr = BIO_ctrl(sbio, BIO_CTRL_DGRAM_QUERY_MTU, 0, NULL);
 
-	CWDebugLog("PMTU: %d", *PMTUPtr);
+	log_debug("PMTU: %d", *PMTUPtr);
 
 	if (useCertificate)
 	{
@@ -297,11 +297,11 @@ CWBool CWSecurityInitSessionClient(CWSocket sock,
 		if (CWSecurityVerifyPeerCertificateForCAPWAP((*sessionPtr), CW_TRUE))
 		{
 
-			CWDebugLog("Certificate Ok for CAPWAP");
+			log_debug("Certificate Ok for CAPWAP");
 		}
 		else
 		{
-			CWDebugLog("Certificate Not Ok for CAPWAP");
+			log_debug("Certificate Not Ok for CAPWAP");
 #ifndef CW_DEBUGGING
 			return CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Certificate Not Ok for CAPWAP");
 #endif
@@ -324,11 +324,11 @@ CWBool CWSecurityReceive(CWSecuritySession session,
 
 	CWSecurityManageSSLError((*readBytesPtr = SSL_read(session, buf, len)), session, ;);
 
-	CWDebugLog("Received packet");
+	log_debug("Received packet");
 	/*
 	if(SSL_read(session, buf, len) <= 0) {
 		if((SSL_get_shutdown(session) & SSL_RECEIVED_SHUTDOWN) == SSL_RECEIVED_SHUTDOWN) { // session aborted by peer
-			CWDebugLog("Connection Aborted by Peer");
+			log_debug("Connection Aborted by Peer");
 			SSL_shutdown(session); // respond
 			return CW_ABORTED;
 		}
@@ -346,7 +346,7 @@ CWBool CWSecuritySend(CWSecuritySession session, const char *buf, int len)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
 	CWSecurityManageSSLError(SSL_write(session, buf, len), session, ;);
-	CWDebugLog("Packet Sent");
+	log_debug("Packet Sent");
 	return CW_TRUE;
 }
 
@@ -394,20 +394,20 @@ CWBool CWSecurityInitSessionServer(CWWTPManager *pWtp,
 	/* tell OpenSSL we are a server */
 	SSL_set_accept_state((*sessionPtr));
 
-	CWDebugLog("Before HS");
+	log_debug("Before HS");
 	CWSecurityManageSSLError(SSL_do_handshake(*sessionPtr),
 							 *sessionPtr,
 							 SSL_free(*sessionPtr););
-	CWDebugLog("After HS");
+	log_debug("After HS");
 
 	if (SSL_get_verify_result(*sessionPtr) == X509_V_OK)
 	{
 
-		CWDebugLog("Certificate Verified");
+		log_debug("Certificate Verified");
 	}
 	else
 	{
-		CWDebugLog("Certificate Error (%d)", SSL_get_verify_result(*sessionPtr));
+		log_debug("Certificate Error (%d)", SSL_get_verify_result(*sessionPtr));
 	}
 
 	if (useCertificate)
@@ -416,11 +416,11 @@ CWBool CWSecurityInitSessionServer(CWWTPManager *pWtp,
 		if (CWSecurityVerifyPeerCertificateForCAPWAP((*sessionPtr), CW_FALSE))
 		{
 
-			CWDebugLog("Certificate Ok for CAPWAP");
+			log_debug("Certificate Ok for CAPWAP");
 		}
 		else
 		{
-			CWDebugLog("Certificate Not Ok for CAPWAP");
+			log_debug("Certificate Not Ok for CAPWAP");
 #ifndef CW_DEBUGGING
 			return CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Certificate Not Ok for CAPWAP");
 #endif
@@ -428,7 +428,7 @@ CWBool CWSecurityInitSessionServer(CWWTPManager *pWtp,
 	}
 
 	*PMTUPtr = BIO_ctrl(sbio, BIO_CTRL_DGRAM_QUERY_MTU, 0, NULL);
-	CWDebugLog("PMTU: %d", *PMTUPtr);
+	log_debug("PMTU: %d", *PMTUPtr);
 
 	return CW_TRUE;
 }
@@ -481,20 +481,20 @@ CWBool CWSecurityInitSessionServerDataChannel(CWWTPManager *pWtp,
 	/* tell OpenSSL we are a server */
 	SSL_set_accept_state((*sessionPtr));
 
-	CWDebugLog("Before HS");
+	log_debug("Before HS");
 	CWSecurityManageSSLError(SSL_do_handshake(*sessionPtr),
 							 *sessionPtr,
 							 SSL_free(*sessionPtr););
-	CWDebugLog("After HS");
+	log_debug("After HS");
 
 	if (SSL_get_verify_result(*sessionPtr) == X509_V_OK)
 	{
 
-		CWDebugLog("Certificate Verified");
+		log_debug("Certificate Verified");
 	}
 	else
 	{
-		CWDebugLog("Certificate Error (%d)", SSL_get_verify_result(*sessionPtr));
+		log_debug("Certificate Error (%d)", SSL_get_verify_result(*sessionPtr));
 	}
 
 	if (useCertificate)
@@ -503,11 +503,11 @@ CWBool CWSecurityInitSessionServerDataChannel(CWWTPManager *pWtp,
 		if (CWSecurityVerifyPeerCertificateForCAPWAP((*sessionPtr), CW_FALSE))
 		{
 
-			CWDebugLog("Certificate Ok for CAPWAP");
+			log_debug("Certificate Ok for CAPWAP");
 		}
 		else
 		{
-			CWDebugLog("Certificate Not Ok for CAPWAP");
+			log_debug("Certificate Not Ok for CAPWAP");
 #ifndef CW_DEBUGGING
 			return CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Certificate Not Ok for CAPWAP");
 #endif
@@ -515,7 +515,7 @@ CWBool CWSecurityInitSessionServerDataChannel(CWWTPManager *pWtp,
 	}
 
 	*PMTUPtr = BIO_ctrl(sbio, BIO_CTRL_DGRAM_QUERY_MTU, 0, NULL);
-	CWDebugLog("PMTU: %d", *PMTUPtr);
+	log_debug("PMTU: %d", *PMTUPtr);
 
 	return CW_TRUE;
 }
@@ -568,20 +568,20 @@ CWBool CWSecurityInitGenericSessionServerDataChannel(CWSafeList packetDataList,
 	/* tell OpenSSL we are a server */
 	SSL_set_accept_state((*sessionPtr));
 
-	CWDebugLog("Before HS");
+	log_debug("Before HS");
 	CWSecurityManageSSLError(SSL_do_handshake(*sessionPtr),
 							 *sessionPtr,
 							 SSL_free(*sessionPtr););
-	CWDebugLog("After HS");
+	log_debug("After HS");
 
 	if (SSL_get_verify_result(*sessionPtr) == X509_V_OK)
 	{
 
-		CWDebugLog("Certificate Verified");
+		log_debug("Certificate Verified");
 	}
 	else
 	{
-		CWDebugLog("Certificate Error (%d)", SSL_get_verify_result(*sessionPtr));
+		log_debug("Certificate Error (%d)", SSL_get_verify_result(*sessionPtr));
 	}
 
 	if (useCertificate)
@@ -590,11 +590,11 @@ CWBool CWSecurityInitGenericSessionServerDataChannel(CWSafeList packetDataList,
 		if (CWSecurityVerifyPeerCertificateForCAPWAP((*sessionPtr), CW_FALSE))
 		{
 
-			CWDebugLog("Certificate Ok for CAPWAP");
+			log_debug("Certificate Ok for CAPWAP");
 		}
 		else
 		{
-			CWDebugLog("Certificate Not Ok for CAPWAP");
+			log_debug("Certificate Not Ok for CAPWAP");
 #ifndef CW_DEBUGGING
 			return CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Certificate Not Ok for CAPWAP");
 #endif
@@ -602,7 +602,7 @@ CWBool CWSecurityInitGenericSessionServerDataChannel(CWSafeList packetDataList,
 	}
 
 	*PMTUPtr = BIO_ctrl(sbio, BIO_CTRL_DGRAM_QUERY_MTU, 0, NULL);
-	CWDebugLog("PMTU: %d", *PMTUPtr);
+	log_debug("PMTU: %d", *PMTUPtr);
 
 	return CW_TRUE;
 }
@@ -704,10 +704,10 @@ CWBool CWSecurityInitContext(CWSecurityContext *ctxPtr,
 														// Better than nothing.
 
 		if(isClient) {
-			CWDebugLog("Client PSK");
+			log_debug("Client PSK");
 			SSL_CTX_set_psk_client_callback( (*ctxPtr), CWSecurityPSKClientCB);
 		} else {
-			CWDebugLog("Server PSK");
+			log_debug("Server PSK");
 			SSL_CTX_set_psk_server_callback( (*ctxPtr), CWSecurityPSKServerCB);
 		}
 		*/
@@ -753,13 +753,13 @@ CWBool CWSecurityVerifyCertEKU(X509 *x509, const char *const expected_oid)
 	if ((eku = (EXTENDED_KEY_USAGE *)X509_get_ext_d2i(x509, NID_ext_key_usage, NULL, NULL)) == NULL)
 	{
 
-		CWDebugLog("Certificate does not have extended key usage extension");
+		log_debug("Certificate does not have extended key usage extension");
 	}
 	else
 	{
 		int i;
 
-		CWDebugLog("Validating certificate extended key usage");
+		log_debug("Validating certificate extended key usage");
 		for (i = 0; !fFound && i < sk_ASN1_OBJECT_num(eku); i++)
 		{
 			ASN1_OBJECT *oid = sk_ASN1_OBJECT_value(eku, i);
@@ -767,7 +767,7 @@ CWBool CWSecurityVerifyCertEKU(X509 *x509, const char *const expected_oid)
 
 			if (!fFound && OBJ_obj2txt(szOid, sizeof(szOid), oid, 0) != -1)
 			{
-				CWDebugLog("Certificate has EKU (str) %s, expects %s", szOid, expected_oid);
+				log_debug("Certificate has EKU (str) %s, expects %s", szOid, expected_oid);
 				if (!strcmp(expected_oid, szOid))
 				{
 					fFound = CW_TRUE;
@@ -775,7 +775,7 @@ CWBool CWSecurityVerifyCertEKU(X509 *x509, const char *const expected_oid)
 			}
 			if (!fFound && OBJ_obj2txt(szOid, sizeof(szOid), oid, 1) != -1)
 			{
-				CWDebugLog("Certificate has EKU (oid) %s, expects %s", szOid, expected_oid);
+				log_debug("Certificate has EKU (oid) %s, expects %s", szOid, expected_oid);
 				if (!strcmp(expected_oid, szOid))
 				{
 					fFound = CW_TRUE;
@@ -837,7 +837,7 @@ int CWSecurityVerifyCB(int ok, X509_STORE_CTX *ctx)
 	err_cert = X509_STORE_CTX_get_current_cert(ctx);
 
 	err = X509_STORE_CTX_get_error(ctx);
-	CWDebugLog(X509_verify_cert_error_string(err));
+	log_debug(X509_verify_cert_error_string(err));
 
 	depth = X509_STORE_CTX_get_error_depth(ctx);
 
@@ -867,12 +867,12 @@ int CWSecurityVerifyCB(int ok, X509_STORE_CTX *ctx)
 	if (!preverify_ok)
 	{
 
-		CWDebugLog("verify error:num=%d:%s:depth=%d:%s", err,
-				   X509_verify_cert_error_string(err), depth, buf);
+		log_debug("verify error:num=%d:%s:depth=%d:%s", err,
+				  X509_verify_cert_error_string(err), depth, buf);
 	}
 	else
 	{
-		CWDebugLog("depth=%d:%s", depth, buf);
+		log_debug("depth=%d:%s", depth, buf);
 	}
 
 	/*
@@ -883,7 +883,7 @@ int CWSecurityVerifyCB(int ok, X509_STORE_CTX *ctx)
 	{
 
 		X509_NAME_oneline(X509_get_issuer_name(ctx->current_cert), buf, 256);
-		CWDebugLog("issuer= %s", buf);
+		log_debug("issuer= %s", buf);
 	}
 	return preverify_ok;
 }
@@ -909,7 +909,7 @@ unsigned int CWSecurityPSKServerCB(SSL *ssl,
 								   unsigned int max_psk_len)
 {
 
-	CWDebugLog("Identity: %s, PSK: %s", identity, psk);
+	log_debug("Identity: %s, PSK: %s", identity, psk);
 	/* TO-DO load keys from... Plain-text config file? Leave them hard-coded? */
 	return psk_key2bn("1a2b3c", psk, max_psk_len);
 }
@@ -928,7 +928,7 @@ int psk_key2bn(const char *psk_key, unsigned char *psk, unsigned int max_psk_len
 	if (!ret)
 	{
 
-		CWLog("Could not convert PSK key '%s' to BIGNUM", psk_key);
+		log_debug("Could not convert PSK key '%s' to BIGNUM", psk_key);
 		if (bn)
 			BN_free(bn);
 		return 0;
@@ -937,8 +937,8 @@ int psk_key2bn(const char *psk_key, unsigned char *psk, unsigned int max_psk_len
 	if (BN_num_bytes(bn) > max_psk_len)
 	{
 
-		CWLog("psk buffer of callback is too small (%d) for key (%d)",
-			  max_psk_len, BN_num_bytes(bn));
+		log_debug("psk buffer of callback is too small (%d) for key (%d)",
+				  max_psk_len, BN_num_bytes(bn));
 		BN_free(bn);
 		return 0;
 	}

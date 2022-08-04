@@ -73,8 +73,8 @@ CWStateTransition CWWTPEnterJoin()
 	int seqNum;
 	CWProtocolJoinResponseValues values;
 
-	CWLog("\n");
-	CWLog("######### Join State #########");
+	log_debug("\n");
+	log_debug("######### Join State #########");
 
 	/* reset Join state */
 	CWNetworkCloseSocket(gWTPSocket);
@@ -115,7 +115,7 @@ CWStateTransition CWWTPEnterJoin()
 		/*
 				struct sockaddr_in *sin = (struct sockaddr_in *)&(gACInfoPtr->preferredAddress);
 				unsigned char *ip = (unsigned char *)&sin->sin_addr.s_addr;
-				CWLog("Preferred: %d %d %d %d\n", ip[0], ip[1], ip[2], ip[3]);
+				log_debug("Preferred: %d %d %d %d\n", ip[0], ip[1], ip[2], ip[3]);
 		*/
 		gACInfoPtr->security = gWTPForceSecurity;
 	}
@@ -143,7 +143,7 @@ CWStateTransition CWWTPEnterJoin()
 		return CW_ENTER_DISCOVERY;
 	}
 
-	CWLog("Initiate Data Channel");
+	log_debug("Initiate Data Channel");
 
 	/* Init DTLS session */
 
@@ -194,7 +194,7 @@ CWStateTransition CWWTPEnterJoin()
 							  (void *)gWTPSocket)))
 	{
 
-		CWLog("Error starting Thread that receive DTLS packet");
+		log_debug("Error starting Thread that receive DTLS packet");
 		timer_rem(waitJoinTimer, NULL);
 		CWNetworkCloseSocket(gWTPSocket);
 #ifndef CW_NO_DTLS
@@ -211,7 +211,7 @@ CWStateTransition CWWTPEnterJoin()
 							  (void *)gWTPDataSocket)))
 	{
 
-		CWLog("Error starting Thread that receive data packet");
+		log_debug("Error starting Thread that receive data packet");
 		return CW_ENTER_DISCOVERY;
 	}
 
@@ -239,7 +239,7 @@ CWStateTransition CWWTPEnterJoin()
 		gWTPPathMTU = gCWForceMTU;
 	}
 
-	CWDebugLog("Path MTU for this Session: %d", gWTPPathMTU);
+	log_debug("Path MTU for this Session: %d", gWTPPathMTU);
 
 	/* send Join Request */
 	seqNum = CWGetSeqNum();
@@ -271,7 +271,7 @@ CWStateTransition CWWTPEnterJoin()
 		goto cw_join_err;
 	}
 
-	CWLog("Join Completed");
+	log_debug("Join Completed");
 
 	return CW_ENTER_CONFIGURE;
 }
@@ -279,7 +279,7 @@ CWStateTransition CWWTPEnterJoin()
 void CWWTPWaitJoinExpired(CWTimerArg arg)
 {
 
-	CWLog("WTP Wait Join Expired");
+	log_debug("WTP Wait Join Expired");
 	gSuccessfulHandshake = CW_FALSE;
 	CWNetworkCloseSocket(gWTPSocket);
 }
@@ -379,7 +379,7 @@ CWBool CWParseJoinResponseMessage(char *msg,
 	if (msg == NULL || valuesPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Parsing Join Response...");
+	log_debug("Parsing Join Response...");
 
 	completeMsg.msg = msg;
 	completeMsg.offset = 0;
@@ -413,7 +413,7 @@ CWBool CWParseJoinResponseMessage(char *msg,
 
 		CWParseFormatMsgElem(&completeMsg, &type, &len);
 
-		//	CWDebugLog("Parsing Message Element: %u, len: %u", type, len);
+		//	log_debug("Parsing Message Element: %u, len: %u", type, len);
 		/*
 		valuesPtr->ACInfoPtr.IPv4AddressesCount = 0;
 		valuesPtr->ACInfoPtr.IPv6AddressesCount = 0;
@@ -494,7 +494,7 @@ CWBool CWParseJoinResponseMessage(char *msg,
 			return CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Unrecognized Message Element");
 		}
 
-		/* CWDebugLog("bytes: %d/%d", (completeMsg.offset-offsetTillMessages), controlVal.msgElemsLen); */
+		/* log_debug("bytes: %d/%d", (completeMsg.offset-offsetTillMessages), controlVal.msgElemsLen); */
 	}
 
 	if (completeMsg.offset != len)
@@ -638,12 +638,12 @@ CWBool CWSaveJoinResponseMessage(CWProtocolJoinResponseValues *joinResponse)
 		/* BUG ML08 */
 		CW_FREE_OBJECT(joinResponse->ACInfoPtr.IPv4Addresses);
 
-		CWDebugLog("Join Response Saved");
+		log_debug("Join Response Saved");
 		return CW_TRUE;
 	}
 	else
 	{
-		CWDebugLog("Join Response said \"Failure\"");
+		log_debug("Join Response said \"Failure\"");
 		return CW_FALSE;
 	}
 }

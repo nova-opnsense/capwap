@@ -91,10 +91,10 @@ CWBool CWWTPCheckForBindingFrame()
 #endif
 				{
 					//	if (!CWNetworkSendUnsafeConnected(gWTPDataSocket, completeMsgPtr[k].msg, completeMsgPtr[k].offset)) {
-					CWLog("[RUN State Check]: Failure sending Request");
+					log_debug("[RUN State Check]: Failure sending Request");
 					break;
 				}
-				//	CWLog("Sending binding Request to AC......");
+				//	log_debug("Sending binding Request to AC......");
 			}
 
 			for (k = 0; k < fragmentsNum; k++)
@@ -118,8 +118,8 @@ CWBool CWWTPCheckForBindingFrame()
 CWBool CWWTPCheckForWTPEventRequest(int eventType, CWMsgElemDataDeleteStation *infoDeleteStation)
 {
 
-	CWLog("\n");
-	CWLog("#________ WTP Event Request Message (Run) ________#");
+	log_debug("\n");
+	log_debug("#________ WTP Event Request Message (Run) ________#");
 
 	/* Send WTP Event Request */
 	CWList msgElemList = NULL;
@@ -155,7 +155,7 @@ CWBool CWWTPCheckForWTPEventRequest(int eventType, CWMsgElemDataDeleteStation *i
 	*pendingReqIndex = CWSendPendingRequestMessage(gPendingRequestMsgs, messages, fragmentsNum);
 	if (*pendingReqIndex < 0)
 	{
-		CWDebugLog("Failure sending WTP Event Request");
+		log_debug("Failure sending WTP Event Request");
 		int k;
 		for (k = 0; k < fragmentsNum; k++)
 		{
@@ -185,21 +185,21 @@ void CWWTPRetransmitTimerExpiredHandler(CWTimerArg arg, CWTimerID id)
 {
 	CWThreadSetSignals(SIG_BLOCK, 1, SIGALRM);
 
-	CWDebugLog("Retransmit Timer Expired for Thread: %08x", (unsigned int)CWThreadSelf());
+	log_debug("Retransmit Timer Expired for Thread: %08x", (unsigned int)CWThreadSelf());
 
 	if(gPendingRequestMsgs[arg].retransmission == gCWMaxRetransmit) {
-		CWDebugLog("Peer is Dead");
+		log_debug("Peer is Dead");
 		CWThreadSetSignals(SIG_UNBLOCK, 1, SIGALRM);
 		//_CWCloseThread(*iPtr);
 		return;
 	}
 
-	CWDebugLog("Retransmission Count increases to %d", gPendingRequestMsgs[arg].retransmission);
+	log_debug("Retransmission Count increases to %d", gPendingRequestMsgs[arg].retransmission);
 
 	int i;
 	for(i = 0; i < gPendingRequestMsgs[arg].fragmentsNum; i++) {
 		if(!CWSecuritySend(gWTPSession, gPendingRequestMsgs[arg].msgElems[i].msg, gPendingRequestMsgs[arg].msgElems[i].offset)){
-			CWDebugLog("Failure sending Request");
+			log_debug("Failure sending Request");
 			int k;
 			for(k = 0; k < gPendingRequestMsgs[arg].fragmentsNum; k++) {
 				CW_FREE_PROTOCOL_MESSAGE(gPendingRequestMsgs[arg].msgElems[k]);
@@ -226,16 +226,16 @@ void CWWTPRetransmitTimerExpiredHandler(CWTimerArg hdl_arg)
 {
 	int index = *((int *)hdl_arg);
 
-	CWDebugLog("Retransmit Timer Expired for Thread: %08x", (unsigned int)CWThreadSelf());
+	log_debug("Retransmit Timer Expired for Thread: %08x", (unsigned int)CWThreadSelf());
 
 	if (gPendingRequestMsgs[index].retransmission == gCWMaxRetransmit)
 	{
-		CWDebugLog("Peer is Dead");
+		log_debug("Peer is Dead");
 		//_CWCloseThread(*iPtr);
 		return;
 	}
 
-	CWDebugLog("Retransmission Count increases to %d", gPendingRequestMsgs[index].retransmission);
+	log_debug("Retransmission Count increases to %d", gPendingRequestMsgs[index].retransmission);
 
 	int i;
 	for (i = 0; i < gPendingRequestMsgs[index].fragmentsNum; i++)
@@ -251,7 +251,7 @@ void CWWTPRetransmitTimerExpiredHandler(CWTimerArg hdl_arg)
 							gPendingRequestMsgs[index].msgElems[i].offset))
 		{
 #endif
-			CWDebugLog("Failure sending Request");
+			log_debug("Failure sending Request");
 			int k;
 			for (k = 0; k < gPendingRequestMsgs[index].fragmentsNum; k++)
 			{

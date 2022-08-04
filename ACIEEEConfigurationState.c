@@ -28,7 +28,7 @@ CWBool CWParseIEEEConfigurationResponseMessage(CWProtocolMessage *msgPtr,
 	if (msgPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Parsing Configuration Response...");
+	log_debug("Parsing Configuration Response...");
 
 	completeMsg.msg = msgPtr->msg;
 	completeMsg.offset = 0;
@@ -54,7 +54,7 @@ CWBool CWParseIEEEConfigurationResponseMessage(CWProtocolMessage *msgPtr,
 
 		CWParseFormatMsgElem(&completeMsg, &elemType, &elemLen);
 
-		//		CWLog("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);
+		//		log_debug("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);
 
 		switch (elemType)
 		{
@@ -62,9 +62,9 @@ CWBool CWParseIEEEConfigurationResponseMessage(CWProtocolMessage *msgPtr,
 			if (!(CWParseResultCode(&completeMsg, elemLen, &(resultCode))))
 				return CW_FALSE;
 			if (resultCode != CW_PROTOCOL_SUCCESS)
-				CWLog("ERROR IEEE 802.11 Configuration");
+				log_debug("ERROR IEEE 802.11 Configuration");
 			else
-				CWLog("OK IEEE 802.11 Configuration");
+				log_debug("OK IEEE 802.11 Configuration");
 			break;
 		case CW_MSG_ELEMENT_IEEE80211_ASSIGNED_WTP_BSSID_CW_TYPE:
 			CW_CREATE_ARRAY_CALLOC_ERR(bssIDTmp, ETH_ALEN + 1, char, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
@@ -105,7 +105,7 @@ CWBool CWParseIEEEConfigurationResponseMessage(CWProtocolMessage *msgPtr,
 
 	// if(completeMsg.offset != len) return CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Garbage at the End of the Message");
 
-	CWDebugLog("Configure Response Parsed");
+	log_debug("Configure Response Parsed");
 	return CW_TRUE;
 }
 
@@ -198,7 +198,7 @@ CWBool CWAssembleIEEEConfigurationRequest(CWProtocolMessage **messagesPtr,
 #endif
 		return CW_FALSE;
 
-	CWDebugLog("Configure Response Assembled");
+	log_debug("Configure Response Assembled");
 	return CW_TRUE;
 }
 

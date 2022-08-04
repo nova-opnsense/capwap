@@ -50,7 +50,7 @@ CWBool CWAssembleMsgElemACName(CWProtocolMessage *msgPtr)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
 	name = CWWTPGetACName();
-	//	CWDebugLog("AC Name: %s", name);
+	//	log_debug("AC Name: %s", name);
 
 	// create message
 	CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, strlen(name), return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
@@ -96,7 +96,7 @@ CWBool CWAssembleMsgElemACNameWithIndex(CWProtocolMessage *msgPtr)
 			CW_FREE_OBJECT(msgs);
 			return CW_FALSE;
 		}
-		//		CWDebugLog("AC Name with index: %d - %s", ACsinfo.ACNameIndex[i].index, ACsinfo.ACNameIndex[i].ACName);
+		//		log_debug("AC Name with index: %d - %s", ACsinfo.ACNameIndex[i].index, ACsinfo.ACNameIndex[i].ACName);
 		len += msgs[i].offset;
 	}
 	CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, len, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
@@ -150,7 +150,7 @@ CWBool CWAssembleMsgElemDiscoveryType(CWProtocolMessage *msgPtr)
 	// create message
 	CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, 1, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
-	//	CWDebugLog("Discovery Type: %d", CWWTPGetDiscoveryType());
+	//	log_debug("Discovery Type: %d", CWWTPGetDiscoveryType());
 
 	CWProtocolStore8(msgPtr, CWWTPGetDiscoveryType());
 
@@ -186,7 +186,7 @@ CWBool CWAssembleMsgElemLocationData(CWProtocolMessage *msgPtr)
 	// create message
 	CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, strlen(location), return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
-	//	CWDebugLog("Location Data: %s", location);
+	//	log_debug("Location Data: %s", location);
 	CWProtocolStoreStr(msgPtr, location);
 
 	return CWAssembleMsgElem(msgPtr, CW_MSG_ELEMENT_LOCATION_DATA_CW_TYPE);
@@ -200,7 +200,7 @@ CWBool CWAssembleMsgElemStatisticsTimer(CWProtocolMessage *msgPtr)
 
 	CWProtocolStore16(msgPtr, CWWTPGetStatisticsTimer());
 
-	//	CWDebugLog("Statistics Timer: %d", CWWTPGetStatisticsTimer());
+	//	log_debug("Statistics Timer: %d", CWWTPGetStatisticsTimer());
 
 	return CWAssembleMsgElem(msgPtr, CW_MSG_ELEMENT_STATISTICS_TIMER_CW_TYPE);
 }
@@ -244,7 +244,7 @@ CWBool CWAssembleMsgElemWTPBoardData(CWProtocolMessage *msgPtr)
 
 		CWProtocolStoreRawBytes(msgPtr, (char *)((infos.vendorInfos)[i].valuePtr), (infos.vendorInfos)[i].length);
 
-		//		CWDebugLog("Board Data: %d - %d - %d - %d", (infos.vendorInfos)[i].vendorIdentifier, (infos.vendorInfos)[i].type, (infos.vendorInfos)[i].length, *((infos.vendorInfos)[i].valuePtr));
+		//		log_debug("Board Data: %d - %d - %d - %d", (infos.vendorInfos)[i].vendorIdentifier, (infos.vendorInfos)[i].type, (infos.vendorInfos)[i].length, *((infos.vendorInfos)[i].valuePtr));
 	}
 
 	CWWTPDestroyVendorInfos(&infos);
@@ -341,12 +341,12 @@ CWBool CWAssembleMsgElemWTPDescriptor(CWProtocolMessage *msgPtr)
 
 		CWProtocolStoreRawBytes(msgPtr, (char *)((infos.vendorInfos)[i].valuePtr), (infos.vendorInfos)[i].length);
 		/*
-				CWDebugLog("WTP Descriptor Vendor ID: %d", (infos.vendorInfos)[i].vendorIdentifier);
-				CWDebugLog("WTP Descriptor Type: %d", (infos.vendorInfos)[i].type);
-				CWDebugLog("WTP Descriptor Length: %d", (infos.vendorInfos)[i].length);
-				CWDebugLog("WTP Descriptor Value: %d", *((infos.vendorInfos)[i].valuePtr));
+				log_debug("WTP Descriptor Vendor ID: %d", (infos.vendorInfos)[i].vendorIdentifier);
+				log_debug("WTP Descriptor Type: %d", (infos.vendorInfos)[i].type);
+				log_debug("WTP Descriptor Length: %d", (infos.vendorInfos)[i].length);
+				log_debug("WTP Descriptor Value: %d", *((infos.vendorInfos)[i].valuePtr));
 		*/
-		// CWDebugLog("Vendor Info \"%d\" = %d - %d - %d", i, (infos.vendorInfos)[i].vendorIdentifier, (infos.vendorInfos)[i].type, (infos.vendorInfos)[i].length);
+		// log_debug("Vendor Info \"%d\" = %d - %d - %d", i, (infos.vendorInfos)[i].vendorIdentifier, (infos.vendorInfos)[i].type, (infos.vendorInfos)[i].length);
 	}
 
 	CWWTPDestroyVendorInfos(&infos);
@@ -362,7 +362,7 @@ CWBool CWAssembleMsgElemWTPFrameTunnelMode(CWProtocolMessage *msgPtr)
 	// create message
 	CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, 1, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
-	//	CWDebugLog("Frame Tunnel Mode: %d", CWWTPGetFrameTunnelMode());
+	//	log_debug("Frame Tunnel Mode: %d", CWWTPGetFrameTunnelMode());
 	CWProtocolStore8(msgPtr, CWWTPGetFrameTunnelMode()); // frame encryption
 
 	return CWAssembleMsgElem(msgPtr, CW_MSG_ELEMENT_WTP_FRAME_TUNNEL_MODE_CW_TYPE);
@@ -376,7 +376,7 @@ CWBool CWAssembleMsgElemWTPIPv4Address(CWProtocolMessage *msgPtr)
 	// create message
 	CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, 4, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
-	//	CWDebugLog("WTP IPv4 Address: %d", CWWTPGetIPv4Address());
+	//	log_debug("WTP IPv4 Address: %d", CWWTPGetIPv4Address());
 	CWProtocolStore32(msgPtr, CWWTPGetIPv4Address());
 
 	return CWAssembleMsgElem(msgPtr, CW_MSG_ELEMENT_LOCAL_IPV4_ADDRESS_CW_TYPE);
@@ -391,7 +391,7 @@ CWBool CWAssembleMsgElemWTPMACType(CWProtocolMessage *msgPtr)
 	// create message
 	CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, 1, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
-	//	CWDebugLog("WTP MAC Type: %d", CWWTPGetMACType());
+	//	log_debug("WTP MAC Type: %d", CWWTPGetMACType());
 	CWProtocolStore8(msgPtr, CWWTPGetMACType()); // mode of operation of the WTP (local, split, ...)
 
 	return CWAssembleMsgElem(msgPtr, CW_MSG_ELEMENT_WTP_MAC_TYPE_CW_TYPE);
@@ -507,7 +507,7 @@ CWBool CWAssembleMsgElemWTPName(CWProtocolMessage *msgPtr)
 	// create message
 	CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, strlen(name), return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
-	//	CWDebugLog("WTPName: %s", name);
+	//	log_debug("WTPName: %s", name);
 	CWProtocolStoreStr(msgPtr, name);
 
 	return CWAssembleMsgElem(msgPtr, CW_MSG_ELEMENT_WTP_NAME_CW_TYPE);
@@ -529,8 +529,8 @@ CWBool CWAssembleMsgElemWTPOperationalStatistics(CWProtocolMessage *msgPtr, int 
 	CWProtocolStore8(msgPtr, gRadiosInfo.radiosInfo[radio].TxQueueLevel);
 	CWProtocolStore16(msgPtr, gRadiosInfo.radiosInfo[radio].wirelessLinkFramesPerSec);
 
-	//	CWDebugLog("");
-	//	CWDebugLog("WTPOperationalStatistics of radio \"%d\": %d - %d", radio,gRadiosInfo.radiosInfo[radio].TxQueueLevel,  gRadiosInfo.radiosInfo[radio].wirelessLinkFramesPerSec);
+	//	log_debug("");
+	//	log_debug("WTPOperationalStatistics of radio \"%d\": %d - %d", radio,gRadiosInfo.radiosInfo[radio].TxQueueLevel,  gRadiosInfo.radiosInfo[radio].wirelessLinkFramesPerSec);
 
 	CWAssembleMsgElem(msgPtr, CW_MSG_ELEMENT_WTP_OPERAT_STATISTICS_CW_TYPE);
 
@@ -561,11 +561,11 @@ CWBool CWAssembleMsgElemWTPRadioStatistics(CWProtocolMessage *msgPtr, int radio)
 	CWProtocolStore16(msgPtr, gRadiosInfo.radiosInfo[radio].statistics.bandChangeCount);
 	CWProtocolStore16(msgPtr, gRadiosInfo.radiosInfo[radio].statistics.currentNoiseFloor);
 
-	//	CWDebugLog("");
-	//	CWDebugLog("WTPRadioStatistics of radio: \"%d\"", radio);
-	//	CWDebugLog("WTPRadioStatistics(1): %d - %d - %d", gRadiosInfo.radiosInfo[radio].statistics.lastFailureType, gRadiosInfo.radiosInfo[radio].statistics.resetCount, gRadiosInfo.radiosInfo[radio].statistics.SWFailureCount);
-	//	CWDebugLog("WTPRadioStatistics(2): %d - %d - %d", gRadiosInfo.radiosInfo[radio].statistics.HWFailuireCount, gRadiosInfo.radiosInfo[radio].statistics.otherFailureCount, gRadiosInfo.radiosInfo[radio].statistics.unknownFailureCount);
-	//	CWDebugLog("WTPRadioStatistics(3): %d - %d - %d - %d", gRadiosInfo.radiosInfo[radio].statistics.configUpdateCount, gRadiosInfo.radiosInfo[radio].statistics.channelChangeCount,gRadiosInfo.radiosInfo[radio].statistics.bandChangeCount,gRadiosInfo.radiosInfo[radio].statistics.currentNoiseFloor);
+	//	log_debug("");
+	//	log_debug("WTPRadioStatistics of radio: \"%d\"", radio);
+	//	log_debug("WTPRadioStatistics(1): %d - %d - %d", gRadiosInfo.radiosInfo[radio].statistics.lastFailureType, gRadiosInfo.radiosInfo[radio].statistics.resetCount, gRadiosInfo.radiosInfo[radio].statistics.SWFailureCount);
+	//	log_debug("WTPRadioStatistics(2): %d - %d - %d", gRadiosInfo.radiosInfo[radio].statistics.HWFailuireCount, gRadiosInfo.radiosInfo[radio].statistics.otherFailureCount, gRadiosInfo.radiosInfo[radio].statistics.unknownFailureCount);
+	//	log_debug("WTPRadioStatistics(3): %d - %d - %d - %d", gRadiosInfo.radiosInfo[radio].statistics.configUpdateCount, gRadiosInfo.radiosInfo[radio].statistics.channelChangeCount,gRadiosInfo.radiosInfo[radio].statistics.bandChangeCount,gRadiosInfo.radiosInfo[radio].statistics.currentNoiseFloor);
 
 	// return CWAssembleMsgElem(msgPtr, CW_MSG_ELEMENT_WTP_RADIO_STATISTICS_CW_TYPE);
 
@@ -592,10 +592,10 @@ CWBool CWAssembleMsgElemWTPRebootStatistics(CWProtocolMessage *msgPtr)
 	CWProtocolStore16(msgPtr, gWTPRebootStatistics.unknownFailureCount);
 	CWProtocolStore8(msgPtr, gWTPRebootStatistics.lastFailureType);
 
-	//	CWDebugLog("");
-	//	CWDebugLog("WTPRebootStat(1): %d - %d - %d", gWTPRebootStatistics.rebootCount, gWTPRebootStatistics.ACInitiatedCount, gWTPRebootStatistics.linkFailurerCount);
-	//	CWDebugLog("WTPRebootStat(2): %d - %d - %d", gWTPRebootStatistics.SWFailureCount, gWTPRebootStatistics.HWFailuireCount, gWTPRebootStatistics.otherFailureCount);
-	//	CWDebugLog("WTPRebootStat(3): %d - %d", gWTPRebootStatistics.unknownFailureCount, gWTPRebootStatistics.lastFailureType);
+	//	log_debug("");
+	//	log_debug("WTPRebootStat(1): %d - %d - %d", gWTPRebootStatistics.rebootCount, gWTPRebootStatistics.ACInitiatedCount, gWTPRebootStatistics.linkFailurerCount);
+	//	log_debug("WTPRebootStat(2): %d - %d - %d", gWTPRebootStatistics.SWFailureCount, gWTPRebootStatistics.HWFailuireCount, gWTPRebootStatistics.otherFailureCount);
+	//	log_debug("WTPRebootStat(3): %d - %d", gWTPRebootStatistics.unknownFailureCount, gWTPRebootStatistics.lastFailureType);
 
 	return CWAssembleMsgElem(msgPtr, CW_MSG_ELEMENT_WTP_REBOOT_STATISTICS_CW_TYPE);
 }
@@ -627,8 +627,8 @@ CWBool CWAssembleMsgElemDuplicateIPv4Address(CWProtocolMessage *msgPtr)
 	// create message
 	CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, duplicate_ipv4_length, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
-	//	CWDebugLog("");
-	//	CWDebugLog("Duplicate IPv4 Address: %d", CWWTPGetIPv4Address());
+	//	log_debug("");
+	//	log_debug("Duplicate IPv4 Address: %d", CWWTPGetIPv4Address());
 
 	CWProtocolStore32(msgPtr, CWWTPGetIPv4Address());
 
@@ -664,8 +664,8 @@ CWBool CWAssembleMsgElemDuplicateIPv6Address(CWProtocolMessage *msgPtr)
 	// create message
 	CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, duplicate_ipv6_length, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
-	//	CWDebugLog("");
-	//	CWDebugLog("Duplicate IPv6 Address");
+	//	log_debug("");
+	//	log_debug("Duplicate IPv6 Address");
 
 	struct sockaddr_in6 myAddr;
 	CWWTPGetIPv6Address(&myAddr);
@@ -730,7 +730,7 @@ CWBool CWAssembleMsgElemRadioAdminState(CWProtocolMessage *msgPtr)
 		}
 
 		len += msgs[i].offset;
-		//		CWDebugLog("Radio Admin State: %d - %d - %d", infos.radios[i].ID, infos.radios[i].state, infos.radios[i].cause);
+		//		log_debug("Radio Admin State: %d - %d - %d", infos.radios[i].ID, infos.radios[i].state, infos.radios[i].cause);
 	}
 
 	CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, len, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
@@ -787,7 +787,7 @@ CWBool CWAssembleMsgElemRadioOperationalState(int radioID, CWProtocolMessage *ms
 		}
 
 		len += msgs[i].offset;
-		CWLog("Radio Operational State: %d - %d - %d", infos.radios[i].ID, infos.radios[i].state, infos.radios[i].cause);
+		log_debug("Radio Operational State: %d - %d - %d", infos.radios[i].ID, infos.radios[i].state, infos.radios[i].cause);
 	}
 
 	CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, len, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
@@ -836,12 +836,12 @@ CWBool CWAssembleMsgElemDecryptErrorReport(CWProtocolMessage *msgPtr, int radioI
 		CWProtocolStoreRawBytes(&(msgs[i]), (char *)*(infos.radios[i].decryptErrorMACAddressList), sizeof(CWMACAddress) * (infos.radios[i].numEntries));
 
 		/*
-		CWDebugLog("###numEntries = %d", infos.radios[i].numEntries);
-		CWDebugLog("j = %d", sizeof(CWMACAddress)*(infos.radios[i].numEntries));
+		log_debug("###numEntries = %d", infos.radios[i].numEntries);
+		log_debug("j = %d", sizeof(CWMACAddress)*(infos.radios[i].numEntries));
 
 		int j;
 		for (j=(sizeof(CWMACAddress)*(infos.radios[i].numEntries)); j>0; j--)
-			CWDebugLog("##(%d/6) = %d", j, msgs[i].msg[(msgs[i].offset)-j]);
+			log_debug("##(%d/6) = %d", j, msgs[i].msg[(msgs[i].offset)-j]);
 		*/
 
 		if (!(CWAssembleMsgElem(&(msgs[i]), CW_MSG_ELEMENT_CW_DECRYPT_ER_REPORT_CW_TYPE)))
@@ -861,7 +861,7 @@ CWBool CWAssembleMsgElemDecryptErrorReport(CWProtocolMessage *msgPtr, int radioI
 		}
 
 		len += msgs[i].offset;
-		//		CWDebugLog("Radio Decrypt Error Report of radio \"%d\" = %d", infos.radios[i].ID, infos.radios[i].numEntries);
+		//		log_debug("Radio Decrypt Error Report of radio \"%d\" = %d", infos.radios[i].ID, infos.radios[i].numEntries);
 	}
 
 	CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, len, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
@@ -893,7 +893,7 @@ CWBool CWAssembleMsgElemWTPRadioInformation(CWProtocolMessage *msgPtr) {
 
 	if(msgPtr == NULL) return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Assemble WTP Radio Info");
+	log_debug("Assemble WTP Radio Info");
 
 	if(!CWWTPGetRadiosInformation(&infos)) {
 		return CW_FALSE;
@@ -909,7 +909,7 @@ CWBool CWAssembleMsgElemWTPRadioInformation(CWProtocolMessage *msgPtr) {
 		CWProtocolStore8(&(msgs[i]), infos.radios[i].ID); // ID of the radio
 		CWProtocolStore32(&(msgs[i]), infos.radios[i].type); // type of the radio
 
-		CWDebugLog("WTPRadioInformation: %d - %d", infos.radios[i].ID, infos.radios[i].type);
+		log_debug("WTPRadioInformation: %d - %d", infos.radios[i].ID, infos.radios[i].type);
 
 		if(!(CWAssembleMsgElem(&(msgs[i]), CW_MSG_ELEMENT_WTP_RADIO_INFO_CW_TYPE))) {
 			int j;
@@ -960,30 +960,30 @@ CWBool CWParseACDescriptor(CWProtocolMessage *msgPtr, int len, CWACInfoValues *v
 	CWParseMessageElementStart();
 
 	valPtr->stations = CWProtocolRetrieve16(msgPtr);
-	//	CWDebugLog("AC Descriptor Stations: %d", valPtr->stations);
+	//	log_debug("AC Descriptor Stations: %d", valPtr->stations);
 
 	valPtr->limit = CWProtocolRetrieve16(msgPtr);
-	//	CWDebugLog("AC Descriptor Limit: %d", valPtr->limit);
+	//	log_debug("AC Descriptor Limit: %d", valPtr->limit);
 
 	valPtr->activeWTPs = CWProtocolRetrieve16(msgPtr);
-	//	CWDebugLog("AC Descriptor Active WTPs: %d", valPtr->activeWTPs);
+	//	log_debug("AC Descriptor Active WTPs: %d", valPtr->activeWTPs);
 
 	valPtr->maxWTPs = CWProtocolRetrieve16(msgPtr);
-	//	CWDebugLog("AC Descriptor Max WTPs: %d",	valPtr->maxWTPs);
+	//	log_debug("AC Descriptor Max WTPs: %d",	valPtr->maxWTPs);
 
 	valPtr->security = CWProtocolRetrieve8(msgPtr);
-	//	CWDebugLog("AC Descriptor Security: %d",	valPtr->security);
+	//	log_debug("AC Descriptor Security: %d",	valPtr->security);
 
 	valPtr->RMACField = CWProtocolRetrieve8(msgPtr);
-	//	CWDebugLog("AC Descriptor Radio MAC Field: %d",	valPtr->security);
+	//	log_debug("AC Descriptor Radio MAC Field: %d",	valPtr->security);
 
 	//	valPtr->WirelessField= CWProtocolRetrieve8(msgPtr);
-	//	CWDebugLog("AC Descriptor Wireless Field: %d",	valPtr->security);
+	//	log_debug("AC Descriptor Wireless Field: %d",	valPtr->security);
 
 	CWProtocolRetrieve8(msgPtr); // Reserved
 
 	valPtr->DTLSPolicy = CWProtocolRetrieve8(msgPtr); // DTLS Policy
-													  //	CWDebugLog("DTLS Policy: %d",	valPtr->DTLSPolicy);
+													  //	log_debug("DTLS Policy: %d",	valPtr->DTLSPolicy);
 
 	valPtr->vendorInfos.vendorInfosCount = 0;
 
@@ -991,21 +991,21 @@ CWBool CWParseACDescriptor(CWProtocolMessage *msgPtr, int len, CWACInfoValues *v
 
 	// see how many vendor ID we have in the message
 	while ((msgPtr->offset - oldOffset) < len)
-	{	// oldOffset stores msgPtr->offset's value at the beginning of this function.
+	{ // oldOffset stores msgPtr->offset's value at the beginning of this function.
 		// See the definition of the CWParseMessageElementStart() macro.
 		int tmp, id = 0, type = 0;
 
-		// CWDebugLog("differenza:%d, offset:%d, oldOffset:%d", (msgPtr->offset-oldOffset), (msgPtr->offset), oldOffset);
+		// log_debug("differenza:%d, offset:%d, oldOffset:%d", (msgPtr->offset-oldOffset), (msgPtr->offset), oldOffset);
 
 		id = CWProtocolRetrieve32(msgPtr);
-		//		CWDebugLog("ID: %d", id); // ID
+		//		log_debug("ID: %d", id); // ID
 
 		type = CWProtocolRetrieve16(msgPtr);
-		//		CWDebugLog("TYPE: %d",type); // type
+		//		log_debug("TYPE: %d",type); // type
 
 		tmp = CWProtocolRetrieve16(msgPtr);
 		msgPtr->offset += tmp; // len
-							   //		CWDebugLog("offset %d", msgPtr->offset);
+							   //		log_debug("offset %d", msgPtr->offset);
 		valPtr->vendorInfos.vendorInfosCount++;
 	}
 
@@ -1014,11 +1014,11 @@ CWBool CWParseACDescriptor(CWProtocolMessage *msgPtr, int len, CWACInfoValues *v
 	// actually read each vendor ID
 	CW_CREATE_ARRAY_ERR(valPtr->vendorInfos.vendorInfos, valPtr->vendorInfos.vendorInfosCount, CWACVendorInfoValues,
 						return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
-	//	CWDebugLog("len %d", len);
-	//	CWDebugLog("vendorInfosCount %d", valPtr->vendorInfos.vendorInfosCount);
+	//	log_debug("len %d", len);
+	//	log_debug("vendorInfosCount %d", valPtr->vendorInfos.vendorInfosCount);
 	for (i = 0; i < valPtr->vendorInfos.vendorInfosCount; i++)
 	{
-		//		CWDebugLog("vendorInfosCount %d vs %d", i, valPtr->vendorInfos.vendorInfosCount);
+		//		log_debug("vendorInfosCount %d vs %d", i, valPtr->vendorInfos.vendorInfosCount);
 		(valPtr->vendorInfos.vendorInfos)[i].vendorIdentifier = CWProtocolRetrieve32(msgPtr);
 		(valPtr->vendorInfos.vendorInfos)[i].type = CWProtocolRetrieve16(msgPtr);
 		(valPtr->vendorInfos.vendorInfos)[i].length = CWProtocolRetrieve16(msgPtr);
@@ -1032,11 +1032,11 @@ CWBool CWParseACDescriptor(CWProtocolMessage *msgPtr, int len, CWACInfoValues *v
 			*((valPtr->vendorInfos.vendorInfos)[i].valuePtr) = ntohl(*((valPtr->vendorInfos.vendorInfos)[i].valuePtr));
 		}
 
-		//		CWDebugLog("AC Descriptor Vendor ID: %d", (valPtr->vendorInfos.vendorInfos)[i].vendorIdentifier);
-		//		CWDebugLog("AC Descriptor Type: %d", (valPtr->vendorInfos.vendorInfos)[i].type);
-		//		CWDebugLog("AC Descriptor Value: %d", *((valPtr->vendorInfos.vendorInfos)[i].valuePtr));
+		//		log_debug("AC Descriptor Vendor ID: %d", (valPtr->vendorInfos.vendorInfos)[i].vendorIdentifier);
+		//		log_debug("AC Descriptor Type: %d", (valPtr->vendorInfos.vendorInfos)[i].type);
+		//		log_debug("AC Descriptor Value: %d", *((valPtr->vendorInfos.vendorInfos)[i].valuePtr));
 	}
-	//	CWDebugLog("AC Descriptor Out");
+	//	log_debug("AC Descriptor Out");
 	CWParseMessageElementEnd();
 }
 
@@ -1056,11 +1056,11 @@ CWBool CWParseACIPv4List(CWProtocolMessage *msgPtr, int len, ACIPv4ListValues *v
 	{
 		struct sockaddr_in addr;
 		(valPtr->ACIPv4List)[i] = CWProtocolRetrieve32(msgPtr);
-		//		CWDebugLog("AC IPv4 List (%d): %d", i+1, (valPtr->ACIPv4List)[i]);
+		//		log_debug("AC IPv4 List (%d): %d", i+1, (valPtr->ACIPv4List)[i]);
 		addr.sin_addr.s_addr = (valPtr->ACIPv4List)[i];
 		addr.sin_family = AF_INET;
 		addr.sin_port = 1024;
-		CWUseSockNtop(&addr, CWDebugLog(str););
+		CWUseSockNtop(&addr, log_debug(str););
 	}
 
 	CWParseMessageElementEnd();
@@ -1094,7 +1094,7 @@ CWBool CWParseACIPv6List(CWProtocolMessage *msgPtr, int len, ACIPv6ListValues *v
 		addr.sin6_family = AF_INET6;
 		addr.sin6_port = htons(CW_CONTROL_PORT);
 
-		//		CWUseSockNtop(&addr, CWDebugLog("AC IPv6 List: %s",str););
+		//		CWUseSockNtop(&addr, log_debug("AC IPv6 List: %s",str););
 	}
 
 	CWParseMessageElementEnd();
@@ -1117,7 +1117,7 @@ CWBool CWParseDeleteStation(CWProtocolMessage *msgPtr, int len, int *radioID, ch
 	Length = CWProtocolRetrieve8(msgPtr);
 	(*address) = (unsigned char *)CWProtocolRetrieveRawBytes(msgPtr, Length);
 
-	/*   CWDebugLog("ADD MAC: %02X:%02X:%02X:%02X:%02X:%02X", (unsigned char)(*address)[0],
+	/*   log_debug("ADD MAC: %02X:%02X:%02X:%02X:%02X:%02X", (unsigned char)(*address)[0],
 															(unsigned char)(*address)[1],
 															(unsigned char)(*address)[2],
 															(unsigned char)(*address)[3],
@@ -1144,7 +1144,7 @@ CWBool CWParseAddStation(CWProtocolMessage *msgPtr, int len, int *radioID, char 
 	(*address) = (unsigned char *)CWProtocolRetrieveRawBytes(msgPtr, Length);
 
 	/*
-	CWDebugLog("ADD MAC: %02X:%02X:%02X:%02X:%02X:%02X", (unsigned char)(*address)[0],
+	log_debug("ADD MAC: %02X:%02X:%02X:%02X:%02X:%02X", (unsigned char)(*address)[0],
 														 (unsigned char)(*address)[1],
 														  (unsigned char)(*address)[2],
 														   (unsigned char)(*address)[3],
@@ -1274,10 +1274,10 @@ CWBool CWParseCWControlIPv4Addresses(CWProtocolMessage *msgPtr, int len, CWProto
 	valPtr->addr.sin_family = AF_INET;
 	valPtr->addr.sin_port = htons(CW_CONTROL_PORT);
 
-	CWUseSockNtop((&(valPtr->addr)), CWDebugLog("Interface Address: %s", str););
+	CWUseSockNtop((&(valPtr->addr)), log_debug("Interface Address: %s", str););
 
 	valPtr->WTPCount = CWProtocolRetrieve16(msgPtr);
-	//	CWDebugLog("WTP Count: %d",	valPtr->WTPCount);
+	//	log_debug("WTP Count: %d",	valPtr->WTPCount);
 
 	CWParseMessageElementEnd();
 }
@@ -1290,10 +1290,10 @@ CWBool CWParseCWControlIPv6Addresses(CWProtocolMessage *msgPtr, int len, CWProto
 	valPtr->addr.sin6_family = AF_INET6;
 	valPtr->addr.sin6_port = htons(CW_CONTROL_PORT);
 
-	CWUseSockNtop((&(valPtr->addr)), CWDebugLog("Interface Address: %s", str););
+	CWUseSockNtop((&(valPtr->addr)), log_debug("Interface Address: %s", str););
 
 	valPtr->WTPCount = CWProtocolRetrieve16(msgPtr);
-	//	CWDebugLog("WTP Count: %d",	valPtr->WTPCount);
+	//	log_debug("WTP Count: %d",	valPtr->WTPCount);
 
 	CWParseMessageElementEnd();
 }
@@ -1303,9 +1303,9 @@ CWBool CWParseCWTimers(CWProtocolMessage *msgPtr, int len, CWProtocolConfigureRe
 	CWParseMessageElementStart();
 
 	valPtr->discoveryTimer = CWProtocolRetrieve8(msgPtr);
-	//	CWDebugLog("Discovery Timer: %d", valPtr->discoveryTimer);
+	//	log_debug("Discovery Timer: %d", valPtr->discoveryTimer);
 	valPtr->echoRequestTimer = CWProtocolRetrieve8(msgPtr);
-	//	CWDebugLog("Echo Timer: %d", valPtr->echoRequestTimer);
+	//	log_debug("Echo Timer: %d", valPtr->echoRequestTimer);
 
 	CWParseMessageElementEnd();
 }
@@ -1330,7 +1330,7 @@ CWBool CWParseDecryptErrorReportPeriod(CWProtocolMessage *msgPtr, int len, WTPDe
 
 	valPtr->radioID = CWProtocolRetrieve8(msgPtr);
 	valPtr->reportInterval = CWProtocolRetrieve16(msgPtr);
-	//	CWDebugLog("Decrypt Error Report Period: %d - %d", valPtr->radioID, valPtr->reportInterval);
+	//	log_debug("Decrypt Error Report Period: %d - %d", valPtr->radioID, valPtr->reportInterval);
 
 	CWParseMessageElementEnd();
 }
@@ -1340,7 +1340,7 @@ CWBool CWParseIdleTimeout(CWProtocolMessage *msgPtr, int len, CWProtocolConfigur
 	CWParseMessageElementStart();
 
 	valPtr->idleTimeout = CWProtocolRetrieve32(msgPtr);
-	//	CWDebugLog("Idle Timeout: %d", valPtr->idleTimeout);
+	//	log_debug("Idle Timeout: %d", valPtr->idleTimeout);
 
 	CWParseMessageElementEnd();
 }
@@ -1350,7 +1350,7 @@ CWBool CWParseWTPFallback(CWProtocolMessage *msgPtr, int len, CWProtocolConfigur
 	CWParseMessageElementStart();
 
 	valPtr->fallback = CWProtocolRetrieve8(msgPtr);
-	//	CWDebugLog("WTP Fallback: %d", valPtr->fallback);
+	//	log_debug("WTP Fallback: %d", valPtr->fallback);
 
 	CWParseMessageElementEnd();
 }

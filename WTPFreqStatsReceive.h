@@ -43,9 +43,9 @@
 #define SERVER_PORT 1237
 #define PACKET_SIZE 65536
 
-#define EXIT_THREAD                                                       \
-	CWLog("ERROR Handling Frequency Stats: application will be closed!"); \
-	close(recSock);                                                       \
+#define EXIT_THREAD                                                           \
+	log_debug("ERROR Handling Frequency Stats: application will be closed!"); \
+	close(recSock);                                                           \
 	exit(1);
 
 /* Structs for frequencies' informations */

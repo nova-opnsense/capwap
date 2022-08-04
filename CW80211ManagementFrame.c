@@ -17,7 +17,7 @@ CW_THREAD_RETURN_TYPE CWWTPBSSManagement(void *arg)
 {
 	struct WTPBSSInfo *BSSInfo = (struct WTPBSSInfo *)arg;
 
-	CWLog("New thread created for BSS SSID: %s", BSSInfo->interfaceInfo->SSID);
+	log_debug("New thread created for BSS SSID: %s", BSSInfo->interfaceInfo->SSID);
 
 	// Start reading from AP readers
 	CW80211ManagementFrameEvent(&(BSSInfo->interfaceInfo->nl_mgmt), CW80211EventReceive, BSSInfo->interfaceInfo->nl_cb, BSSInfo);
@@ -57,7 +57,7 @@ void CW80211ManagementFrameEvent(struct nl_handle **handleMgmt, cw_sock_handler 
 		}
 		else if (result < 0)
 		{
-			CWLog("Error on select(): %s", strerror(errno));
+			log_debug("Error on select(): %s", strerror(errno));
 		}
 	}
 }
@@ -69,11 +69,11 @@ void CW80211EventReceive(void *cbPtr, void *handlePtr)
 
 	int res;
 
-	// CWLog("nl80211: Event message available");
+	// log_debug("nl80211: Event message available");
 	res = nl_recvmsgs(handle, cb);
 	if (res < 0)
 	{
-		CWLog("nl80211: %s->nl_recvmsgs failed: %d, %s", __func__, res, strerror(res));
+		log_debug("nl80211: %s->nl_recvmsgs failed: %d, %s", __func__, res, strerror(res));
 	}
 }
 
@@ -89,12 +89,12 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 	int deleteRadioID;
 	unsigned char deleteStaAddr[ETH_ALEN];
 
-	// CWLog("nl80211: Drv Event %d (%s) received for %s", cmd, nl80211_command_to_string(cmd), WTPBSSInfoPtr->interfaceInfo->ifName);
+	// log_debug("nl80211: Drv Event %d (%s) received for %s", cmd, nl80211_command_to_string(cmd), WTPBSSInfoPtr->interfaceInfo->ifName);
 
 	// union wpa_event_data data;
 	if (!tb[NL80211_ATTR_FRAME])
 	{
-		CWLog("[NL80211] ______ Unexpected frame");
+		log_debug("[NL80211] ______ Unexpected frame");
 		CW80211HandleClass3Frame(WTPBSSInfoPtr, cmd, tb, frameBuffer);
 		return;
 	}
@@ -118,11 +118,11 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 
 		if (CWCompareEthernetAddress(probeRequest.SSID, WTPBSSInfoPtr->interfaceInfo->SSID) != 0)
 		{
-			// CWLog("[80211] SSID is not the same of this interface. Aborted");
+			// log_debug("[80211] SSID is not the same of this interface. Aborted");
 			return;
 		}
 
-		CWLog("[80211] ______ Probe Request Received");
+		log_debug("[80211] ______ Probe Request Received");
 
 		// Split MAC: invia probe request ad AC per conoscenza
 #ifdef SPLIT_MAC
@@ -131,13 +131,13 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 #endif
 		// In ogni caso, risponde il WTP direttamente senza attendere AC
 		frameResponse = CW80211AssembleProbeResponse(WTPBSSInfoPtr, &(probeRequest), &frameRespLen);
-		CWLog("Dopo assemble");
+		log_debug("Dopo assemble");
 	}
 
 	/* +++ AUTH +++ */
 	if (WLAN_FC_GET_TYPE(fc) == WLAN_FC_TYPE_MGMT && WLAN_FC_GET_STYPE(fc) == WLAN_FC_STYPE_AUTH)
 	{
-		CWLog("[80211] ______ Auth Request Received");
+		log_debug("[80211] ______ Auth Request Received");
 
 		struct CWFrameAuthRequest authRequest;
 		if (!CW80211ParseAuthRequest(frameReceived, &authRequest))
@@ -146,7 +146,7 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 			return;
 		}
 
-		///		CWLog("[CW80211] TRY TO STA %02x:%02x:%02x:%02x:%02x:%02x", (int) authRequest.SA[0], (int) authRequest.SA[1], (int) authRequest.SA[2], (int) authRequest.SA[3], (int) authRequest.SA[4], (int) authRequest.SA[5]);
+		///		log_debug("[CW80211] TRY TO STA %02x:%02x:%02x:%02x:%02x:%02x", (int) authRequest.SA[0], (int) authRequest.SA[1], (int) authRequest.SA[2], (int) authRequest.SA[3], (int) authRequest.SA[4], (int) authRequest.SA[5]);
 
 		thisSTA = addSTABySA(WTPBSSInfoPtr, authRequest.SA);
 		if (thisSTA)
@@ -166,14 +166,14 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 		// Local MAC: invia direttamente auth a STA
 		frameResponse = CW80211AssembleAuthResponse(WTPBSSInfoPtr->interfaceInfo->MACaddr, &authRequest, &frameRespLen);
 		if (!CWStartAssociationRequestTimer(thisSTA, WTPBSSInfoPtr))
-			CWLog("[CW80211] Problem starting timer association request");
+			log_debug("[CW80211] Problem starting timer association request");
 #endif
 	}
 
 	/* +++ Association Response +++ */
 	if (WLAN_FC_GET_TYPE(fc) == WLAN_FC_TYPE_MGMT && WLAN_FC_GET_STYPE(fc) == WLAN_FC_STYPE_ASSOC_REQ)
 	{
-		CWLog("[80211] ______ Association Request Received");
+		log_debug("[80211] ______ Association Request Received");
 		struct CWFrameAssociationRequest assocRequest;
 		if (!CW80211ParseAssociationRequest(frameReceived, &assocRequest))
 		{
@@ -181,7 +181,7 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 			return;
 		}
 
-		CWLog("ASSOCIATION RESPONSE: searching STA");
+		log_debug("ASSOCIATION RESPONSE: searching STA");
 		thisSTA = findSTABySA(WTPBSSInfoPtr, assocRequest.SA);
 		if (thisSTA)
 		{
@@ -199,31 +199,31 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 			return; // CW_FALSE;
 		}
 
-		CWLog("ASSOCIATION RESPONSE: READ VALUES");
+		log_debug("ASSOCIATION RESPONSE: READ VALUES");
 
 		thisSTA->capabilityBit = assocRequest.capabilityBit;
 		thisSTA->listenInterval = assocRequest.listenInterval;
 		thisSTA->lenSupportedRates = assocRequest.supportedRatesLen;
 		thisSTA->extSupportedRatesLen = assocRequest.extSupportedRatesLen;
 
-		CWLog("assocRequest.capabilityBit: %x", assocRequest.capabilityBit);
-		CWLog("assocRequest.listenInterval: %x", assocRequest.listenInterval);
-		CWLog("thisSTA->lenSupportedRates: %d", thisSTA->lenSupportedRates);
-		CWLog("thisSTA->extSupportedRatesLen: %d", thisSTA->extSupportedRatesLen);
+		log_debug("assocRequest.capabilityBit: %x", assocRequest.capabilityBit);
+		log_debug("assocRequest.listenInterval: %x", assocRequest.listenInterval);
+		log_debug("thisSTA->lenSupportedRates: %d", thisSTA->lenSupportedRates);
+		log_debug("thisSTA->extSupportedRatesLen: %d", thisSTA->extSupportedRatesLen);
 
 		int test = 0;
 		for (test = 0; test < thisSTA->lenSupportedRates; test++)
-			CWLog("AssocRequest.supportedRates[%d]: %d", test, assocRequest.supportedRates[test]);
+			log_debug("AssocRequest.supportedRates[%d]: %d", test, assocRequest.supportedRates[test]);
 
 		CW_CREATE_ARRAY_CALLOC_ERR(thisSTA->supportedRates, (thisSTA->lenSupportedRates) + 1, char, {CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL); return /*CW_FALSE*/; });
 		CW_COPY_MEMORY(thisSTA->supportedRates, assocRequest.supportedRates, thisSTA->lenSupportedRates);
-		CWLog("thisSTA->supportedRates[0]: %d\n thisSTA->supportedRates[1]: %d", thisSTA->supportedRates[0], thisSTA->supportedRates[1]);
+		log_debug("thisSTA->supportedRates[0]: %d\n thisSTA->supportedRates[1]: %d", thisSTA->supportedRates[0], thisSTA->supportedRates[1]);
 
 		if (thisSTA->extSupportedRatesLen > 0)
 		{
 			CW_CREATE_ARRAY_CALLOC_ERR(thisSTA->extSupportedRates, thisSTA->extSupportedRatesLen + 1, char, {CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL); return /*CW_FALSE*/; });
 			CW_COPY_MEMORY(thisSTA->extSupportedRates, assocRequest.extSupportedRates, thisSTA->extSupportedRatesLen);
-			CWLog("thisSTA->extSupportedRates[0]: %d\n thisSTA->extSupportedRates[1]: %d", thisSTA->extSupportedRates[0], thisSTA->extSupportedRates[1]);
+			log_debug("thisSTA->extSupportedRates[0]: %d\n thisSTA->extSupportedRates[1]: %d", thisSTA->extSupportedRates[0], thisSTA->extSupportedRates[1]);
 		}
 
 		// Send Association Frame
@@ -232,20 +232,20 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 
 			// Local MAC
 #ifndef SPLIT_MAC
-		CWLog("Local MAC... prepare association response");
+		log_debug("Local MAC... prepare association response");
 		// Ass ID is a random number
 		CW80211SetAssociationID(&(thisSTA->staAID));
-		CWLog("Calling CW80211AssembleAssociationResponse AID %d", thisSTA->staAID);
+		log_debug("Calling CW80211AssembleAssociationResponse AID %d", thisSTA->staAID);
 		frameResponse = CW80211AssembleAssociationResponse(WTPBSSInfoPtr, thisSTA, &assocRequest, &frameRespLen);
 
 		if (frameResponse)
 		{
-			CWLog("ASSOCIATION RESPONSE: sending....");
+			log_debug("ASSOCIATION RESPONSE: sending....");
 			if (!CW80211SendFrame(WTPBSSInfoPtr, 0, CW_FALSE, frameResponse, frameRespLen, &(cookie_out), 1, 1))
-				CWLog("NL80211: Errore CW80211SendFrame");
+				log_debug("NL80211: Errore CW80211SendFrame");
 		}
 
-		CWLog("Sending response to AC");
+		log_debug("Sending response to AC");
 		// Send Association Frame Response
 		if (!CWSendFrameMgmtFromWTPtoAC(frameResponse, frameRespLen))
 			return;
@@ -259,7 +259,7 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 	/* +++ Reassociation Response +++ */
 	if (WLAN_FC_GET_TYPE(fc) == WLAN_FC_TYPE_MGMT && WLAN_FC_GET_STYPE(fc) == WLAN_FC_STYPE_REASSOC_REQ)
 	{
-		CWLog("[80211] ______ Reassociation Request Received");
+		log_debug("[80211] ______ Reassociation Request Received");
 		struct CWFrameAssociationRequest assocRequest;
 		if (!CW80211ParseAssociationRequest(frameReceived, &assocRequest))
 		{
@@ -296,13 +296,13 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 
 			// Local MAC
 #ifndef SPLIT_MAC
-		CWLog("Local MAC... prepare reassociation response");
+		log_debug("Local MAC... prepare reassociation response");
 		// Ass ID is a random number
 		if (thisSTA->staAID == 0)
 			CW80211SetAssociationID(&(thisSTA->staAID));
-		CWLog("Calling CW80211AssembleReassociationResponse AID %d", thisSTA->staAID);
+		log_debug("Calling CW80211AssembleReassociationResponse AID %d", thisSTA->staAID);
 		frameResponse = CW80211AssembleReassociationResponse(WTPBSSInfoPtr, thisSTA, &assocRequest, &frameRespLen);
-		CWLog("Sending response to AC");
+		log_debug("Sending response to AC");
 
 		// Ass ID is a random number
 		// Send Ressociation Frame Response
@@ -316,7 +316,7 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 	if (frameResponse)
 	{
 		if (!CW80211SendFrame(WTPBSSInfoPtr, 0, CW_FALSE, frameResponse, frameRespLen, &(cookie_out), 1, 1))
-			CWLog("NL80211: Errore CW80211SendFrame");
+			log_debug("NL80211: Errore CW80211SendFrame");
 	}
 
 	/* +++ Dissassociation or Deauthentication Frame: cleanup of STA parameters +++ */
@@ -335,7 +335,7 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 			// Deauth elimina dal BSS la STA
 			if (WLAN_FC_GET_STYPE(fc) == WLAN_FC_STYPE_DEAUTH)
 			{
-				CWLog("[CW80211] Deauth Request Received");
+				log_debug("[CW80211] Deauth Request Received");
 
 				deleteRadioID = WTPBSSInfoPtr->phyInfo->radioID;
 				CW_COPY_MEMORY(deleteStaAddr, thisSTA->address, ETH_ALEN);
@@ -354,7 +354,7 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 			// Disassociation regredisce di stato
 			else
 			{
-				CWLog("[CW80211] Disassociation Request Received");
+				log_debug("[CW80211] Disassociation Request Received");
 
 				if (thisSTA)
 				{
@@ -365,7 +365,7 @@ void CW80211EventProcess(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr **tb,
 					{
 						CWPrintEthernetAddress(disassocRequest.SA, "[CW80211] STA disassociated");
 						if (!CWStartAssociationRequestTimer(thisSTA, WTPBSSInfoPtr))
-							CWLog("[CW80211] Problem starting timer association request");
+							log_debug("[CW80211] Problem starting timer association request");
 					}
 					else
 						CWPrintEthernetAddress(disassocRequest.SA, "[CW80211] STA NOT disassociated");
@@ -399,7 +399,7 @@ WTPSTAInfo *addSTABySA(WTPBSSInfo *WTPBSSInfoPtr, unsigned char *sa)
 			CW_CREATE_ARRAY_CALLOC_ERR(WTPBSSInfoPtr->staList[indexSTA].address, ETH_ALEN + 1, char, {CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL); return NULL; });
 			CW_COPY_MEMORY(WTPBSSInfoPtr->staList[indexSTA].address, sa, ETH_ALEN);
 			CWPrintEthernetAddress(sa, "[CW80211] Added STA to memory struct");
-			CWLog("Index STA: %d", indexSTA);
+			log_debug("Index STA: %d", indexSTA);
 
 			return &(WTPBSSInfoPtr->staList[indexSTA]);
 		}
@@ -416,7 +416,7 @@ void CW80211HandleClass3Frame(WTPBSSInfo *WTPBSSInfoPtr, int cmd, struct nlattr 
 	int frameRespLen = 0, offsetFrameReceived = 0;
 	short int fc, stateSTA = CW_80211_STA_OFF;
 	int frameLen;
-	// CWLog("nl80211: Devo gestire un frame di classe 3 (%s) received for %s", nl80211_command_to_string(cmd), WTPBSSInfoPtr->interfaceInfo->ifName);
+	// log_debug("nl80211: Devo gestire un frame di classe 3 (%s) received for %s", nl80211_command_to_string(cmd), WTPBSSInfoPtr->interfaceInfo->ifName);
 
 	// Deauth?
 	return;
@@ -468,11 +468,11 @@ CWBool CWSendFrameMgmtFromWTPtoAC(char *frameReceived, int frameLen)
 
 	if (!extract802_11_Frame(&frameMsg, frameReceived, frameLen))
 	{
-		CWLog("THR FRAME: Error extracting a frameMsg");
+		log_debug("THR FRAME: Error extracting a frameMsg");
 		return CW_FALSE;
 	}
 
-	CWLog("[CW80211] Send 802.11 management frame (%d bytes) to AC", frameLen);
+	log_debug("[CW80211] Send 802.11 management frame (%d bytes) to AC", frameLen);
 
 	CW_CREATE_OBJECT_ERR(listElement, CWBindingDataListElement, return CW_FALSE;);
 	listElement->frame = frameMsg;
@@ -520,7 +520,7 @@ void CWWTPAssociationRequestTimerExpiredHandler(void *arg)
 		info->staInfo->address != NULL)
 		CWPrintEthernetAddress(info->staInfo->address, "[CW80211] Association Timer Raised for station");
 	else
-		CWLog("[CW80211] Association Timer Raised");
+		log_debug("[CW80211] Association Timer Raised");
 
 	if (
 		(info != NULL) &&

@@ -67,8 +67,8 @@ CWBool ACEnterConfigure(int WTPIndex, CWProtocolMessage *msgPtr)
 	int seqNum;
 	CWProtocolConfigureRequestValues configureRequest;
 
-	CWLog("\n");
-	CWLog("######### Configure State #########");
+	log_debug("\n");
+	log_debug("######### Configure State #########");
 
 	if (!(CWParseConfigureRequestMessage(msgPtr->msg,
 										 msgPtr->offset,
@@ -84,7 +84,7 @@ CWBool ACEnterConfigure(int WTPIndex, CWProtocolMessage *msgPtr)
 		return CW_FALSE;
 	}
 
-	CWLog("Configure Request Received");
+	log_debug("Configure Request Received");
 
 	if (!(CWSaveConfigureRequestMessage(&configureRequest, &(gWTPs[WTPIndex].WTPProtocolManager))))
 	{
@@ -112,7 +112,7 @@ CWBool ACEnterConfigure(int WTPIndex, CWProtocolMessage *msgPtr)
 		return CW_FALSE;
 	}
 
-	CWLog("Configure Response Sent");
+	log_debug("Configure Response Sent");
 
 	/* start Change State Pending timer */
 	if (!CWErr(CWTimerRequest(gCWChangeStatePendingTimer,
@@ -153,7 +153,7 @@ CWBool CWParseConfigureRequestMessage(char *msg,
 	if (msg == NULL || seqNumPtr == NULL || valuesPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Parsing Configure Request...");
+	log_debug("Parsing Configure Request...");
 
 	// Elena Agostini: nl80211 support
 	valuesPtr->tmpPhyInfo.numPhyActive = 0;
@@ -191,7 +191,7 @@ CWBool CWParseConfigureRequestMessage(char *msg,
 
 		CWParseFormatMsgElem(&completeMsg, &elemType, &elemLen);
 
-		/*CWDebugLog("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);*/
+		/*log_debug("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);*/
 
 		switch (elemType)
 		{
@@ -321,7 +321,7 @@ CWBool CWParseConfigureRequestMessage(char *msg,
 			break;
 		}
 	}
-	CWDebugLog("Configure Request Parsed");
+	log_debug("Configure Request Parsed");
 	return CW_TRUE;
 }
 
@@ -340,7 +340,7 @@ CWBool CWAssembleConfigureResponse(CWProtocolMessage **messagesPtr,
 	if (messagesPtr == NULL || fragmentsNumPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Assembling Configure Response...");
+	log_debug("Assembling Configure Response...");
 	CW_CREATE_PROTOCOL_MSG_ARRAY_ERR(msgElems, MsgElemCount, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
 	/* Assemble Message Elements */
@@ -373,7 +373,7 @@ CWBool CWAssembleConfigureResponse(CWProtocolMessage **messagesPtr,
 		return CW_FALSE;
 	}
 
-	/*CWDebugLog("~~~~~ msg count: %d ", msgElemBindingCount);*/
+	/*log_debug("~~~~~ msg count: %d ", msgElemBindingCount);*/
 
 	if (!(CWAssembleMessage(messagesPtr,
 							fragmentsNumPtr,
@@ -394,7 +394,7 @@ CWBool CWAssembleConfigureResponse(CWProtocolMessage **messagesPtr,
 		return CW_FALSE;
 	}
 
-	CWDebugLog("Configure Response Assembled");
+	log_debug("Configure Response Assembled");
 	return CW_TRUE;
 }
 
@@ -402,7 +402,7 @@ CWBool CWSaveConfigureRequestMessage(CWProtocolConfigureRequestValues *configure
 									 CWWTPProtocolManager *WTPProtocolManager)
 {
 
-	CWDebugLog("Saving Configure Request...");
+	log_debug("Saving Configure Request...");
 
 	CW_FREE_OBJECT(WTPProtocolManager->ACName);
 
@@ -445,13 +445,13 @@ CWBool CWSaveConfigureRequestMessage(CWProtocolConfigureRequestValues *configure
 				CW_CREATE_ARRAY_CALLOC_ERR(WTPProtocolManager->radiosInfo.radiosInfo[j].gWTPPhyInfo.supportedRates, configureRequest->phyFrequencyInfo[i].lenSupportedRates + 1, char, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 				CW_COPY_MEMORY(WTPProtocolManager->radiosInfo.radiosInfo[j].gWTPPhyInfo.supportedRates, configureRequest->phyFrequencyInfo[i].supportedRates, configureRequest->phyFrequencyInfo[i].lenSupportedRates);
 
-				CWLog("Dentro CWSaveConfigureRequestMessage: %d - %d", WTPProtocolManager->radiosInfo.radiosInfo[j].gWTPPhyInfo.supportedRates[0], WTPProtocolManager->radiosInfo.radiosInfo[j].gWTPPhyInfo.supportedRates[7]);
+				log_debug("Dentro CWSaveConfigureRequestMessage: %d - %d", WTPProtocolManager->radiosInfo.radiosInfo[j].gWTPPhyInfo.supportedRates[0], WTPProtocolManager->radiosInfo.radiosInfo[j].gWTPPhyInfo.supportedRates[7]);
 
 				break;
 			}
 		}
 	}
 
-	CWDebugLog("Configure Request Saved");
+	log_debug("Configure Request Saved");
 	return CW_TRUE;
 }

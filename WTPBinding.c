@@ -123,9 +123,9 @@ CWBool CWWTPInitBinding(int radioIndex)
 		 */
 		/*	ret = nl80211GetTxqParams(&(gRadiosInfo.radiosInfo[radioIndex].ifaceSockNL80211), &(aux->qosValues[i]), gRadiosInfo.radiosInfo[radioIndex].radioID);
 
-			CWLog("aux->qosValues[%d].cwMin = %d", i, aux->qosValues[i].cwMin);
-			CWLog("aux->qosValues[%d].cwMax = %d", i, aux->qosValues[i].cwMax);
-			CWLog("aux->qosValues[%d].AIFS = %d", i, aux->qosValues[i].AIFS);
+			log_debug("aux->qosValues[%d].cwMin = %d", i, aux->qosValues[i].cwMin);
+			log_debug("aux->qosValues[%d].cwMax = %d", i, aux->qosValues[i].cwMax);
+			log_debug("aux->qosValues[%d].AIFS = %d", i, aux->qosValues[i].AIFS);
 			*/
 		/*
 		 * Donato Capitella - TO_REMOVE_DEVELOP
@@ -185,7 +185,7 @@ CWBool CWBindingSetQosValues(int qosCount, RadioQosValues *radioQosValues, CWPro
 				for (j = 0; j < NUM_QOS_PROFILES; j++)
 				{
 
-					CWLog("AIFS:  %d	%d", auxPtr->qosValues[j].AIFS, radioQosValues[i].qosValues[j].AIFS);
+					log_debug("AIFS:  %d	%d", auxPtr->qosValues[j].AIFS, radioQosValues[i].qosValues[j].AIFS);
 
 					int aifs = (int)radioQosValues[i].qosValues[j].AIFS;
 					int burst_time = 0;
@@ -265,7 +265,7 @@ CWBool CWBindingSetQosValues(int qosCount, RadioQosValues *radioQosValues, CWPro
 	sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if (sock < 0)
 	{
-		CWLog("Error Creating Socket for ioctl");
+		log_debug("Error Creating Socket for ioctl");
 		return CWErrorRaise(CW_ERROR_GENERAL, NULL);
 		;
 	}
@@ -363,7 +363,7 @@ CWBool CWManageOFDMValues(CWBindingConfigurationUpdateRequestValuesOFDM *ofdmVal
 
 	if ((sendSock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
 	{
-		CWLog("[FreqAnalyzer]: Error on creation of socket.");
+		log_debug("[FreqAnalyzer]: Error on creation of socket.");
 		return CWErrorRaise(CW_ERROR_GENERAL, NULL);
 	}
 
@@ -373,7 +373,7 @@ CWBool CWManageOFDMValues(CWBindingConfigurationUpdateRequestValuesOFDM *ofdmVal
 
 	if (inet_aton(FREQ_SERVER_ADDR, &serv_addr.sin_addr) == 0)
 	{
-		CWLog("[CWManageOFDMValue]: Error on aton function.");
+		log_debug("[CWManageOFDMValue]: Error on aton function.");
 		close(sendSock);
 		return CWErrorRaise(CW_ERROR_GENERAL, NULL);
 	}
@@ -388,7 +388,7 @@ CWBool CWManageOFDMValues(CWBindingConfigurationUpdateRequestValuesOFDM *ofdmVal
 
 	if (sendto(sendSock, radioValues, sizeof(OFDMControlValues), 0, (struct sockaddr *)&serv_addr, slen) < 0)
 	{
-		CWLog("[CWManageOFDMValue]: Error on sendto function.");
+		log_debug("[CWManageOFDMValue]: Error on sendto function.");
 		close(sendSock);
 		return CWErrorRaise(CW_ERROR_GENERAL, NULL);
 	}
@@ -490,7 +490,7 @@ CWBool CWBindingParseConfigurationUpdateRequest(char *msg, int len, void **value
 	if (msg == NULL || valuesPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWLog("Parsing Binding Configuration Update Request...");
+	log_debug("Parsing Binding Configuration Update Request...");
 
 	completeMsg.msg = msg;
 	completeMsg.offset = 0;
@@ -508,7 +508,7 @@ CWBool CWBindingParseConfigurationUpdateRequest(char *msg, int len, void **value
 
 		GlobalElemType = elemType;
 
-		// CWDebugLog("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);
+		// log_debug("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);
 
 		switch (elemType)
 		{
@@ -598,7 +598,7 @@ CWBool CWBindingParseConfigurationUpdateRequest(char *msg, int len, void **value
 		}
 	}
 
-	CWLog("Binding Configure Update Request Parsed");
+	log_debug("Binding Configure Update Request Parsed");
 
 	return CW_TRUE;
 }
@@ -633,7 +633,7 @@ CWBool CWBindingParseConfigureResponse(char *msg, int len, void **valuesPtr)
 	if (msg == NULL || valuesPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWLog("Parsing Binding Configuration Request...");
+	log_debug("Parsing Binding Configuration Request...");
 
 	completeMsg.msg = msg;
 	completeMsg.offset = 0;
@@ -652,7 +652,7 @@ CWBool CWBindingParseConfigureResponse(char *msg, int len, void **valuesPtr)
 
 		CWParseFormatMsgElem(&completeMsg, &elemType, &elemLen);
 
-		//		CWDebugLog("Parsing Message Element: %d, elemLen: %d", elemType, elemLen);
+		//		log_debug("Parsing Message Element: %d, elemLen: %d", elemType, elemLen);
 
 		switch (elemType)
 		{
@@ -714,7 +714,7 @@ CWBool CWBindingParseConfigureResponse(char *msg, int len, void **valuesPtr)
 		}
 	}
 
-	CWLog("Binding Configuration Request Parsed");
+	log_debug("Binding Configuration Request Parsed");
 
 	return CW_TRUE;
 }

@@ -62,8 +62,8 @@ CWBool ACEnterJoin(int WTPIndex, CWProtocolMessage *msgPtr)
 	CWProtocolJoinRequestValues joinRequest;
 	CWList msgElemList = NULL;
 
-	CWLog("\n");
-	CWLog("######### Join State #########");
+	log_debug("\n");
+	log_debug("######### Join State #########");
 
 	if (msgPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
@@ -185,7 +185,7 @@ CWBool CWAssembleJoinResponse(CWProtocolMessage **messagesPtr,
 									 msgElemCount + mandatoryMsgElemCount,
 									 return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
-	CWDebugLog("Assembling Join Response...");
+	log_debug("Assembling Join Response...");
 
 	if (
 		(!(CWAssembleMsgElemACDescriptor(&(msgElems[++k])))) ||
@@ -292,7 +292,7 @@ CWBool CWAssembleJoinResponse(CWProtocolMessage **messagesPtr,
 #endif
 		return CW_FALSE;
 
-	CWDebugLog("Join Response Assembled");
+	log_debug("Join Response Assembled");
 
 	return CW_TRUE;
 
@@ -327,7 +327,7 @@ CWBool CWParseJoinRequestMessage(char *msg,
 	if (msg == NULL || seqNumPtr == NULL || valuesPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Parse Join Request");
+	log_debug("Parse Join Request");
 
 	completeMsg.msg = msg;
 	completeMsg.offset = 0;
@@ -358,7 +358,7 @@ CWBool CWParseJoinRequestMessage(char *msg,
 
 		CWParseFormatMsgElem(&completeMsg, &elemType, &elemLen);
 
-		//		CWLog("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);
+		//		log_debug("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);
 
 		switch (elemType)
 		{
@@ -431,10 +431,10 @@ CWBool CWParseJoinRequestMessage(char *msg,
 
 		default:
 			completeMsg.offset += elemLen;
-			CWLog("Unrecognized Message Element(%d) in Discovery response", elemType);
+			log_debug("Unrecognized Message Element(%d) in Discovery response", elemType);
 			break;
 		}
-		/*CWDebugLog("bytes: %d/%d", (completeMsg.offset-offsetTillMessages), controlVal.msgElemsLen);*/
+		/*log_debug("bytes: %d/%d", (completeMsg.offset-offsetTillMessages), controlVal.msgElemsLen);*/
 	}
 
 	if (completeMsg.offset != len)
@@ -447,7 +447,7 @@ CWBool CWSaveJoinRequestMessage(CWProtocolJoinRequestValues *joinRequest,
 								CWWTPProtocolManager *WTPProtocolManager)
 {
 
-	CWDebugLog("Saving Join Request...");
+	log_debug("Saving Join Request...");
 
 	if (joinRequest == NULL || WTPProtocolManager == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
@@ -558,6 +558,6 @@ CWBool CWSaveJoinRequestMessage(CWProtocolJoinRequestValues *joinRequest,
 				WTPProtocolManager->radiosInfo.radiosInfo[i].gWTPPhyInfo.interfaces[indexWlan].frameTunnelMode = 0;
 		}
 	}
-	CWDebugLog("Join Request Saved");
+	log_debug("Join Request Saved");
 	return CW_TRUE;
 }

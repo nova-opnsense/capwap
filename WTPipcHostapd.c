@@ -39,9 +39,9 @@
 #include "../dmalloc-5.5.0/dmalloc.h"
 #endif
 
-#define EXIT_FRAME_THREAD(sock)                                  \
-	CWLog("ERROR Handling Frames: application will be closed!"); \
-	close(sock);                                                 \
+#define EXIT_FRAME_THREAD(sock)                                      \
+	log_debug("ERROR Handling Frames: application will be closed!"); \
+	close(sock);                                                     \
 	exit(1);
 
 //#define LOCALUDP
@@ -147,7 +147,7 @@ void CWWTPsend_data_to_hostapd(unsigned char *buf, int len)
 
 	if (sendto(sock, tmp_buf, len + 1, 0, (struct sockaddr *)&client, address_size) < 0)
 	{
-		CWDebugLog("Error to send data frame on Unix socket");
+		log_debug("Error to send data frame on Unix socket");
 		return;
 	}
 }
@@ -161,7 +161,7 @@ void CWWTPsend_command_to_hostapd_SET_TXQ(unsigned char *buf, int len)
 
 	if (sendto(sock, buf, len, 0, (struct sockaddr *)&client, address_size) < 0)
 	{
-		CWDebugLog("Error to send command frame on Unix socket");
+		log_debug("Error to send command frame on Unix socket");
 		return;
 	}
 }
@@ -175,7 +175,7 @@ void CWWTPsend_command_to_hostapd_SET_ADDR(unsigned char *buf, int len)
 
 	if (sendto(sock, buf, len, 0, (struct sockaddr *)&client, address_size) < 0)
 	{
-		CWDebugLog("Error to send command frame on socket");
+		log_debug("Error to send command frame on socket");
 		return;
 	}
 }
@@ -195,7 +195,7 @@ WAITHOSTAPDADD:
 
 	if (sendto(sock, buf, len, 0, (struct sockaddr *)&client, address_size) < 0)
 	{
-		CWDebugLog("Error to send command ADD WLAN on socket");
+		log_debug("Error to send command ADD WLAN on socket");
 		return;
 	}
 }
@@ -215,7 +215,7 @@ WAITHOSTAPDDEL:
 
 	if (sendto(sock, buf, len, 0, (struct sockaddr *)&client, address_size) < 0)
 	{
-		CWLog("Error to send command DEL WLAN on socket");
+		log_debug("Error to send command DEL WLAN on socket");
 		return;
 	}
 }
@@ -229,7 +229,7 @@ void CWWTPsend_command_to_hostapd_DEL_ADDR(unsigned char *buf, int len)
 
 	if (sendto(sock, buf, len, 0, (struct sockaddr *)&client, address_size) < 0)
 	{
-		CWLog("Error to send command frame on socket");
+		log_debug("Error to send command frame on socket");
 		return;
 	}
 }
@@ -241,7 +241,7 @@ void CWWTPsend_command_to_hostapd_CLOSE(unsigned char *buf, int len)
 
 	if (sendto(sock, buf, len, 0, (struct sockaddr *)&client, address_size) < 0)
 	{
-		CWLog("Error to send command frame on socket");
+		log_debug("Error to send command frame on socket");
 		return;
 	}
 }
@@ -308,11 +308,11 @@ CW_THREAD_RETURN_TYPE CWWTPThread_read_data_from_hostapd(void *arg)
 
 	if (sock < 0)
 	{
-		CWDebugLog("WTP ipc HOSTAPD: Error creating socket");
+		log_debug("WTP ipc HOSTAPD: Error creating socket");
 		EXIT_FRAME_THREAD(sock);
 	}
 
-	CWDebugLog("WTP ipc HOSTAPD: Trying to connect to hostapd (wtp)...");
+	log_debug("WTP ipc HOSTAPD: Trying to connect to hostapd (wtp)...");
 
 #if defined(LOCALUDP)
 	server.sun_family = AF_UNIX;
@@ -339,7 +339,7 @@ CW_THREAD_RETURN_TYPE CWWTPThread_read_data_from_hostapd(void *arg)
 
 	if (connect_ret == -1)
 	{
-		CWDebugLog("WTP ipc HOSTAPD: Error connect/bind to socket");
+		log_debug("WTP ipc HOSTAPD: Error connect/bind to socket");
 		EXIT_FRAME_THREAD(sock);
 	}
 
@@ -351,15 +351,15 @@ CW_THREAD_RETURN_TYPE CWWTPThread_read_data_from_hostapd(void *arg)
 	/* 1: Only one daemon Hostapd_WTP at time */
 	if (listen(sock, 1) < 0)
 	{
-		CWDebugLog("WTP ipc HOSTAPD: Error listen ");
+		log_debug("WTP ipc HOSTAPD: Error listen ");
 		EXIT_FRAME_THREAD(sock);
 	}
 #endif
 
 #if defined(LOCALUDP)
-	CWDebugLog("Waiting packet from Hostapd_WTP at Pipe:%s", gHostapd_unix_path);
+	log_debug("Waiting packet from Hostapd_WTP at Pipe:%s", gHostapd_unix_path);
 #else
-	CWDebugLog("Waiting packet from Hostapd_WTP at Port:%d", gHostapd_port);
+	log_debug("Waiting packet from Hostapd_WTP at Port:%d", gHostapd_port);
 #endif
 
 	address_size = sizeof(client);
@@ -370,7 +370,7 @@ CW_THREAD_RETURN_TYPE CWWTPThread_read_data_from_hostapd(void *arg)
 	sig_byte += 5;
 #endif
 
-	CWLog("CW_REPEAT_FOREVER: CWWTPThread_read_data_from_hostapd()");
+	log_debug("CW_REPEAT_FOREVER: CWWTPThread_read_data_from_hostapd()");
 	CW_REPEAT_FOREVER
 	{
 
@@ -387,7 +387,7 @@ CW_THREAD_RETURN_TYPE CWWTPThread_read_data_from_hostapd(void *arg)
 
 		if (connected == 0 && buffer[0] != CONNECT)
 		{
-			CWLog("WTP is not in RUN state");
+			log_debug("WTP is not in RUN state");
 			CWWTPsend_command_to_hostapd_CLOSE(cmd, 10);
 			continue;
 		}
@@ -400,11 +400,11 @@ CW_THREAD_RETURN_TYPE CWWTPThread_read_data_from_hostapd(void *arg)
 
 			if (!extract802_11_Frame(&frame, buffer + sig_byte, len - sig_byte))
 			{
-				CWLog("THR FRAME: Error extracting a frame");
+				log_debug("THR FRAME: Error extracting a frame");
 				EXIT_FRAME_THREAD(sock);
 			}
 
-			CWDebugLog("Send 802.11 management(len:%d) to AC", len - 1);
+			log_debug("Send 802.11 management(len:%d) to AC", len - 1);
 
 			CW_CREATE_OBJECT_ERR(listElement, CWBindingDataListElement, EXIT_FRAME_THREAD(sock););
 			listElement->frame = frame;
@@ -424,12 +424,12 @@ CW_THREAD_RETURN_TYPE CWWTPThread_read_data_from_hostapd(void *arg)
 			sendto(sock, cmd, 1, 0, (struct sockaddr *)&client, address_size);
 
 #if defined(LOCALUDP)
-			CWDebugLog("Hostapd_wtp Unix Domain Connect: %s", client.sun_path);
+			log_debug("Hostapd_wtp Unix Domain Connect: %s", client.sun_path);
 #else
 #if defined(USEIPV6)
-			CWDebugLog("Hostapd_wtp (v6) Connect: %d", client.sin6_port);
+			log_debug("Hostapd_wtp (v6) Connect: %d", client.sin6_port);
 #else
-			CWDebugLog("Hostapd_wtp (v4) Connect: %s:%d", inet_ntoa(client.sin_addr), client.sin_port);
+			log_debug("Hostapd_wtp (v4) Connect: %s:%d", inet_ntoa(client.sin_addr), client.sin_port);
 #endif
 #endif
 
@@ -443,7 +443,7 @@ CW_THREAD_RETURN_TYPE CWWTPThread_read_data_from_hostapd(void *arg)
 			memcpy(&WTP_Radio_Information, buffer + sig_byte, 1);
 			CWThreadMutexUnlock(&mutext_info);
 
-			CWDebugLog("WTPRINFO_R:  %02X", WTP_Radio_Information);
+			log_debug("WTPRINFO_R:  %02X", WTP_Radio_Information);
 
 			cmd[0] = GET_RATES; // Next info to get
 			sendto(sock, cmd, 1, 0, (struct sockaddr *)&client, address_size);
@@ -455,7 +455,7 @@ CW_THREAD_RETURN_TYPE CWWTPThread_read_data_from_hostapd(void *arg)
 			memcpy(WTP_Rates, buffer + sig_byte, 8);
 			CWThreadMutexUnlock(&mutext_info);
 
-			CWDebugLog("GET_RATES_R:   %02X  %02X  %02X  %02X  %02X  %02X  %02X  %02X", WTP_Rates[0], WTP_Rates[1], WTP_Rates[2], WTP_Rates[3], WTP_Rates[4], WTP_Rates[5], WTP_Rates[6], WTP_Rates[7]);
+			log_debug("GET_RATES_R:   %02X  %02X  %02X  %02X  %02X  %02X  %02X  %02X", WTP_Rates[0], WTP_Rates[1], WTP_Rates[2], WTP_Rates[3], WTP_Rates[4], WTP_Rates[5], WTP_Rates[6], WTP_Rates[7]);
 
 			cmd[0] = GET_MDC; // Next info to get
 			sendto(sock, cmd, 1, 0, (struct sockaddr *)&client, address_size);
@@ -467,13 +467,13 @@ CW_THREAD_RETURN_TYPE CWWTPThread_read_data_from_hostapd(void *arg)
 			memcpy(WTP_MDC, buffer + sig_byte, 6);
 			CWThreadMutexUnlock(&mutext_info);
 
-			CWDebugLog("GET_MDC_R: %02X  %02X  %02X  %02X  %02X  %02X",
-					   WTP_MDC[0],
-					   WTP_MDC[1],
-					   WTP_MDC[2],
-					   WTP_MDC[3],
-					   WTP_MDC[4],
-					   WTP_MDC[5]);
+			log_debug("GET_MDC_R: %02X  %02X  %02X  %02X  %02X  %02X",
+					  WTP_MDC[0],
+					  WTP_MDC[1],
+					  WTP_MDC[2],
+					  WTP_MDC[3],
+					  WTP_MDC[4],
+					  WTP_MDC[5]);
 
 			cmd[0] = GET_MAC;
 			sendto(sock, cmd, 1, 0, (struct sockaddr *)&client, address_size);
@@ -485,13 +485,13 @@ CW_THREAD_RETURN_TYPE CWWTPThread_read_data_from_hostapd(void *arg)
 			memcpy(gRADIO_MAC, buffer + sig_byte, 6);
 			CWThreadMutexUnlock(&gRADIO_MAC_mutex);
 
-			CWDebugLog("GET_MAC_R:   %02X  %02X  %02X  %02X  %02X  %02X",
-					   (unsigned char)gRADIO_MAC[0],
-					   (unsigned char)gRADIO_MAC[1],
-					   (unsigned char)gRADIO_MAC[2],
-					   (unsigned char)gRADIO_MAC[3],
-					   (unsigned char)gRADIO_MAC[4],
-					   (unsigned char)gRADIO_MAC[5]);
+			log_debug("GET_MAC_R:   %02X  %02X  %02X  %02X  %02X  %02X",
+					  (unsigned char)gRADIO_MAC[0],
+					  (unsigned char)gRADIO_MAC[1],
+					  (unsigned char)gRADIO_MAC[2],
+					  (unsigned char)gRADIO_MAC[3],
+					  (unsigned char)gRADIO_MAC[4],
+					  (unsigned char)gRADIO_MAC[5]);
 
 			cmd[0] = GOWAITWLAN;
 			sendto(sock, cmd, 1, 0, (struct sockaddr *)&client, address_size);
@@ -501,29 +501,29 @@ CW_THREAD_RETURN_TYPE CWWTPThread_read_data_from_hostapd(void *arg)
 
 			connected = 0;
 #if defined(LOCALUDP)
-			CWDebugLog("Hostapd_wtp Unix Domain DisConnect: %s", client.sun_path);
+			log_debug("Hostapd_wtp Unix Domain DisConnect: %s", client.sun_path);
 #else
 #if defined(USEIPV6)
-			CWDebugLog("Hostapd_wtp (v6) DisConnect: %d", client.sin6_port);
+			log_debug("Hostapd_wtp (v6) DisConnect: %d", client.sin6_port);
 #else
-			CWDebugLog("Hostapd_wtp (v4) Disconnect: %s:%d", inet_ntoa(client.sin_addr), client.sin_port);
+			log_debug("Hostapd_wtp (v4) Disconnect: %s:%d", inet_ntoa(client.sin_addr), client.sin_port);
 #endif
 #endif
 		}
 		else if (buffer[0] == SET_TXQ_R)
 		{
 
-			CWDebugLog("Hostapd WTP \"SET_TXQ_R\" Command\n");
+			log_debug("Hostapd WTP \"SET_TXQ_R\" Command\n");
 		}
 		else if (buffer[0] == GOWAITWLAN_R)
 		{
 
-			CWDebugLog("Hostapd WTP in WAIT \"ADD WLAN\" Command\n");
+			log_debug("Hostapd WTP in WAIT \"ADD WLAN\" Command\n");
 		}
 		else
 		{
 
-			CWDebugLog("Received Unknow Command from Hostapd WTP(%d)", buffer[0]);
+			log_debug("Received Unknow Command from Hostapd WTP(%d)", buffer[0]);
 		}
 	}
 

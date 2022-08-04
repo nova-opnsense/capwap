@@ -82,7 +82,7 @@
 	oldOffset = msgPtr->offset
 
 #define CWParseMessageElementEnd() \
-	CWDebugLog(NULL);              \
+	log_debug(NULL);               \
 	return ((msgPtr->offset) - oldOffset) == len ? CW_TRUE : CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Message Element Malformed");
 
 /*_________________________________________________________*/

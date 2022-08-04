@@ -152,7 +152,7 @@ CWBool CWReceiveMessage(CWProtocolMessage *msgPtr)
 	char buf[CW_BUFFER_SIZE];
 	CWBool dataFlag = CW_FALSE;
 
-	CWLog("CW_REPEAT_FOREVER: CWReceiveMessage()");
+	log_debug("CW_REPEAT_FOREVER: CWReceiveMessage()");
 	CW_REPEAT_FOREVER
 	{
 		CW_ZERO_MEMORY(buf, CW_BUFFER_SIZE);
@@ -191,76 +191,76 @@ CWBool CWReceiveMessage(CWProtocolMessage *msgPtr)
 				{
 				case CW_ERROR_SUCCESS:
 				{
-					CWDebugLog("ERROR: Success");
+					log_debug("ERROR: Success");
 					break;
 				}
 				case CW_ERROR_OUT_OF_MEMORY:
 				{
-					CWDebugLog("ERROR: Out of Memory");
+					log_debug("ERROR: Out of Memory");
 					break;
 				}
 				case CW_ERROR_WRONG_ARG:
 				{
-					CWDebugLog("ERROR: Wrong Argument");
+					log_debug("ERROR: Wrong Argument");
 					break;
 				}
 				case CW_ERROR_INTERRUPTED:
 				{
-					CWDebugLog("ERROR: Interrupted");
+					log_debug("ERROR: Interrupted");
 					break;
 				}
 				case CW_ERROR_NEED_RESOURCE:
 				{
-					CWDebugLog("ERROR: Need Resource");
+					log_debug("ERROR: Need Resource");
 					break;
 				}
 				case CW_ERROR_COMUNICATING:
 				{
-					CWDebugLog("ERROR: Comunicating");
+					log_debug("ERROR: Comunicating");
 					break;
 				}
 				case CW_ERROR_CREATING:
 				{
-					CWDebugLog("ERROR: Creating");
+					log_debug("ERROR: Creating");
 					break;
 				}
 				case CW_ERROR_GENERAL:
 				{
-					CWDebugLog("ERROR: General");
+					log_debug("ERROR: General");
 					break;
 				}
 				case CW_ERROR_OPERATION_ABORTED:
 				{
-					CWDebugLog("ERROR: Operation Aborted");
+					log_debug("ERROR: Operation Aborted");
 					break;
 				}
 				case CW_ERROR_SENDING:
 				{
-					CWDebugLog("ERROR: Sending");
+					log_debug("ERROR: Sending");
 					break;
 				}
 				case CW_ERROR_RECEIVING:
 				{
-					CWDebugLog("ERROR: Receiving");
+					log_debug("ERROR: Receiving");
 					break;
 				}
 				case CW_ERROR_INVALID_FORMAT:
 				{
-					CWDebugLog("ERROR: Invalid Format");
+					log_debug("ERROR: Invalid Format");
 					break;
 				}
 				case CW_ERROR_TIME_EXPIRED:
 				{
-					CWDebugLog("ERROR: Time Expired");
+					log_debug("ERROR: Time Expired");
 					break;
 				}
 				case CW_ERROR_NONE:
 				{
-					CWDebugLog("ERROR: None");
+					log_debug("ERROR: None");
 					break;
 				}
 				}
-				CWDebugLog("~~~~~~");
+				log_debug("~~~~~~");
 				return CW_FALSE;
 			}
 		}
@@ -282,7 +282,7 @@ CWBool CWReceiveDataMessage(CWProtocolMessage *msgPtr)
 	CWBool dataFlag = CW_TRUE;
 	char *pkt_buffer = NULL;
 
-	CWLog("CW_REPEAT_FOREVER: CWReceiveDataMessage()");
+	log_debug("CW_REPEAT_FOREVER: CWReceiveDataMessage()");
 	CW_REPEAT_FOREVER
 	{
 		CW_ZERO_MEMORY(buf, CW_BUFFER_SIZE);
@@ -318,72 +318,72 @@ CWBool CWReceiveDataMessage(CWProtocolMessage *msgPtr)
 				{
 				case CW_ERROR_SUCCESS:
 				{
-					CWDebugLog("ERROR: Success");
+					log_debug("ERROR: Success");
 					break;
 				}
 				case CW_ERROR_OUT_OF_MEMORY:
 				{
-					CWDebugLog("ERROR: Out of Memory");
+					log_debug("ERROR: Out of Memory");
 					break;
 				}
 				case CW_ERROR_WRONG_ARG:
 				{
-					CWDebugLog("ERROR: Wrong Argument");
+					log_debug("ERROR: Wrong Argument");
 					break;
 				}
 				case CW_ERROR_INTERRUPTED:
 				{
-					CWDebugLog("ERROR: Interrupted");
+					log_debug("ERROR: Interrupted");
 					break;
 				}
 				case CW_ERROR_NEED_RESOURCE:
 				{
-					CWDebugLog("ERROR: Need Resource");
+					log_debug("ERROR: Need Resource");
 					break;
 				}
 				case CW_ERROR_COMUNICATING:
 				{
-					CWDebugLog("ERROR: Comunicating");
+					log_debug("ERROR: Comunicating");
 					break;
 				}
 				case CW_ERROR_CREATING:
 				{
-					CWDebugLog("ERROR: Creating");
+					log_debug("ERROR: Creating");
 					break;
 				}
 				case CW_ERROR_GENERAL:
 				{
-					CWDebugLog("ERROR: General");
+					log_debug("ERROR: General");
 					break;
 				}
 				case CW_ERROR_OPERATION_ABORTED:
 				{
-					CWDebugLog("ERROR: Operation Aborted");
+					log_debug("ERROR: Operation Aborted");
 					break;
 				}
 				case CW_ERROR_SENDING:
 				{
-					CWDebugLog("ERROR: Sending");
+					log_debug("ERROR: Sending");
 					break;
 				}
 				case CW_ERROR_RECEIVING:
 				{
-					CWDebugLog("ERROR: Receiving");
+					log_debug("ERROR: Receiving");
 					break;
 				}
 				case CW_ERROR_INVALID_FORMAT:
 				{
-					CWDebugLog("ERROR: Invalid Format");
+					log_debug("ERROR: Invalid Format");
 					break;
 				}
 				case CW_ERROR_TIME_EXPIRED:
 				{
-					CWDebugLog("ERROR: Time Expired");
+					log_debug("ERROR: Time Expired");
 					break;
 				}
 				case CW_ERROR_NONE:
 				{
-					CWDebugLog("ERROR: None");
+					log_debug("ERROR: None");
 					break;
 				}
 				}
@@ -429,7 +429,7 @@ CWBool CWWTPSendAcknowledgedPacket(int seqNum,
 
 	while (gWTPRetransmissionCount < gCWMaxRetransmit)
 	{
-		//		CWLog("Transmission Num:%d", gWTPRetransmissionCount);
+		//		log_debug("Transmission Num:%d", gWTPRetransmissionCount);
 		for (i = 0; i < fragmentsNum; i++)
 		{
 #ifdef CW_NO_DTLS
@@ -442,7 +442,7 @@ CWBool CWWTPSendAcknowledgedPacket(int seqNum,
 								messages[i].offset))
 #endif
 			{
-				CWLog("Failure sending Request");
+				log_debug("Failure sending Request");
 				goto cw_failure;
 			}
 		}
@@ -450,7 +450,7 @@ CWBool CWWTPSendAcknowledgedPacket(int seqNum,
 		timewait.tv_sec = time(0) + gTimeToSleep;
 		timewait.tv_nsec = 0;
 
-		CWLog("CW_REPEAT_FOREVER: CWWTPSendAcknowledgedPacket()");
+		log_debug("CW_REPEAT_FOREVER: CWWTPSendAcknowledgedPacket()");
 		CW_REPEAT_FOREVER
 		{
 			CWThreadMutexLock(&gInterfaceMutex);
@@ -481,7 +481,7 @@ CWBool CWWTPSendAcknowledgedPacket(int seqNum,
 				if (!(CWReceiveMessage(&msg)))
 				{
 					CW_FREE_PROTOCOL_MESSAGE(msg);
-					CWLog("Failure Receiving Response");
+					log_debug("Failure Receiving Response");
 					goto cw_failure;
 				}
 
@@ -491,7 +491,7 @@ CWBool CWWTPSendAcknowledgedPacket(int seqNum,
 					{
 
 						CW_FREE_PROTOCOL_MESSAGE(msg);
-						CWLog("Failure Parsing Response");
+						log_debug("Failure Parsing Response");
 						goto cw_failure;
 					}
 					else
@@ -515,7 +515,7 @@ CWBool CWWTPSendAcknowledgedPacket(int seqNum,
 					if (CWErrorGetLastErrorCode() != CW_ERROR_INVALID_FORMAT)
 					{
 						CW_FREE_PROTOCOL_MESSAGE(msg);
-						CWLog("Failure Saving Response");
+						log_debug("Failure Saving Response");
 						goto cw_failure;
 					}
 				}
@@ -531,7 +531,7 @@ CWBool CWWTPSendAcknowledgedPacket(int seqNum,
 			default:
 			{
 				CWErrorHandleLast();
-				CWDebugLog("Failure");
+				log_debug("Failure");
 				goto cw_failure;
 				break;
 			}
@@ -539,7 +539,7 @@ CWBool CWWTPSendAcknowledgedPacket(int seqNum,
 		}
 
 	cw_continue_external_loop:
-		CWDebugLog("Retransmission time is over");
+		log_debug("Retransmission time is over");
 
 		gTimeToSleep <<= 1;
 		if (gTimeToSleep > gMaxTimeToSleep)
@@ -569,7 +569,7 @@ cw_failure:
 		}
 		CW_FREE_OBJECT(messages);
 	}
-	CWDebugLog("Failure");
+	log_debug("Failure");
 	return CW_FALSE;
 }
 
@@ -594,7 +594,7 @@ CWBool CWWTPRequestPacketRetransmissionCustomTimeInterval(int retransmissionTime
 
 	while (gWTPRetransmissionCount < gCWMaxRetransmit)
 	{
-		//		CWDebugLog("Transmission Num:%d", gWTPRetransmissionCount);
+		//		log_debug("Transmission Num:%d", gWTPRetransmissionCount);
 		for (i = 0; i < fragmentsNum; i++)
 		{
 #ifdef CW_NO_DTLS
@@ -607,7 +607,7 @@ CWBool CWWTPRequestPacketRetransmissionCustomTimeInterval(int retransmissionTime
 								messages[i].offset))
 #endif
 			{
-				CWDebugLog("Failure sending Request");
+				log_debug("Failure sending Request");
 				goto cw_failure;
 			}
 		}
@@ -615,7 +615,7 @@ CWBool CWWTPRequestPacketRetransmissionCustomTimeInterval(int retransmissionTime
 		timewait.tv_sec = time(0) + gTimeToSleep;
 		timewait.tv_nsec = 0;
 
-		CWLog("CW_REPEAT_FOREVER: CWWTPRequestPacketRetransmissionCustomTimeInterval()");
+		log_debug("CW_REPEAT_FOREVER: CWWTPRequestPacketRetransmissionCustomTimeInterval()");
 		CW_REPEAT_FOREVER
 		{
 			CWThreadMutexLock(&gInterfaceMutex);
@@ -646,7 +646,7 @@ CWBool CWWTPRequestPacketRetransmissionCustomTimeInterval(int retransmissionTime
 				if (!(CWReceiveMessage(&msg)))
 				{
 					CW_FREE_PROTOCOL_MESSAGE(msg);
-					CWDebugLog("Failure Receiving Response");
+					log_debug("Failure Receiving Response");
 					goto cw_failure;
 				}
 
@@ -656,7 +656,7 @@ CWBool CWWTPRequestPacketRetransmissionCustomTimeInterval(int retransmissionTime
 					{
 
 						CW_FREE_PROTOCOL_MESSAGE(msg);
-						CWDebugLog("Failure Parsing Response");
+						log_debug("Failure Parsing Response");
 						goto cw_failure;
 					}
 					else
@@ -680,7 +680,7 @@ CWBool CWWTPRequestPacketRetransmissionCustomTimeInterval(int retransmissionTime
 					if (CWErrorGetLastErrorCode() != CW_ERROR_INVALID_FORMAT)
 					{
 						CW_FREE_PROTOCOL_MESSAGE(msg);
-						CWDebugLog("Failure Saving Response");
+						log_debug("Failure Saving Response");
 						goto cw_failure;
 					}
 				}
@@ -696,7 +696,7 @@ CWBool CWWTPRequestPacketRetransmissionCustomTimeInterval(int retransmissionTime
 			default:
 			{
 				CWErrorHandleLast();
-				CWDebugLog("Failure");
+				log_debug("Failure");
 				goto cw_failure;
 				break;
 			}
@@ -704,7 +704,7 @@ CWBool CWWTPRequestPacketRetransmissionCustomTimeInterval(int retransmissionTime
 		}
 
 	cw_continue_external_loop:
-		CWDebugLog("Retransmission time is over");
+		log_debug("Retransmission time is over");
 
 		gTimeToSleep <<= 1;
 		if (gTimeToSleep > gMaxTimeToSleep)
@@ -734,7 +734,7 @@ cw_failure:
 		}
 		CW_FREE_OBJECT(messages);
 	}
-	CWDebugLog("Failure");
+	log_debug("Failure");
 	return CW_FALSE;
 }
 
@@ -770,9 +770,9 @@ int main(int argc, const char *argv[])
 	// Elena: This is useless
 	/*
 	#ifndef CW_SINGLE_THREAD
-		CWDebugLog("Use Threads");
+		log_debug("Use Threads");
 	#else
-		CWDebugLog("Don't Use Threads");
+		log_debug("Don't Use Threads");
 	#endif
 	*/
 	CWErrorHandlingInitLib();
@@ -784,27 +784,27 @@ int main(int argc, const char *argv[])
 	}
 
 	// Elena Agostini - 05/2014
-	CWLogInitFile(wtpLogFile);
+	// CWLogInitFile(wtpLogFile);
 	strncpy(gLogFileName, wtpLogFile, strlen(wtpLogFile));
 
 	/* Capwap receive packets list */
 	if (!CWErr(CWCreateSafeList(&gPacketReceiveList)))
 	{
-		CWLog("Can't start WTP");
+		log_debug("Can't start WTP");
 		exit(1);
 	}
 
 	/* Capwap receive packets list */
 	if (!CWErr(CWCreateSafeList(&gPacketReceiveDataList)))
 	{
-		CWLog("Can't start WTP");
+		log_debug("Can't start WTP");
 		exit(1);
 	}
 
 	/* Capwap receive frame list */
 	if (!CWErr(CWCreateSafeList(&gFrameList)))
 	{
-		CWLog("Can't start WTP");
+		log_debug("Can't start WTP");
 		exit(1);
 	}
 
@@ -821,7 +821,7 @@ int main(int argc, const char *argv[])
 	CWSetMutexSafeList(gPacketReceiveDataList, &gInterfaceMutexData);
 	CWSetConditionSafeList(gPacketReceiveDataList, &gInterfaceWaitData);
 
-	CWLog("Starting WTP...");
+	log_debug("Starting WTP...");
 
 	CWRandomInitLib();
 
@@ -829,7 +829,7 @@ int main(int argc, const char *argv[])
 
 	if (timer_init() == 0)
 	{
-		CWLog("Can't init timer module");
+		log_debug("Can't init timer module");
 		exit(1);
 	}
 
@@ -841,14 +841,14 @@ int main(int argc, const char *argv[])
 	if (!CWErr(CWSecurityInitLib()) || !CWErr(CWWTPLoadConfiguration()))
 	{
 #endif
-		CWLog("Can't start WTP");
+		log_debug("Can't start WTP");
 		exit(1);
 	}
 
-	CWDebugLog("Init WTP Radio Info");
+	log_debug("Init WTP Radio Info");
 	if (!CWWTPInitConfiguration())
 	{
-		CWLog("Error Init Configuration");
+		log_debug("Error Init Configuration");
 		exit(1);
 	}
 
@@ -857,7 +857,7 @@ int main(int argc, const char *argv[])
 	CWThread thread_receiveFrame;
 	if (!CWErr(CWCreateThread(&thread_receiveFrame, CWWTPReceiveFrame, NULL)))
 	{
-		CWLog("Error starting Thread that receive binding frame");
+		log_debug("Error starting Thread that receive binding frame");
 		exit(1);
 	}
 #endif
@@ -865,7 +865,7 @@ int main(int argc, const char *argv[])
 	/*
 		CWThread thread_receiveStats;
 		if(!CWErr(CWCreateThread(&thread_receiveStats, CWWTPReceiveStats, NULL))) {
-			CWLog("Error starting Thread that receive stats on monitoring interface");
+			log_debug("Error starting Thread that receive stats on monitoring interface");
 			exit(1);
 		}
 	*/
@@ -877,7 +877,7 @@ int main(int argc, const char *argv[])
 	/*
 		CWThread thread_receiveFreqStats;
 		if(!CWErr(CWCreateThread(&thread_receiveFreqStats, CWWTPReceiveFreqStats, NULL))) {
-			CWLog("Error starting Thread that receive frequency stats on monitoring interface");
+			log_debug("Error starting Thread that receive frequency stats on monitoring interface");
 			exit(1);
 		}
 		*/
@@ -887,7 +887,7 @@ int main(int argc, const char *argv[])
 		nextState = CW_ENTER_JOIN;
 
 	/* start CAPWAP state machine */
-	CWLog("CW_REPEAT_FOREVER: CWWTP::main()");
+	log_debug("CW_REPEAT_FOREVER: CWWTP::main()");
 	CW_REPEAT_FOREVER
 	{
 		switch (nextState)
@@ -911,7 +911,7 @@ int main(int argc, const char *argv[])
 			nextState = CWWTPEnterRun();
 			break;
 		case CW_ENTER_RESET:
-			CWLog("------ Enter Reset State ------");
+			log_debug("------ Enter Reset State ------");
 			nextState = CW_ENTER_DISCOVERY;
 			break;
 		case CW_QUIT:
@@ -945,12 +945,12 @@ CWBool CWWTPLoadConfiguration()
 {
 	int i;
 
-	CWLog("WTP Loads Configuration");
+	log_debug("WTP Loads Configuration");
 
 	/* get saved preferences */
 	if (!CWErr(CWParseConfigFile()))
 	{
-		CWLog("Can't Read Config File");
+		log_debug("Can't Read Config File");
 		exit(1);
 	}
 
@@ -965,7 +965,7 @@ CWBool CWWTPLoadConfiguration()
 	for (i = 0; i < gCWACCount; i++)
 	{
 
-		CWDebugLog("Init Configuration for AC at %s", gCWACAddresses[i]);
+		log_debug("Init Configuration for AC at %s", gCWACAddresses[i]);
 		CW_CREATE_STRING_FROM_STRING_ERR(gCWACList[i].address, gCWACAddresses[i],
 										 return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 	}
@@ -978,7 +978,7 @@ void CWWTPDestroy()
 {
 	int i;
 
-	CWLog("Destroy WTP");
+	log_debug("Destroy WTP");
 
 	/*
 	 * Elena Agostini - 07/2014: Memory leak

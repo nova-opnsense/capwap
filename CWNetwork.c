@@ -76,7 +76,7 @@ CWBool CWNetworkSendUnsafeUnconnected(CWSocket sock,
 	if (buf == NULL || addrPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWUseSockNtop(addrPtr, NULL; /*CWDebugLog(str);*/);
+	CWUseSockNtop(addrPtr, NULL; /*log_debug(str);*/);
 
 	while (sendto(sock, buf, len, 0, (struct sockaddr *)addrPtr, CWNetworkGetAddressSize(addrPtr)) < 0)
 	{
@@ -193,7 +193,7 @@ CWBool CWNetworkInitSocketClient(CWSocket *sockPtr, CWNetworkLev4Address *addrPt
 	if (bind(*sockPtr, (const struct sockaddr *)&sockaddr, addrlen) < 0)
 	{
 		close(*sockPtr);
-		CWDebugLog("failed to bind Client socket in <%s> line:%d.\n", __func__, __LINE__);
+		log_debug("failed to bind Client socket in <%s> line:%d.\n", __func__, __LINE__);
 		return CW_FALSE;
 	}
 
@@ -201,16 +201,16 @@ CWBool CWNetworkInitSocketClient(CWSocket *sockPtr, CWNetworkLev4Address *addrPt
 		CWNetworkRaiseSystemError(CW_ERROR_GENERAL);
 
 #ifdef IPv6
-	CWLog("Created Client socket on %s UDP port %d\n", sockaddr.sin6_family == AF_INET6 ? "IPv6" : "IPv4", sockaddr.sin6_port);
+	log_debug("Created Client socket on %s UDP port %d\n", sockaddr.sin6_family == AF_INET6 ? "IPv6" : "IPv4", sockaddr.sin6_port);
 #else
-	CWLog("Created Client socket on IPv4 UDP port %d\n", sockaddr.sin_port);
+	log_debug("Created Client socket on IPv4 UDP port %d\n", sockaddr.sin_port);
 #endif
 
 	/* NULL addrPtr means that we don't want to connect to a
 	 * specific address */
 	if (addrPtr != NULL)
 	{
-		CWUseSockNtop(((struct sockaddr *)addrPtr), CWDebugLog(str););
+		CWUseSockNtop(((struct sockaddr *)addrPtr), log_debug(str););
 
 		if (connect((*sockPtr), ((struct sockaddr *)addrPtr), CWNetworkGetAddressSize(addrPtr)) < 0)
 		{
@@ -267,7 +267,7 @@ CWBool CWNetworkInitSocketClientDataChannel(CWSocket *sockPtr, CWNetworkLev4Addr
 	if (bind(*sockPtr, (const struct sockaddr *)&sockaddr, addrlen) < 0)
 	{
 		close(*sockPtr);
-		CWDebugLog("failed to bind Client socket in <%s> line:%d.\n", __func__, __LINE__);
+		log_debug("failed to bind Client socket in <%s> line:%d.\n", __func__, __LINE__);
 		return CW_FALSE;
 	}
 
@@ -275,9 +275,9 @@ CWBool CWNetworkInitSocketClientDataChannel(CWSocket *sockPtr, CWNetworkLev4Addr
 		CWNetworkRaiseSystemError(CW_ERROR_GENERAL);
 
 #ifdef IPv6
-	CWLog("Created Client socket on %s UDP data port %d\n", sockaddr.sin6_family == AF_INET6 ? "IPv6" : "IPv4", sockaddr.sin6_port);
+	log_debug("Created Client socket on %s UDP data port %d\n", sockaddr.sin6_family == AF_INET6 ? "IPv6" : "IPv4", sockaddr.sin6_port);
 #else
-	CWLog("Created Client socket on IPv4 UDP data port %d\n", sockaddr.sin_port);
+	log_debug("Created Client socket on IPv4 UDP data port %d\n", sockaddr.sin_port);
 #endif
 
 	/* NULL addrPtr means that we don't want to connect to a
@@ -286,7 +286,7 @@ CWBool CWNetworkInitSocketClientDataChannel(CWSocket *sockPtr, CWNetworkLev4Addr
 	{
 		CW_COPY_NET_ADDR_PTR(&addrPtrDataChannel, addrPtr);
 		sock_set_port_cw((struct sockaddr *)&addrPtrDataChannel, htons(CW_DATA_PORT));
-		CWUseSockNtop((struct sockaddr *)&addrPtrDataChannel, CWDebugLog(str););
+		CWUseSockNtop((struct sockaddr *)&addrPtrDataChannel, log_debug(str););
 
 		if (connect((*sockPtr), (struct sockaddr *)&addrPtrDataChannel, CWNetworkGetAddressSize(&addrPtrDataChannel)) < 0)
 		{
@@ -336,11 +336,11 @@ CWBool CWNetworkInitSocketClientWithPort(CWSocket *sockPtr, CWNetworkLev4Address
 
 	/* Elena Agostini - 04/2014 */
 	sockaddr.sin_port = ntohs(portSocket);
-	CWLog("portSocket: %d", portSocket);
+	log_debug("portSocket: %d", portSocket);
 	if (bind(*sockPtr, (const struct sockaddr *)&sockaddr, addrlen) < 0)
 	{
 		close(*sockPtr);
-		CWDebugLog("failed to bind Client socket in <%s> line:%d.\n", __func__, __LINE__);
+		log_debug("failed to bind Client socket in <%s> line:%d.\n", __func__, __LINE__);
 		return CW_FALSE;
 	}
 
@@ -348,16 +348,16 @@ CWBool CWNetworkInitSocketClientWithPort(CWSocket *sockPtr, CWNetworkLev4Address
 		CWNetworkRaiseSystemError(CW_ERROR_GENERAL);
 
 #ifdef IPv6
-	CWLog("Created Client socket on %s UDP port %d\n", sockaddr.sin6_family == AF_INET6 ? "IPv6" : "IPv4", sockaddr.sin6_port);
+	log_debug("Created Client socket on %s UDP port %d\n", sockaddr.sin6_family == AF_INET6 ? "IPv6" : "IPv4", sockaddr.sin6_port);
 #else
-	CWLog("Created Client socket on IPv4 UDP port %d\n", sockaddr.sin_port);
+	log_debug("Created Client socket on IPv4 UDP port %d\n", sockaddr.sin_port);
 #endif
 
 	/* NULL addrPtr means that we don't want to connect to a
 	 * specific address */
 	if (addrPtr != NULL)
 	{
-		CWUseSockNtop(((struct sockaddr *)addrPtr), CWDebugLog(str););
+		CWUseSockNtop(((struct sockaddr *)addrPtr), log_debug(str););
 
 		if (connect((*sockPtr), ((struct sockaddr *)addrPtr), CWNetworkGetAddressSize(addrPtr)) < 0)
 		{
@@ -408,7 +408,7 @@ CWBool CWNetworkInitSocketClientDataChannelWithPort(CWSocket *sockPtr, CWNetwork
 	if (bind(*sockPtr, (const struct sockaddr *)&sockaddr, addrlen) < 0)
 	{
 		close(*sockPtr);
-		CWDebugLog("failed to bind Client socket in <%s> line:%d.\n", __func__, __LINE__);
+		log_debug("failed to bind Client socket in <%s> line:%d.\n", __func__, __LINE__);
 		return CW_FALSE;
 	}
 
@@ -416,9 +416,9 @@ CWBool CWNetworkInitSocketClientDataChannelWithPort(CWSocket *sockPtr, CWNetwork
 		CWNetworkRaiseSystemError(CW_ERROR_GENERAL);
 
 #ifdef IPv6
-	CWLog("Created Client socket on %s UDP data port %d\n", sockaddr.sin6_family == AF_INET6 ? "IPv6" : "IPv4", sockaddr.sin6_port);
+	log_debug("Created Client socket on %s UDP data port %d\n", sockaddr.sin6_family == AF_INET6 ? "IPv6" : "IPv4", sockaddr.sin6_port);
 #else
-	CWLog("Created Client socket on IPv4 UDP data port %d\n", sockaddr.sin_port);
+	log_debug("Created Client socket on IPv4 UDP data port %d\n", sockaddr.sin_port);
 #endif
 
 	/* NULL addrPtr means that we don't want to connect to a
@@ -427,7 +427,7 @@ CWBool CWNetworkInitSocketClientDataChannelWithPort(CWSocket *sockPtr, CWNetwork
 	{
 		CW_COPY_NET_ADDR_PTR(&addrPtrDataChannel, addrPtr);
 		sock_set_port_cw((struct sockaddr *)&addrPtrDataChannel, htons(CW_DATA_PORT));
-		CWUseSockNtop((struct sockaddr *)&addrPtrDataChannel, CWDebugLog(str););
+		CWUseSockNtop((struct sockaddr *)&addrPtrDataChannel, log_debug(str););
 
 		if (connect((*sockPtr), (struct sockaddr *)&addrPtrDataChannel, CWNetworkGetAddressSize(&addrPtrDataChannel)) < 0)
 		{
@@ -457,18 +457,18 @@ CWBool CWNetworkTimedPollRead(CWSocket sock, struct timeval *timeout)
 	if ((r = select(sock + 1, &fset, NULL, NULL, timeout)) == 0)
 	{
 
-		CWDebugLog("Select Time Expired");
+		log_debug("Select Time Expired");
 		return CWErrorRaise(CW_ERROR_TIME_EXPIRED, NULL);
 	}
 	else if (r < 0)
 	{
 
-		CWDebugLog("Select Error");
+		log_debug("Select Error");
 
 		if (errno == EINTR)
 		{
 
-			CWDebugLog("Select Interrupted by signal");
+			log_debug("Select Interrupted by signal");
 			return CWErrorRaise(CW_ERROR_INTERRUPTED, NULL);
 		}
 

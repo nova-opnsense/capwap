@@ -164,7 +164,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 	if (Writen(sock, &connected, sizeof(int)) < 0)
 	{
-		CWLog("Error on writing on application socket ");
+		log_debug("Error on writing on application socket ");
 		return NULL;
 	}
 
@@ -182,7 +182,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 	 *	 Thread Main Loop	*
 	 ************************/
 
-	CWLog("CW_REPEAT_FOREVER: CWManageApplication()");
+	log_debug("CW_REPEAT_FOREVER: CWManageApplication()");
 	CW_REPEAT_FOREVER
 	{
 		memset(commandBuffer, 0, COMMAND_BUFFER_SIZE);
@@ -214,7 +214,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 				if (!CWErr(CWThreadMutexLock(&gActiveWTPsMutex)))
 				{
-					CWLog("Error locking the mutex");
+					log_debug("Error locking the mutex");
 					return NULL;
 				}
 
@@ -265,7 +265,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 				}
 
 				if (Writen(sock, wtpListBuffer, payload_size) < 0)
-					CWLog("Error on write message on application socket");
+					log_debug("Error on write message on application socket");
 			}
 
 			if (cmd_msg == CONF_UPDATE_MSG)
@@ -280,7 +280,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 				if ((n = Readn(sock, commandBuffer, sizeof(msg_elem) + sizeof(wtpIndex))) < 0)
 				{
-					CWLog("Error while reading from socket.");
+					log_debug("Error while reading from socket.");
 					goto quit_manage;
 				}
 
@@ -292,7 +292,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 				/* Check if WTP Index is valid */
 				if (!is_valid_wtp_index(wtpIndex))
 				{
-					CWLog("WTP Index non valid!");
+					log_debug("WTP Index non valid!");
 					goto quit_manage;
 				}
 
@@ -304,7 +304,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 					CW_CREATE_OBJECT_ERR(ofdmValues, OFDMControlValues, {CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL); return 0; });
 					if ((n = Readn(sock, ofdmValues, sizeof(OFDMControlValues))) < 0)
 					{
-						CWLog("Error while reading from socket");
+						log_debug("Error while reading from socket");
 						goto quit_manage;
 					}
 
@@ -319,7 +319,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 						if (!CWErr(CWThreadMutexLock(&gActiveWTPsMutex)))
 						{
-							CWLog("Error locking the mutex");
+							log_debug("Error locking the mutex");
 							return NULL;
 						}
 						numActiveWTPs = gActiveWTPs;
@@ -354,7 +354,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 					if ((n = Readn(sock, commandBuffer, sizeof(unsigned char) + sizeof(int))) < 0)
 					{
-						CWLog("Error while reading from socket.");
+						log_debug("Error while reading from socket.");
 						goto quit_manage;
 					}
 
@@ -366,7 +366,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 					{
 						if ((n = Readn(sock, commandBuffer + sizeof(char) + sizeof(int), commandLength)) < 0)
 						{
-							CWLog("Error while reading from socket.");
+							log_debug("Error while reading from socket.");
 							goto quit_manage;
 						}
 
@@ -390,7 +390,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 						if (!CWErr(CWThreadMutexLock(&gActiveWTPsMutex)))
 						{
-							CWLog("Error locking the mutex");
+							log_debug("Error locking the mutex");
 							return NULL;
 						}
 						numActiveWTPs = gActiveWTPs;
@@ -402,7 +402,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 							{
 								if (gWTPs[i].isNotFree)
 								{
-									CWLog("Sending UCI Configuration Message to: %d - %s", i, gWTPs[i].WTPProtocolManager.name);
+									log_debug("Sending UCI Configuration Message to: %d - %s", i, gWTPs[i].WTPProtocolManager.name);
 									CWVendorSetValues(i, socketIndex, vendorValues);
 								}
 							}
@@ -425,7 +425,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 					if ((n = Readn(sock, &(wumValues->type), sizeof(unsigned char))) < 0)
 					{
-						CWLog("Error while reading from socket.");
+						log_debug("Error while reading from socket.");
 						goto quit_manage;
 					}
 
@@ -433,7 +433,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 					{
 						if ((n = Readn(sock, commandBuffer, 3 * sizeof(unsigned char) + sizeof(int))) < 0)
 						{
-							CWLog("Error while reading from socket.");
+							log_debug("Error while reading from socket.");
 							goto quit_manage;
 						}
 
@@ -451,7 +451,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 						/* Read sequence number and fragment size */
 						if ((n = Readn(sock, commandBuffer, 2 * sizeof(int))) < 0)
 						{
-							CWLog("Error while reading from socket.");
+							log_debug("Error while reading from socket.");
 							goto quit_manage;
 						}
 
@@ -463,13 +463,13 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 						if (seqNum < 0)
 						{
-							CWLog("Update with sequence number < 0 not valid.");
+							log_debug("Update with sequence number < 0 not valid.");
 							goto quit_manage;
 						}
 
 						if (fragSize <= 0)
 						{
-							CWLog("Update with fragment size <= 0 not valid.");
+							log_debug("Update with fragment size <= 0 not valid.");
 							goto quit_manage;
 						}
 
@@ -477,13 +477,13 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 						char *buf = malloc(fragSize);
 						if (buf == NULL)
 						{
-							CWLog("Can't allocate memory");
+							log_debug("Can't allocate memory");
 							goto quit_manage;
 						}
 
 						if ((n = Readn(sock, buf, fragSize)) < 0)
 						{
-							CWLog("Error while reading from socket.");
+							log_debug("Error while reading from socket.");
 							goto quit_manage;
 						}
 
@@ -500,7 +500,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 						if (!CWErr(CWThreadMutexLock(&gActiveWTPsMutex)))
 						{
-							CWLog("Error locking the mutex");
+							log_debug("Error locking the mutex");
 							return NULL;
 						}
 						numActiveWTPs = gActiveWTPs;
@@ -512,7 +512,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 							{
 								if (gWTPs[i].isNotFree)
 								{
-									CWLog("Sending WUM Configuration Message to: %d - %s", i, gWTPs[i].WTPProtocolManager.name);
+									log_debug("Sending WUM Configuration Message to: %d - %s", i, gWTPs[i].WTPProtocolManager.name);
 									CWWumSetValues(i, socketIndex, vendorValues);
 								}
 							}
@@ -537,27 +537,27 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 					CW_CREATE_OBJECT_ERR(cmdWLAN, WUMWLANCmdParameters, {CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL); return 0; });
 
-					CWLog("Received ADD WLAN command");
+					log_debug("Received ADD WLAN command");
 
 					if ((n = Readn(sock, &(typeRequest), sizeof(unsigned char))) < 0)
 					{
-						CWLog("Error while reading from socket.");
+						log_debug("Error while reading from socket.");
 						goto quit_manage;
 					}
-					// CWLog("typeRequest : %d", typeRequest);
+					// log_debug("typeRequest : %d", typeRequest);
 
 					if ((n = Readn(sock, &msgLen, sizeof(int))) < 0)
 					{
-						CWLog("Error while reading from socket.");
+						log_debug("Error while reading from socket.");
 						goto quit_manage;
 					}
-					// CWLog("msgLen : %d", msgLen);
+					// log_debug("msgLen : %d", msgLen);
 
 					CW_CREATE_ARRAY_CALLOC_ERR(payload, msgLen + 1, char, {CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL); return 0; });
 
 					if ((n = Readn(sock, payload, (msgLen * sizeof(unsigned char)))) < 0)
 					{
-						CWLog("Error while reading from socket.");
+						log_debug("Error while reading from socket.");
 						goto quit_manage;
 					}
 					cmdWLAN->typeCmd = CW_OP_ADD_WLAN;
@@ -589,7 +589,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 					// RFC vieta radioID <= 0 e wlanID <= 0
 					if (cmdWLAN->radioID < 0 || cmdWLAN->wlanID < 0)
 					{
-						CWLog("ERROR: radioID or wlanID < 0");
+						log_debug("ERROR: radioID or wlanID < 0");
 						CW_FREE_OBJECT(cmdWLAN);
 						break;
 					}
@@ -605,7 +605,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 						if (!CWErr(CWThreadMutexLock(&gActiveWTPsMutex)))
 						{
-							CWLog("Error locking the mutex");
+							log_debug("Error locking the mutex");
 							return NULL;
 						}
 						numActiveWTPs = gActiveWTPs;
@@ -642,30 +642,30 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 					CW_CREATE_OBJECT_ERR(cmdWLAN, WUMWLANCmdParameters, {CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL); return 0; });
 
-					CWLog("Received DEL WLAN command");
+					log_debug("Received DEL WLAN command");
 
 					if ((n = Readn(sock, &(typeRequest), sizeof(unsigned char))) < 0)
 					{
-						CWLog("Error while reading from socket.");
+						log_debug("Error while reading from socket.");
 						goto quit_manage;
 					}
-					// CWLog("typeRequest : %d", typeRequest);
+					// log_debug("typeRequest : %d", typeRequest);
 
 					if ((n = Readn(sock, &msgLen, sizeof(int))) < 0)
 					{
-						CWLog("Error while reading from socket.");
+						log_debug("Error while reading from socket.");
 						goto quit_manage;
 					}
-					// CWLog("msgLen : %d", msgLen);
+					// log_debug("msgLen : %d", msgLen);
 
 					CW_CREATE_ARRAY_CALLOC_ERR(payload, msgLen + 1, char, {CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL); return 0; });
 
 					if ((n = Readn(sock, payload, (msgLen * sizeof(unsigned char)))) < 0)
 					{
-						CWLog("Error while reading from socket.");
+						log_debug("Error while reading from socket.");
 						goto quit_manage;
 					}
-					//	CWLog("payload : %s", payload);
+					//	log_debug("payload : %s", payload);
 
 					cmdWLAN->typeCmd = CW_OP_DEL_WLAN;
 
@@ -690,7 +690,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 					// RFC vieta radioID <= 0 e wlanID <= 0
 					/*if(cmdWLAN->radioID <= 0 || cmdWLAN->wlanID <= 0)
 					{
-						CWLog("ERROR: radioID or wlanID <= 0");
+						log_debug("ERROR: radioID or wlanID <= 0");
 						CW_FREE_OBJECT(cmdWLAN);
 						break;
 					}
@@ -706,7 +706,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 
 						if (!CWErr(CWThreadMutexLock(&gActiveWTPsMutex)))
 						{
-							CWLog("Error locking the mutex");
+							log_debug("Error locking the mutex");
 							return NULL;
 						}
 						numActiveWTPs = gActiveWTPs;
@@ -738,7 +738,7 @@ CW_THREAD_RETURN_TYPE CWManageApplication(void *arg)
 		}
 		else
 		{
-			CWLog("Error on receive application command (read socket)");
+			log_debug("Error on receive application command (read socket)");
 			goto quit_manage;
 		}
 	}
@@ -747,7 +747,7 @@ quit_manage:
 
 	if (!CWErr(CWThreadMutexLock(&appsManager.numSocketFreeMutex)))
 	{
-		CWLog("Error locking numSocketFree Mutex");
+		log_debug("Error locking numSocketFree Mutex");
 		return NULL;
 	}
 
@@ -787,7 +787,7 @@ CW_THREAD_RETURN_TYPE CWInterface(void *arg)
 
 	if (!CWErr(CWCreateThreadMutex(&appsManager.numSocketFreeMutex)))
 	{
-		CWLog("Error on mutex creation on appManager structure");
+		log_debug("Error on mutex creation on appManager structure");
 		return NULL;
 	}
 
@@ -796,10 +796,10 @@ CW_THREAD_RETURN_TYPE CWInterface(void *arg)
 	 ****************************************************/
 
 	listen_sock = socket(AF_INET, SOCK_STREAM, 0);
-	CWLog("listen_sock = %d", listen_sock);
+	log_debug("listen_sock = %d", listen_sock);
 	if (listen_sock < 0)
 	{
-		CWLog("Error on socket creation on Interface");
+		log_debug("Error on socket creation on Interface");
 		return NULL;
 	}
 
@@ -811,7 +811,7 @@ CW_THREAD_RETURN_TYPE CWInterface(void *arg)
 
 	if (setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR, &optValue, sizeof(int)) == -1)
 	{
-		CWLog("Error on socket creation on Interface");
+		log_debug("Error on socket creation on Interface");
 		return NULL;
 	}
 
@@ -821,13 +821,13 @@ CW_THREAD_RETURN_TYPE CWInterface(void *arg)
 
 	if (bind(listen_sock, (struct sockaddr *)&servaddr, sizeof(struct sockaddr_in)) < 0)
 	{
-		CWLog("Error on Binding");
+		log_debug("Error on Binding");
 		return NULL;
 	}
 
 	if (listen(listen_sock, MAX_APPS_CONNECTED_TO_AC) < 0)
 	{
-		CWLog("Error on LIsTsocket creation");
+		log_debug("Error on LIsTsocket creation");
 		return NULL;
 	}
 
@@ -835,11 +835,11 @@ CW_THREAD_RETURN_TYPE CWInterface(void *arg)
 	 *			Main Loop			*
 	 ********************************/
 
-	CWLog("CW_REPEAT_FOREVER: CWInterface()");
+	log_debug("CW_REPEAT_FOREVER: CWInterface()");
 	CW_REPEAT_FOREVER
 	{
 		conn_sock = accept(listen_sock, (struct sockaddr *)NULL, NULL);
-		CWLog("conn_sock = %d", conn_sock);
+		log_debug("conn_sock = %d", conn_sock);
 		if (conn_sock > 0)
 		{
 
@@ -850,7 +850,7 @@ CW_THREAD_RETURN_TYPE CWInterface(void *arg)
 
 			if (!CWErr(CWThreadMutexLock(&appsManager.numSocketFreeMutex)))
 			{
-				CWLog("Error locking numSocketFree Mutex");
+				log_debug("Error locking numSocketFree Mutex");
 				return NULL;
 			}
 
@@ -879,13 +879,13 @@ CW_THREAD_RETURN_TYPE CWInterface(void *arg)
 
 				if (!CWErr(CWCreateThreadMutex(&appsManager.socketMutex[argPtr->index])))
 				{
-					CWLog("Error on mutex creation on appManager structure");
+					log_debug("Error on mutex creation on appManager structure");
 					return NULL;
 				}
 
 				if (!CWErr(CWCreateThread(&thread_id, CWManageApplication, argPtr)))
 				{
-					CWLog("Error on thread CWManageApplication creation");
+					log_debug("Error on thread CWManageApplication creation");
 					appsManager.isFree[argPtr->index] = CW_TRUE;
 					close(conn_sock);
 					CW_FREE_OBJECT(argPtr);
@@ -897,7 +897,7 @@ CW_THREAD_RETURN_TYPE CWInterface(void *arg)
 					 */
 					if (!CWErr(CWThreadMutexLock(&appsManager.numSocketFreeMutex)))
 					{
-						CWLog("Error locking numSocketFree Mutex");
+						log_debug("Error locking numSocketFree Mutex");
 						return NULL;
 					}
 					appsManager.numSocketFree++;
@@ -914,13 +914,13 @@ CW_THREAD_RETURN_TYPE CWInterface(void *arg)
 
 				if (Writen(conn_sock, &clientFull, sizeof(int)) < 0)
 				{
-					CWLog("Error on sending Error Message");
+					log_debug("Error on sending Error Message");
 					close(conn_sock);
 				}
 			}
 		}
 		else
-			CWLog("Error on accept (applications) system call");
+			log_debug("Error on accept (applications) system call");
 	}
 
 	CWDestroyThreadMutex(&appsManager.numSocketFreeMutex);
@@ -969,7 +969,7 @@ int Readn(int fd, void *ptr, size_t nbytes)
 
 	if ((n = readn(fd, ptr, nbytes)) < 0)
 	{
-		CWLog("Error while reading data from socket.");
+		log_debug("Error while reading data from socket.");
 		return -1;
 	}
 

@@ -105,9 +105,9 @@ void CWPrintEthernetAddress(unsigned char *address, char *string)
 		return;
 
 	if (string == NULL)
-		CWLog("%02x:%02x:%02x:%02x:%02x:%02x", (int)address[0], (int)address[1], (int)address[2], (int)address[3], (int)address[4], (int)address[5]);
+		log_debug("%02x:%02x:%02x:%02x:%02x:%02x", (int)address[0], (int)address[1], (int)address[2], (int)address[3], (int)address[4], (int)address[5]);
 	else
-		CWLog("%s -> %02x:%02x:%02x:%02x:%02x:%02x", string, (int)address[0], (int)address[1], (int)address[2], (int)address[3], (int)address[4], (int)address[5]);
+		log_debug("%s -> %02x:%02x:%02x:%02x:%02x:%02x", string, (int)address[0], (int)address[1], (int)address[2], (int)address[3], (int)address[4], (int)address[5]);
 }
 
 int CWCompareEthernetAddress(unsigned char *address1, unsigned char *address2)

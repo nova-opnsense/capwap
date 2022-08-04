@@ -64,7 +64,7 @@ CWBool CWAssembleDataMessage(CWProtocolMessage **completeMsgPtr, int *fragmentsN
 	if (completeMsgPtr == NULL || fragmentsNumPtr == NULL || frame == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	//	CWDebugLog("PMTU: %d", PMTU);
+	//	log_debug("PMTU: %d", PMTU);
 
 	// handle fragmentation
 
@@ -76,11 +76,11 @@ CWBool CWAssembleDataMessage(CWProtocolMessage **completeMsgPtr, int *fragmentsN
 		if (PMTU == 0)
 			goto cw_dont_fragment;
 
-		//		CWDebugLog("Aligned PMTU: %d", PMTU);
+		//		log_debug("Aligned PMTU: %d", PMTU);
 		*fragmentsNumPtr = (frame->offset) / PMTU;
 		if ((frame->offset % PMTU) != 0)
 			(*fragmentsNumPtr)++;
-		// CWDebugLog("Fragments #: %d", *fragmentsNumPtr);
+		// log_debug("Fragments #: %d", *fragmentsNumPtr);
 	}
 	else
 	{
@@ -159,7 +159,7 @@ CWBool CWAssembleDataMessage(CWProtocolMessage **completeMsgPtr, int *fragmentsN
 		int fragID = CWGetFragmentID();
 		int totalSize = frame->offset;
 
-		// CWDebugLog("%d Fragments", *fragmentsNumPtr);
+		// log_debug("%d Fragments", *fragmentsNumPtr);
 		CW_CREATE_PROTOCOL_MSG_ARRAY_ERR(*completeMsgPtr, *fragmentsNumPtr, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 		frame->offset = 0;
 
@@ -184,7 +184,7 @@ CWBool CWAssembleDataMessage(CWProtocolMessage **completeMsgPtr, int *fragmentsN
 				transportVal.last = 1;
 			}
 
-			CWDebugLog("Fragment #:%d, offset:%d, bytes stored:%d/%d", i, transportVal.fragmentOffset, fragSize, totalSize);
+			log_debug("Fragment #:%d, offset:%d, bytes stored:%d/%d", i, transportVal.fragmentOffset, fragSize, totalSize);
 
 			// Assemble Transport Header for this fragment
 			if (keepAlive)
@@ -231,13 +231,13 @@ CWBool CWAssembleTransportHeaderBinding(CWProtocolMessage *transportHdrPtr, CWBi
 				 CW_TRANSPORT_HEADER_LENGTH_LEN,
 				 CW_BINDING_DATALENGTH);
 
-	//	CWDebugLog("#### RSSI in= %d",valuesPtr->RSSI );
+	//	log_debug("#### RSSI in= %d",valuesPtr->RSSI );
 	CWSetField32(val,
 				 CW_TRANSPORT_HEADER_RSSI_START,
 				 CW_TRANSPORT_HEADER_RSSI_LEN,
 				 valuesPtr->RSSI);
 
-	//	CWDebugLog("#### SNR in= %d",valuesPtr->SNR );
+	//	log_debug("#### SNR in= %d",valuesPtr->SNR );
 	CWSetField32(val,
 				 CW_TRANSPORT_HEADER_SNR_START,
 				 CW_TRANSPORT_HEADER_SNR_LEN,
@@ -258,7 +258,7 @@ CWBool CWAssembleTransportHeaderBinding(CWProtocolMessage *transportHdrPtr, CWBi
 				 CW_TRANSPORT_HEADER_DATARATE_2_LEN,
 				 (valuesPtr->dataRate) & 0x000000FF);
 
-	//	CWDebugLog("#### data rate in= %d",valuesPtr->dataRate );
+	//	log_debug("#### data rate in= %d",valuesPtr->dataRate );
 	/*	CWSetField32(val,
 				 CW_TRANSPORT_HEADER_DATARATE_START,
 				 CW_TRANSPORT_HEADER_DATARATE_LEN,
@@ -283,7 +283,7 @@ CWBool CWParseTransportHeaderMACAddress(CWProtocolMessage *msgPtr, char *mac_ptr
 	unsigned char *vval;
 	vval = malloc(7);
 
-	// CWDebugLog("Parse Transport Header");
+	// log_debug("Parse Transport Header");
 	int Mac_len = CWProtocolRetrieve8(msgPtr);
 
 	vval = (unsigned char *)CWProtocolRetrieveRawBytes(msgPtr, 7);
@@ -303,12 +303,12 @@ CWBool CWParseTransportHeaderBinding(CWProtocolMessage *msgPtr, CWBindingTranspo
 {
 	unsigned int val = 0;
 
-	CWLog("CWParseTransportHeaderBinding");
+	log_debug("CWParseTransportHeaderBinding");
 
 	if (msgPtr == NULL || valuesPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	// CWDebugLog("Parse Transport Header");
+	// log_debug("Parse Transport Header");
 	val = CWProtocolRetrieve32(msgPtr);
 
 	/* Mauro: non piu' specificato nel campo Wireless Specific Information
@@ -319,10 +319,10 @@ CWBool CWParseTransportHeaderBinding(CWProtocolMessage *msgPtr, CWBindingTranspo
 		return CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Wrong Binding Data Field Length");
 
 	valuesPtr->RSSI = CWGetField32(val, CW_TRANSPORT_HEADER_RSSI_START, CW_TRANSPORT_HEADER_RSSI_LEN);
-	//	CWDebugLog("RSSI: %d", valuesPtr->RSSI);
+	//	log_debug("RSSI: %d", valuesPtr->RSSI);
 
 	valuesPtr->SNR = CWGetField32(val, CW_TRANSPORT_HEADER_SNR_START, CW_TRANSPORT_HEADER_SNR_LEN);
-	//	CWDebugLog("SNR: %d", valuesPtr->SNR);
+	//	log_debug("SNR: %d", valuesPtr->SNR);
 
 	/* Mauro: preleva il byte piu' significativo del sottocampo Data */
 	valuesPtr->dataRate = CWGetField32(val, CW_TRANSPORT_HEADER_DATARATE_1_START, CW_TRANSPORT_HEADER_DATARATE_1_LEN);
@@ -352,7 +352,7 @@ CWBool CWParseTransportHeaderBinding(CWProtocolMessage *msgPtr, CWBindingTranspo
 	valuesPtr->dataRate = ((valuesPtr->dataRate) << 8) | CWGetField32(val, CW_TRANSPORT_HEADER_DATARATE_1_START, CW_TRANSPORT_HEADER_DATARATE_1_LEN);
 
 	//	valuesPtr->dataRate = CWGetField32(val, CW_TRANSPORT_HEADER_DATARATE_START, CW_TRANSPORT_HEADER_DATARATE_LEN);
-	//	CWDebugLog("DATARATE: %d", valuesPtr->dataRate);
+	//	log_debug("DATARATE: %d", valuesPtr->dataRate);
 
 	return CW_TRUE;
 }

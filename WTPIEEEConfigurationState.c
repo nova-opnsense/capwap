@@ -78,7 +78,7 @@ CWBool CWAssembleIEEEConfigurationResponse(CWProtocolMessage **messagesPtr,
 									 msgElemCount,
 									 return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
-	CWDebugLog("Assembling IEEE configuration Response...");
+	log_debug("Assembling IEEE configuration Response...");
 	if (bssid == NULL)
 	{
 		if ((!(CWAssembleMsgElemResultCode(&(msgElems[++k]), resultCode))))
@@ -126,7 +126,7 @@ CWBool CWAssembleIEEEConfigurationResponse(CWProtocolMessage **messagesPtr,
 							)))
 		return CW_FALSE;
 
-	CWDebugLog("IEEE Configuration Request Assembled");
+	log_debug("IEEE Configuration Request Assembled");
 	return CW_TRUE;
 }
 
@@ -146,7 +146,7 @@ CWBool CWParseIEEEConfigurationRequestMessage(char *msg,
 	if (msg == NULL || interfaceInfo == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Parsing IEEE Configuration Response...");
+	log_debug("Parsing IEEE Configuration Response...");
 
 	completeMsg.msg = msg;
 	completeMsg.offset = 0;
@@ -176,7 +176,7 @@ CWBool CWParseIEEEConfigurationRequestMessage(char *msg,
 		unsigned short int len = 0;	 /* = CWProtocolRetrieve16(&completeMsg); */
 
 		CWParseFormatMsgElem(&completeMsg, &type, &len);
-		// CWLog("Parsing Message Element: %u, len: %u complete: %d", type, len, completeMsg.offset);
+		// log_debug("Parsing Message Element: %u, len: %u complete: %d", type, len, completeMsg.offset);
 
 		switch (type)
 		{
@@ -203,7 +203,7 @@ CWBool CWParseIEEEConfigurationRequestMessage(char *msg,
 
 	completeMsg.offset = offsetTillMessages;
 
-	CWDebugLog("IEEE Configuration Request Parsed");
+	log_debug("IEEE Configuration Request Parsed");
 	return CW_TRUE;
 }
 
@@ -220,7 +220,7 @@ CWBool CWSaveIEEEConfigurationRequestMessage(ACInterfaceRequestInfo *interfaceAC
 	int indexRadio = CWIEEEBindingGetIndexFromDevID(interfaceACInfo->radioID);
 	int indexWlan = CWIEEEBindingGetIndexFromDevID(interfaceACInfo->wlanID);
 
-	//	CWLog("WLAN Interface op %d on radioID: %d wlanID: %d", interfaceACInfo->operation, indexRadio, indexWlan);
+	//	log_debug("WLAN Interface op %d on radioID: %d wlanID: %d", interfaceACInfo->operation, indexRadio, indexWlan);
 	// Add Wlan
 	if (interfaceACInfo->operation == CW_OP_ADD_WLAN)
 	{
@@ -256,7 +256,7 @@ CWBool CWSaveIEEEConfigurationRequestMessage(ACInterfaceRequestInfo *interfaceAC
 			/*			if(gRadiosInfo.radiosInfo[indexRadio].gWTPPhyInfo.interfaces[indexWlan].frameTunnelMode == CW_LOCAL_BRIDGING)
 			//			if(CWWTPGetFrameTunnelMode() == CW_LOCAL_BRIDGING)
 						{
-							CWLog("Local Bridging tunnel mode. Adding %s to %s", gRadiosInfo.radiosInfo[indexRadio].gWTPPhyInfo.interfaces[indexWlan].ifName, gBridgeInterfaceName);
+							log_debug("Local Bridging tunnel mode. Adding %s to %s", gRadiosInfo.radiosInfo[indexRadio].gWTPPhyInfo.interfaces[indexWlan].ifName, gBridgeInterfaceName);
 							if(!CWAddNewBridgeInterface(globalNLSock.ioctl_sock, gBridgeInterfaceName, gRadiosInfo.radiosInfo[indexRadio].gWTPPhyInfo.interfaces[indexWlan].realWlanID))
 								goto failure;
 						}
@@ -301,22 +301,22 @@ CWBool CWSaveIEEEConfigurationRequestMessage(ACInterfaceRequestInfo *interfaceAC
 	else if (interfaceACInfo->operation == CW_OP_UPDATE_WLAN)
 	{
 		// TODO
-		CWLog("IEEE update WLAN operation");
+		log_debug("IEEE update WLAN operation");
 		goto success;
 	}
 	else
 	{
-		CWLog("IEEE Unknwon type of WLAN operation");
+		log_debug("IEEE Unknwon type of WLAN operation");
 		goto failure;
 	}
 
 success:
 	//	CW_FREE_OBJECT(interfaceACInfo);
-	CWLog("IEEE Configuration Request Saved");
+	log_debug("IEEE Configuration Request Saved");
 	return CW_TRUE;
 
 failure:
 	//	CW_FREE_OBJECT(interfaceACInfo);
-	CWLog("IEEE Configuration Request NOT Saved");
+	log_debug("IEEE Configuration Request NOT Saved");
 	return CW_FALSE;
 }

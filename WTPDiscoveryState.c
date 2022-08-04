@@ -84,8 +84,8 @@ CWStateTransition CWWTPEnterDiscovery()
 	CWBool j;
 	int ret = -10;
 
-	CWLog("\n");
-	CWLog("######### Discovery State #########");
+	log_debug("\n");
+	log_debug("######### Discovery State #########");
 
 	/* reset Discovery state */
 	gCWDiscoveryCount = 0;
@@ -111,7 +111,7 @@ CWStateTransition CWWTPEnterDiscovery()
 	/* wait a random time */
 	sleep(CWRandomIntInRange(gCWDiscoveryInterval, gCWMaxDiscoveryInterval));
 
-	CWLog("CW_REPEAT_FOREVER: CWWTPEnterDiscovery()");
+	log_debug("CW_REPEAT_FOREVER: CWWTPEnterDiscovery()");
 	CW_REPEAT_FOREVER
 	{
 		CWBool sentSomething = CW_FALSE;
@@ -143,7 +143,7 @@ CWStateTransition CWWTPEnterDiscovery()
 				CW_CREATE_OBJECT_ERR(gACInfoPtr, CWACInfoValues, return CW_QUIT;);
 
 				CWNetworkGetAddressForHost(gCWACList[i].address, &(gACInfoPtr->preferredAddress));
-				CWUseSockNtop(&(gACInfoPtr->preferredAddress), CWDebugLog(str););
+				CWUseSockNtop(&(gACInfoPtr->preferredAddress), log_debug(str););
 				j = CWErr(CWNetworkSendUnsafeUnconnected(gWTPSocket,
 														 &(gACInfoPtr->preferredAddress),
 														 (*msgPtr).msg,
@@ -151,7 +151,7 @@ CWStateTransition CWWTPEnterDiscovery()
 				/*
 				 * log eventual error and continue
 				 * CWUseSockNtop(&(gACInfoPtr->preferredAddress),
-				 * 		 CWLog("WTP sends Discovery Request to: %s", str););
+				 * 		 log_debug("WTP sends Discovery Request to: %s", str););
 				 */
 
 				CW_FREE_PROTOCOL_MESSAGE(*msgPtr);
@@ -179,15 +179,15 @@ CWStateTransition CWWTPEnterDiscovery()
 			break;
 		}
 
-		CWLog("WTP Discovery-To-Discovery (%d)", gCWDiscoveryCount);
+		log_debug("WTP Discovery-To-Discovery (%d)", gCWDiscoveryCount);
 	}
 
-	CWLog("WTP Picks an AC");
+	log_debug("WTP Picks an AC");
 
 	/* crit error: we should have received at least one Discovery Response */
 	if (!CWWTPFoundAnAC())
 	{
-		CWLog("No Discovery response Received");
+		log_debug("No Discovery response Received");
 		return CW_ENTER_DISCOVERY;
 	}
 
@@ -195,7 +195,7 @@ CWStateTransition CWWTPEnterDiscovery()
 	CWWTPPickACInterface();
 
 	CWUseSockNtop(&(gACInfoPtr->preferredAddress),
-				  CWLog("Preferred AC: \"%s\", at address: %s", gACInfoPtr->name, str););
+				  log_debug("Preferred AC: \"%s\", at address: %s", gACInfoPtr->name, str););
 
 	return CW_ENTER_JOIN;
 }
@@ -215,7 +215,7 @@ CWBool CWReadResponses()
 
 	gettimeofday(&before, NULL);
 
-	CWLog("CW_REPEAT_FOREVER: CWReadResponses()");
+	log_debug("CW_REPEAT_FOREVER: CWReadResponses()");
 	CW_REPEAT_FOREVER
 	{
 		/* check if something is available to read until newTimeout */
@@ -258,7 +258,7 @@ CWBool CWReadResponses()
 	}
 cw_time_over:
 	/* time is over */
-	CWDebugLog("Timer expired during receive");
+	log_debug("Timer expired during receive");
 cw_error:
 	return result;
 }
@@ -305,7 +305,7 @@ CWBool CWReceiveDiscoveryResponse()
 	/* see if this AC is better than the one we have stored */
 	CWWTPEvaluateAC(ACInfoPtr);
 
-	CWLog("WTP Receives Discovery Response");
+	log_debug("WTP Receives Discovery Response");
 
 	/* check if the sequence number we got is correct */
 	for (i = 0; i < gCWACCount; i++)
@@ -315,7 +315,7 @@ CWBool CWReceiveDiscoveryResponse()
 		{
 
 			CWUseSockNtop(&addr,
-						  CWLog("Discovery Response from:%s", str););
+						  log_debug("Discovery Response from:%s", str););
 			/* we received response from this address */
 			gCWACList[i].received = CW_TRUE;
 
@@ -416,7 +416,7 @@ cw_pick_IPv4:
 	return;
 
 cw_pick_IPv6:
-	/* CWDebugLog("Pick IPv6"); */
+	/* log_debug("Pick IPv6"); */
 	if (gACInfoPtr->IPv6Addresses == NULL ||
 		gACInfoPtr->IPv6AddressesCount <= 0)
 		goto cw_pick_IPv4;
@@ -533,7 +533,7 @@ CWBool CWParseDiscoveryResponseMessage(char *msg,
 	if (msg == NULL || seqNumPtr == NULL || ACInfoPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Parse Discovery Response");
+	log_debug("Parse Discovery Response");
 
 	completeMsg.msg = msg;
 	completeMsg.offset = 0;
@@ -566,7 +566,7 @@ CWBool CWParseDiscoveryResponseMessage(char *msg,
 		unsigned short int len = 0;	 /* = CWProtocolRetrieve16(&completeMsg); */
 
 		CWParseFormatMsgElem(&completeMsg, &type, &len);
-		//	CWDebugLog("Parsing Message Element: %u, len: %u", type, len);
+		//	log_debug("Parsing Message Element: %u, len: %u", type, len);
 
 		switch (type)
 		{
@@ -606,7 +606,7 @@ CWBool CWParseDiscoveryResponseMessage(char *msg,
 								"Unrecognized Message Element");
 		}
 
-		/* CWDebugLog("bytes: %d/%d",
+		/* log_debug("bytes: %d/%d",
 		 * 	      (completeMsg.offset-offsetTillMessages),
 		 * 	      controlVal.msgElemsLen);
 		 */

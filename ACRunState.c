@@ -195,7 +195,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 	{
 		/* We have received a Data Message... now just log this event and do actions by the dataType */
 
-		//	CWDebugLog("--> Received a DATA Message: Type: %d", msgPtr->data_msgType);
+		//	log_debug("--> Received a DATA Message: Type: %d", msgPtr->data_msgType);
 
 		if (msgPtr->data_msgType == CW_DATA_MSG_FRAME_TYPE)
 		{
@@ -206,7 +206,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 
 			int seqNum = CWGetSeqNum();
 
-			CWLog("CW_DATA_MSG_FRAME_TYPE. Non faccio nulla?");
+			log_debug("CW_DATA_MSG_FRAME_TYPE. Non faccio nulla?");
 		}
 		else if (msgPtr->data_msgType == CW_DATA_MSG_KEEP_ALIVE_TYPE)
 		{
@@ -236,7 +236,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 									   CW_PACKET_PLAIN,
 									   1))
 			{
-				CWLog("Failure Assembling KeepAlive Request");
+				log_debug("Failure Assembling KeepAlive Request");
 				if (messages)
 					for (i = 0; i < fragmentsNum; i++)
 					{
@@ -259,7 +259,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 
 			if (dataSocket == 0)
 			{
-				CWLog("data socket of WTP %d isn't ready.");
+				log_debug("data socket of WTP %d isn't ready.");
 				return CW_FALSE;
 			}
 #endif
@@ -278,7 +278,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 				if (!CWNetworkSendUnsafeUnconnected(dataSocket, &(address), messages[i].msg, messages[i].offset))
 #endif
 				{
-					CWLog("Failure sending  KeepAlive Request");
+					log_debug("Failure sending  KeepAlive Request");
 					int k;
 					for (k = 0; k < fragmentsNum; k++)
 					{
@@ -289,7 +289,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 				}
 			}
 
-			CWLog("Inviato KeepAlive");
+			log_debug("Inviato KeepAlive");
 
 			int k;
 			for (k = 0; messages && k < fragmentsNum; k++)
@@ -301,7 +301,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 		else if (msgPtr->data_msgType == CW_IEEE_802_3_FRAME_TYPE)
 		{
 
-			CWDebugLog("Write 802.3 data to TAP[%d], len:%d", gWTPs[WTPIndex].tap_fd, msglen);
+			log_debug("Write 802.3 data to TAP[%d], len:%d", gWTPs[WTPIndex].tap_fd, msglen);
 			// write(gWTPs[WTPIndex].tap_fd, msgPtr->msg, msglen);
 			write(ACTap_FD, msgPtr->msg, msglen);
 		}
@@ -319,15 +319,15 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 			{
 				if (!CW80211ParseDataFrameToDS(msgPtr->msg, &(dataFrame)))
 				{
-					CWLog("CW80211: Error parsing data frame");
+					log_debug("CW80211: Error parsing data frame");
 					return CW_FALSE;
 				}
 				/*
-								CWLog("**RICEVUTO DA WTP FRAME**");
-								CWLog("dataFrame.frameControl: %02x", dataFrame.frameControl);
-								CWLog("dataFrame.DA: %02x: --- :%02x: --", (int) dataFrame.DA[0], (int) dataFrame.DA[4]);
-								CWLog("dataFrame.SA: %02x: --- :%02x: --", (int) dataFrame.SA[0], (int) dataFrame.SA[4]);
-								CWLog("dataFrame.BSSID: %02x: --- :%02x: --", (int) dataFrame.BSSID[0], (int) dataFrame.BSSID[4]);
+								log_debug("**RICEVUTO DA WTP FRAME**");
+								log_debug("dataFrame.frameControl: %02x", dataFrame.frameControl);
+								log_debug("dataFrame.DA: %02x: --- :%02x: --", (int) dataFrame.DA[0], (int) dataFrame.DA[4]);
+								log_debug("dataFrame.SA: %02x: --- :%02x: --", (int) dataFrame.SA[0], (int) dataFrame.SA[4]);
+								log_debug("dataFrame.BSSID: %02x: --- :%02x: --", (int) dataFrame.BSSID[0], (int) dataFrame.BSSID[4]);
 				*/
 				unsigned char *dataHdr = CW80211AssembleDataFrameHdr(dataFrame.SA, dataFrame.DA, dataFrame.BSSID, dataFrame.seqCtrl, &(offsetDataFrame), 0, 1);
 				if (dataHdr == NULL)
@@ -345,7 +345,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 					write_bytes = write(ACTap_FD, frame8023, frame8023len);
 					if (write_bytes != frame8023len)
 					{
-						CWLog("Error:. ByteToWrite:%d, ByteWritten:%d ", frame8023len, write_bytes);
+						log_debug("Error:. ByteToWrite:%d, ByteWritten:%d ", frame8023len, write_bytes);
 					}
 
 					for (indexWTP = 0; indexWTP < gMaxWTPs; indexWTP++)
@@ -358,7 +358,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 									gWTPs[indexWTP].WTPProtocolManager.radiosInfo.radiosInfo[indexRadio].gWTPPhyInfo.interfaces[indexWlan].typeInterface == CW_AP_MODE &&
 									gWTPs[indexWTP].WTPProtocolManager.radiosInfo.radiosInfo[indexRadio].gWTPPhyInfo.interfaces[indexWlan].BSSID != NULL)
 								{
-									//								CWLog("Invio a WTP %d radio %d wlan %d frameRespLen: %d msglen: %d", indexWTP, indexRadio, indexWlan, frameRespLen, msglen);
+									//								log_debug("Invio a WTP %d radio %d wlan %d frameRespLen: %d msglen: %d", indexWTP, indexRadio, indexWlan, frameRespLen, msglen);
 									CW_CREATE_OBJECT_ERR(msgFrame, CWProtocolMessage, { return CW_FALSE; });
 									CW_CREATE_PROTOCOL_MESSAGE(*msgFrame, msglen, { return CW_FALSE; });
 									/*
@@ -407,7 +407,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 
 									if (dataSocket == 0)
 									{
-										CWLog("data socket of WTP %d isn't ready.");
+										log_debug("data socket of WTP %d isn't ready.");
 										return CW_FALSE;
 									}
 #endif
@@ -419,7 +419,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 										if (!CWNetworkSendUnsafeUnconnected(dataSocket, &(address), completeMsgPtr[i].msg, completeMsgPtr[i].offset))
 #endif
 										{
-											CWLog("Failure sending  KeepAlive Request");
+											log_debug("Failure sending  KeepAlive Request");
 											int k;
 											for (k = 0; k < fragmentsNum; k++)
 											{
@@ -430,7 +430,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 										}
 									}
 
-									CWLog("Inviato Frame 80211 a WTP");
+									log_debug("Inviato Frame 80211 a WTP");
 
 									int k;
 									for (k = 0; messages && k < fragmentsNum; k++)
@@ -453,21 +453,21 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 					// Destinatario non associato
 					if (tmpNode == NULL)
 					{
-						//	CWLog("Destinatario non associato");
+						//	log_debug("Destinatario non associato");
 						if (!CWConvertDataFrame_80211_to_8023(msgPtr->msg, msglen, frame8023, &(frame8023len)))
 							return CW_FALSE;
 
 						write_bytes = write(ACTap_FD, frame8023, frame8023len);
 						if (write_bytes != frame8023len)
 						{
-							CWLog("%02X %02X %02X %02X %02X %02X ", msgPtr->msg[0], msgPtr->msg[1], msgPtr->msg[2], msgPtr->msg[3], msgPtr->msg[4], msgPtr->msg[5]);
-							CWLog("Error:. ByteToWrite:%d, ByteWritten:%d ", frame8023len, write_bytes);
+							log_debug("%02X %02X %02X %02X %02X %02X ", msgPtr->msg[0], msgPtr->msg[1], msgPtr->msg[2], msgPtr->msg[3], msgPtr->msg[4], msgPtr->msg[5]);
+							log_debug("Error:. ByteToWrite:%d, ByteWritten:%d ", frame8023len, write_bytes);
 						}
 					}
 					// Destinatario associato ad un WTP
 					else
 					{
-						//						CWLog("Destinatario associato");
+						//						log_debug("Destinatario associato");
 						CW_CREATE_OBJECT_ERR(msgFrame, CWProtocolMessage, { return CW_FALSE; });
 						CW_CREATE_PROTOCOL_MESSAGE(*msgFrame, msglen, { return CW_FALSE; });
 
@@ -477,21 +477,21 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 						/*
 												if(!CW80211ParseDataFrameFromDS(dataFrameBuffer, &(dataFrameFromDS)))
 												{
-													CWLog("CW80211: Error parsing data frame");
+													log_debug("CW80211: Error parsing data frame");
 													return CW_FALSE;
 												}
 
-												CWLog("**Invio a WTP %d frame interno 802.11**", tmpNode->index);
-												CWLog("FrameControl: %02x", dataFrameFromDS.frameControl);
-												CWLog("DA: %02x: --- :%02x: --", (int) dataFrameFromDS.DA[0], (int) dataFrameFromDS.DA[4]);
-												CWLog("SA: %02x: --- :%02x: --", (int) dataFrameFromDS.SA[0], (int) dataFrameFromDS.SA[4]);
-												CWLog("BSSID: %02x: --- :%02x: --", (int) dataFrameFromDS.BSSID[0], (int) dataFrameFromDS.BSSID[4]);
+												log_debug("**Invio a WTP %d frame interno 802.11**", tmpNode->index);
+												log_debug("FrameControl: %02x", dataFrameFromDS.frameControl);
+												log_debug("DA: %02x: --- :%02x: --", (int) dataFrameFromDS.DA[0], (int) dataFrameFromDS.DA[4]);
+												log_debug("SA: %02x: --- :%02x: --", (int) dataFrameFromDS.SA[0], (int) dataFrameFromDS.SA[4]);
+												log_debug("BSSID: %02x: --- :%02x: --", (int) dataFrameFromDS.BSSID[0], (int) dataFrameFromDS.BSSID[4]);
 							*/
 						memcpy(msgFrame->msg, dataFrameBuffer, msglen);
 						msgFrame->offset = msglen;
 						msgFrame->data_msgType = CW_IEEE_802_11_FRAME_TYPE;
 
-						//						CWLog("STA trovata[%02x:%02x:%02x:%02x:%02x:%02x]", (int) dataFrame.DA[0], (int) dataFrame.DA[1], (int) dataFrame.DA[2], (int) dataFrame.DA[3], (int) dataFrame.DA[4], (int) dataFrame.DA[5]);
+						//						log_debug("STA trovata[%02x:%02x:%02x:%02x:%02x:%02x]", (int) dataFrame.DA[0], (int) dataFrame.DA[1], (int) dataFrame.DA[2], (int) dataFrame.DA[3], (int) dataFrame.DA[4], (int) dataFrame.DA[5]);
 
 						if (!CWAssembleDataMessage(&completeMsgPtr, &fragmentsNum, gWTPs[tmpNode->index].pathMTU, msgFrame, NULL,
 #ifdef CW_DTLS_DATA_CHANNEL
@@ -523,7 +523,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 
 						if (dataSocket == 0)
 						{
-							CWLog("data socket of WTP %d isn't ready.");
+							log_debug("data socket of WTP %d isn't ready.");
 							return CW_FALSE;
 						}
 #endif
@@ -535,7 +535,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 							if (!CWNetworkSendUnsafeUnconnected(dataSocket, &(address), completeMsgPtr[i].msg, completeMsgPtr[i].offset))
 #endif
 							{
-								CWLog("Failure sending  KeepAlive Request");
+								log_debug("Failure sending  KeepAlive Request");
 								int k;
 								for (k = 0; k < fragmentsNum; k++)
 								{
@@ -546,7 +546,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 							}
 						}
 
-						//	CWLog("Inviato Frame 80211 a WTP %d su socket dati: %d", tmpNode->index, dataSocket);
+						//	log_debug("Inviato Frame 80211 a WTP %d su socket dati: %d", tmpNode->index, dataSocket);
 
 						int k;
 						for (k = 0; messages && k < fragmentsNum; k++)
@@ -565,7 +565,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 			{
 				int subtype = (int)WLAN_FC_GET_STYPE(frameControl);
 
-				CWLog("CW80211: Management Frame Received. Subtype: %d", subtype);
+				log_debug("CW80211: Management Frame Received. Subtype: %d", subtype);
 
 #ifdef SPLIT_MAC
 				/*
@@ -574,7 +574,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 				 */
 				if (subtype == WLAN_FC_STYPE_PROBE_REQ)
 				{
-					CWLog("CW80211: Management Probe request received");
+					log_debug("CW80211: Management Probe request received");
 					// Do some stuff with AC logic...
 				}
 
@@ -583,7 +583,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 				 */
 				if (subtype == WLAN_FC_STYPE_AUTH)
 				{
-					CWLog("CW80211: Management Auth request received");
+					log_debug("CW80211: Management Auth request received");
 
 					struct CWFrameAuthRequest authRequest;
 					if (!CW80211ParseAuthRequest(msgPtr->msg, &authRequest))
@@ -626,7 +626,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 
 					if (dataSocket == 0)
 					{
-						CWLog("data socket of WTP %d isn't ready.");
+						log_debug("data socket of WTP %d isn't ready.");
 						return CW_FALSE;
 					}
 #endif
@@ -639,7 +639,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 						if (!CWNetworkSendUnsafeUnconnected(dataSocket, &(address), completeMsgPtr[i].msg, completeMsgPtr[i].offset))
 #endif
 						{
-							CWLog("Failure sending  KeepAlive Request");
+							log_debug("Failure sending  KeepAlive Request");
 							int k;
 							for (k = 0; k < fragmentsNum; k++)
 							{
@@ -650,7 +650,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 						}
 					}
 
-					CWLog("Inviato Frame 80211 a WTP");
+					log_debug("Inviato Frame 80211 a WTP");
 
 					int k;
 					for (k = 0; messages && k < fragmentsNum; k++)
@@ -662,7 +662,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 #endif
 				if (subtype == WLAN_FC_STYPE_ASSOC_REQ || subtype == WLAN_FC_STYPE_REASSOC_REQ)
 				{
-					CWLog("CW80211: Management Association request received");
+					log_debug("CW80211: Management Association request received");
 
 #ifdef SPLIT_MAC
 					/* In caso di SPLIT MAC, se AC riceve AssReq deve prima generare AssResp ed inviarlo al WTP.. */
@@ -679,7 +679,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 						for (indexWlan = 0; indexWlan < WTP_MAX_INTERFACES; indexWlan++)
 						{
 							/*
-							CWLog("Ricerca BSSID %02x:%02x:%02x:%02x:%02x:%02x radio[%d] wlan[%d]", (int)assRequest.BSSID[0],
+							log_debug("Ricerca BSSID %02x:%02x:%02x:%02x:%02x:%02x radio[%d] wlan[%d]", (int)assRequest.BSSID[0],
 							(int)assRequest.BSSID[1],
 							(int)assRequest.BSSID[2],
 							(int)assRequest.BSSID[3],
@@ -687,7 +687,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 							(int)assRequest.BSSID[5],
 							indexRadio, indexWlan);
 
-							CWLog("Esamino radio %d wlan %d: tipoInterfaccia: %d, BSSID:%02x:%02x:%02x:%02x:%02x:%02x",
+							log_debug("Esamino radio %d wlan %d: tipoInterfaccia: %d, BSSID:%02x:%02x:%02x:%02x:%02x:%02x",
 							indexRadio, indexWlan,
 							gWTPs[WTPIndex].WTPProtocolManager.radiosInfo.radiosInfo[indexRadio].gWTPPhyInfo.interfaces[indexWlan].typeInterface,
 							(int)gWTPs[WTPIndex].WTPProtocolManager.radiosInfo.radiosInfo[indexRadio].gWTPPhyInfo.interfaces[indexWlan].BSSID[0],
@@ -740,7 +740,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 
 					if (frameResponse == NULL)
 					{
-						CWLog("Nessun frame di risposta. Esco");
+						log_debug("Nessun frame di risposta. Esco");
 						return CW_TRUE;
 					}
 					CW_CREATE_OBJECT_ERR(msgFrame, CWProtocolMessage, { return CW_FALSE; });
@@ -781,7 +781,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 
 					if (dataSocket == 0)
 					{
-						CWLog("data socket of WTP %d isn't ready.");
+						log_debug("data socket of WTP %d isn't ready.");
 						return CW_FALSE;
 					}
 #endif
@@ -795,7 +795,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 #endif
 
 						{
-							CWLog("Failure sending  KeepAlive Request");
+							log_debug("Failure sending  KeepAlive Request");
 							int k;
 							for (k = 0; k < fragmentsNum; k++)
 							{
@@ -805,7 +805,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 							break;
 						}
 					}
-					CWLog("Inviato Frame 80211 a WTP");
+					log_debug("Inviato Frame 80211 a WTP");
 
 					int k;
 					for (k = 0; messages && k < fragmentsNum; k++)
@@ -880,10 +880,10 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 									if (CWACSendAcknowledgedPacket(tmpNodeSta->index,
 																   CW_MSG_TYPE_VALUE_STATION_CONFIGURATION_RESPONSE,
 																   seqNum))
-										CWLog("AC send Station Request Message to WTP[%d] to delete STA[%02x:%02x:%02x:%02x:%02x:%02x] radioID[%d]", tmpNodeSta->index, (int)tmpNodeSta->staAddr[0], (int)tmpNodeSta->staAddr[1], (int)tmpNodeSta->staAddr[2], (int)tmpNodeSta->staAddr[3], (int)tmpNodeSta->staAddr[4], (int)tmpNodeSta->staAddr[5], tmpNodeSta->radioID);
+										log_debug("AC send Station Request Message to WTP[%d] to delete STA[%02x:%02x:%02x:%02x:%02x:%02x] radioID[%d]", tmpNodeSta->index, (int)tmpNodeSta->staAddr[0], (int)tmpNodeSta->staAddr[1], (int)tmpNodeSta->staAddr[2], (int)tmpNodeSta->staAddr[3], (int)tmpNodeSta->staAddr[4], (int)tmpNodeSta->staAddr[5], tmpNodeSta->radioID);
 									else
 									{
-										CWLog("AC couldn't send Station Request Message to WTP[%d] to delete STA[%02x:%02x:%02x:%02x:%02x:%02x] radioID[%d]", tmpNodeSta->index, (int)tmpNodeSta->staAddr[0], (int)tmpNodeSta->staAddr[1], (int)tmpNodeSta->staAddr[2], (int)tmpNodeSta->staAddr[3], (int)tmpNodeSta->staAddr[4], (int)tmpNodeSta->staAddr[5], tmpNodeSta->radioID);
+										log_debug("AC couldn't send Station Request Message to WTP[%d] to delete STA[%02x:%02x:%02x:%02x:%02x:%02x] radioID[%d]", tmpNodeSta->index, (int)tmpNodeSta->staAddr[0], (int)tmpNodeSta->staAddr[1], (int)tmpNodeSta->staAddr[2], (int)tmpNodeSta->staAddr[3], (int)tmpNodeSta->staAddr[4], (int)tmpNodeSta->staAddr[5], tmpNodeSta->radioID);
 										CWACStopRetransmission(tmpNodeSta->index);
 									}
 								}
@@ -903,7 +903,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 				if (subtype == WLAN_FC_STYPE_ASSOC_RESP)
 				{
 					gettimeofday(&tval_before, NULL);
-					CWLog("CW80211: Management Association response received");
+					log_debug("CW80211: Management Association response received");
 
 					CWFrameAssociationResponse assocResponse;
 					if (!CW80211ParseAssociationResponse(msgPtr->msg, &(assocResponse)))
@@ -971,7 +971,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 
 							gettimeofday(&tval_after, NULL);
 							timersub(&tval_after, &tval_before, &tval_result);
-							CWLog("Association time elapsed: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
+							log_debug("Association time elapsed: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
 
 							if (
 								tmpNodeSta != NULL &&
@@ -979,13 +979,13 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 								tmpNodeSta->BSSID != NULL &&
 								toSendEventRequestDelete == CW_TRUE)
 							{
-								CWLog("Entro per handover");
+								log_debug("Entro per handover");
 								gettimeofday(&tval_before, NULL);
 
 								CWFrameAssociationResponse assocResponseFake;
 								CW_COPY_MEMORY(assocResponseFake.DA, tmpNodeSta->staAddr, ETH_ALEN);
 								CW_COPY_MEMORY(assocResponseFake.BSSID, tmpNodeSta->BSSID, ETH_ALEN);
-								CWLog("Prima di assemble delete");
+								log_debug("Prima di assemble delete");
 
 								// Send a Station Configuration Request DELETE STA
 								if (CWAssembleStationConfigurationRequest(&(gWTPs[tmpNodeSta->index].messages),
@@ -995,22 +995,22 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 																		  CW_MSG_ELEMENT_DELETE_STATION_CW_TYPE))
 								{
 
-									CWLog("Prima di CWACSendAcknowledgedPacket");
+									log_debug("Prima di CWACSendAcknowledgedPacket");
 
 									if (CWACSendAcknowledgedPacket(tmpNodeSta->index,
 																   CW_MSG_TYPE_VALUE_STATION_CONFIGURATION_RESPONSE,
 																   seqNum))
-										CWLog("AC send Station Request Message to WTP[%d] to delete STA[%02x:%02x:%02x:%02x:%02x:%02x] radioID[%d]", tmpNodeSta->index, (int)tmpNodeSta->staAddr[0], (int)tmpNodeSta->staAddr[1], (int)tmpNodeSta->staAddr[2], (int)tmpNodeSta->staAddr[3], (int)tmpNodeSta->staAddr[4], (int)tmpNodeSta->staAddr[5], tmpNodeSta->radioID);
+										log_debug("AC send Station Request Message to WTP[%d] to delete STA[%02x:%02x:%02x:%02x:%02x:%02x] radioID[%d]", tmpNodeSta->index, (int)tmpNodeSta->staAddr[0], (int)tmpNodeSta->staAddr[1], (int)tmpNodeSta->staAddr[2], (int)tmpNodeSta->staAddr[3], (int)tmpNodeSta->staAddr[4], (int)tmpNodeSta->staAddr[5], tmpNodeSta->radioID);
 									else
 									{
-										CWLog("AC couldn't send Station Request Message to WTP[%d] to delete STA[%02x:%02x:%02x:%02x:%02x:%02x] radioID[%d]", tmpNodeSta->index, (int)tmpNodeSta->staAddr[0], (int)tmpNodeSta->staAddr[1], (int)tmpNodeSta->staAddr[2], (int)tmpNodeSta->staAddr[3], (int)tmpNodeSta->staAddr[4], (int)tmpNodeSta->staAddr[5], tmpNodeSta->radioID);
+										log_debug("AC couldn't send Station Request Message to WTP[%d] to delete STA[%02x:%02x:%02x:%02x:%02x:%02x] radioID[%d]", tmpNodeSta->index, (int)tmpNodeSta->staAddr[0], (int)tmpNodeSta->staAddr[1], (int)tmpNodeSta->staAddr[2], (int)tmpNodeSta->staAddr[3], (int)tmpNodeSta->staAddr[4], (int)tmpNodeSta->staAddr[5], tmpNodeSta->radioID);
 										CWACStopRetransmission(tmpNodeSta->index);
 									}
 								}
 
 								gettimeofday(&tval_after, NULL);
 								timersub(&tval_after, &tval_before, &tval_result);
-								CWLog("Handover time elapsed: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
+								log_debug("Handover time elapsed: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
 
 								return CW_TRUE;
 							}
@@ -1022,12 +1022,12 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 #endif
 			}
 			else
-				CWLog("Frame Unknown");
+				log_debug("Frame Unknown");
 			// flush_pcap(msgPtr->msg, msglen, "cap_wtp_to_ac.txt");
 		}
 		else
 		{
-			CWDebugLog("Manage special data packets with frequency");
+			log_debug("Manage special data packets with frequency");
 
 			/************************************************************
 			 * Update 2009:												*
@@ -1092,7 +1092,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 
 					if (!CWErr(CWThreadMutexLock(&appsManager.socketMutex[socketIndex])))
 					{
-						CWLog("[ACrunState]:: Error locking socket Application Mutex");
+						log_debug("[ACrunState]:: Error locking socket Application Mutex");
 						free(freqPayload);
 						return CW_FALSE;
 					}
@@ -1101,7 +1101,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 					{
 						CWThreadMutexUnlock(&appsManager.socketMutex[socketIndex]);
 						free(freqPayload);
-						CWLog("[ACrunState]:: Error writing Message To Application");
+						log_debug("[ACrunState]:: Error writing Message To Application");
 						return CW_FALSE;
 					}
 
@@ -1109,7 +1109,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 					free(freqPayload);
 				}
 				else
-					CWLog("[ACrunState]:: Malloc error (payload to frequency application");
+					log_debug("[ACrunState]:: Malloc error (payload to frequency application");
 			}
 
 			if (msgPtr->data_msgType == CW_DATA_MSG_STATS_TYPE)
@@ -1118,7 +1118,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 				{ // Init Socket only the first time when the function is called
 					if ((UnixSocksArray[WTPIndex].data_stats_sock = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0)
 					{
-						CWDebugLog("Error creating socket for data send");
+						log_debug("Error creating socket for data send");
 						return CW_FALSE;
 					}
 
@@ -1153,7 +1153,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 								(struct sockaddr *)&(UnixSocksArray[WTPIndex].servaddr), sizeof(UnixSocksArray[WTPIndex].servaddr));
 				if (nbytes < 0)
 				{
-					CWDebugLog("Error sending data over socket");
+					log_debug("Error sending data over socket");
 					return CW_FALSE;
 				}
 			}
@@ -1432,7 +1432,7 @@ CWBool ACEnterRun(int WTPIndex, CWProtocolMessage *msgPtr, CWBool dataFlag)
 		 * We have an unexpected request and we have to send
 		 * a corresponding response containing a failure result code
 		 */
-		CWDebugLog("--> Not valid Request in Run State... we send a failure Response");
+		log_debug("--> Not valid Request in Run State... we send a failure Response");
 
 		if (!(CWAssembleUnrecognizedMessageResponse(&messages,
 													&messagesCount,
@@ -1505,11 +1505,11 @@ CWBool CWACParseGenericRunMessage(int WTPIndex,
 		/* Elena Agostini: gWTPs[WTPIndex].responseType is never set if it is a response
 		 * || (gWTPs[WTPIndex].responseType != controlVal->messageTypeValue)*/
 		/*
-				CWLog("gWTPs seqNum: %d\n", gWTPs[WTPIndex].responseSeqNum);
-				CWLog("controlVal seqNum: %d\n", controlVal->seqNum);
+				log_debug("gWTPs seqNum: %d\n", gWTPs[WTPIndex].responseSeqNum);
+				log_debug("controlVal seqNum: %d\n", controlVal->seqNum);
 
-				CWLog("gWTPs responseType: %d\n", gWTPs[WTPIndex].responseType);
-				CWLog("controlVal responseType: %d\n", controlVal->messageTypeValue);
+				log_debug("gWTPs responseType: %d\n", gWTPs[WTPIndex].responseType);
+				log_debug("controlVal responseType: %d\n", controlVal->messageTypeValue);
 		*/
 		CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Seq Num or Msg Type not valid!");
 		return CW_FALSE;
@@ -1535,7 +1535,7 @@ CWBool CWParseConfigurationUpdateResponseMessage(CWProtocolMessage *msgPtr,
 
 	offsetTillMessages = msgPtr->offset;
 
-	CWLog("Parsing Configuration Update Response...");
+	log_debug("Parsing Configuration Update Response...");
 
 	/* parse message elements */
 	while ((msgPtr->offset - offsetTillMessages) < len)
@@ -1604,7 +1604,7 @@ CWBool CWParseConfigurationUpdateResponseMessage(CWProtocolMessage *msgPtr,
 	if ((msgPtr->offset - offsetTillMessages) != len)
 		return CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Garbage at the End of the Message");
 
-	CWLog("Configuration Update Response Parsed");
+	log_debug("Configuration Update Response Parsed");
 
 	return CW_TRUE;
 }
@@ -1620,7 +1620,7 @@ CWBool CWParseClearConfigurationResponseMessage(CWProtocolMessage *msgPtr, int l
 
 	offsetTillMessages = msgPtr->offset;
 
-	CWLog("Parsing Clear Configuration Response...");
+	log_debug("Parsing Clear Configuration Response...");
 
 	// parse message elements
 	while ((msgPtr->offset - offsetTillMessages) < len)
@@ -1644,7 +1644,7 @@ CWBool CWParseClearConfigurationResponseMessage(CWProtocolMessage *msgPtr, int l
 	if ((msgPtr->offset - offsetTillMessages) != len)
 		return CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Garbage at the End of the Message");
 
-	CWLog("Clear Configuration Response Parsed");
+	log_debug("Clear Configuration Response Parsed");
 
 	return CW_TRUE;
 }
@@ -1660,7 +1660,7 @@ CWBool CWParseStationConfigurationResponseMessage(CWProtocolMessage *msgPtr, int
 
 	offsetTillMessages = msgPtr->offset;
 
-	CWLog("Parsing Station Configuration Response...");
+	log_debug("Parsing Station Configuration Response...");
 
 	// parse message elements
 	while ((msgPtr->offset - offsetTillMessages) < len)
@@ -1674,7 +1674,7 @@ CWBool CWParseStationConfigurationResponseMessage(CWProtocolMessage *msgPtr, int
 		{
 		case CW_MSG_ELEMENT_RESULT_CODE_CW_TYPE:
 			*resultCode = CWProtocolRetrieve32(msgPtr);
-			CWLog("Result Code: %d", (*resultCode));
+			log_debug("Result Code: %d", (*resultCode));
 			break;
 		default:
 			return CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Unrecognized Message Element in Station Configuration Response");
@@ -1685,7 +1685,7 @@ CWBool CWParseStationConfigurationResponseMessage(CWProtocolMessage *msgPtr, int
 	if ((msgPtr->offset - offsetTillMessages) != len)
 		return CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Garbage at the End of the Message");
 
-	CWLog("Station Configuration Response Parsed");
+	log_debug("Station Configuration Response Parsed");
 
 	return CW_TRUE;
 }
@@ -1767,14 +1767,14 @@ CWBool CWSaveConfigurationUpdateResponseMessage(CWProtocolResultCode resultCode,
 
 			if (!CWErr(CWThreadMutexLock(&appsManager.socketMutex[socketIndex])))
 			{
-				CWLog("Error locking numSocketFree Mutex");
+				log_debug("Error locking numSocketFree Mutex");
 				return CW_FALSE;
 			}
 
 			if (Writen(appsManager.appSocket[socketIndex], responseBuffer, headerSize + payloadSize) < 0)
 			{
 				CWThreadMutexUnlock(&appsManager.socketMutex[socketIndex]);
-				CWLog("Error locking numSocketFree Mutex");
+				log_debug("Error locking numSocketFree Mutex");
 				return CW_FALSE;
 			}
 
@@ -1799,7 +1799,7 @@ CWBool CWSaveConfigurationUpdateResponseMessage(CWProtocolResultCode resultCode,
 		CWSignalThreadCondition(&gWTPs[WTPIndex].interfaceWait);
 	}
 
-	CWDebugLog("Configuration Update Response Saved");
+	log_debug("Configuration Update Response Saved");
 	return CW_TRUE;
 }
 
@@ -1814,9 +1814,9 @@ CWBool CWParseWTPDataTransferRequestMessage(CWProtocolMessage *msgPtr, int len, 
 
 	offsetTillMessages = msgPtr->offset;
 
-	CWLog("");
-	CWLog("#________ WTP Data Transfer (Run) ________#");
-	CWLog("Parsing WTP Data Transfer Request...");
+	log_debug("");
+	log_debug("#________ WTP Data Transfer (Run) ________#");
+	log_debug("Parsing WTP Data Transfer Request...");
 
 	// parse message elements
 	while ((msgPtr->offset - offsetTillMessages) < len)
@@ -1832,7 +1832,7 @@ CWBool CWParseWTPDataTransferRequestMessage(CWProtocolMessage *msgPtr, int len, 
 		{
 			if (!(CWParseMsgElemDataTransferData(msgPtr, elemLen, valuesPtr)))
 				return CW_FALSE;
-			CWDebugLog("----- %s --------\n", valuesPtr->debug_info);
+			log_debug("----- %s --------\n", valuesPtr->debug_info);
 			break;
 		}
 		default:
@@ -1865,9 +1865,9 @@ CWBool CWParseWTPEventRequestMessage(CWProtocolMessage *msgPtr,
 	*/
 	offsetTillMessages = msgPtr->offset;
 
-	CWLog("");
-	CWLog("#________ WTP Event (Run) ________#");
-	CWLog("Parsing WTP Event Request...");
+	log_debug("");
+	log_debug("#________ WTP Event (Run) ________#");
+	log_debug("Parsing WTP Event Request...");
 
 	valuesPtr->errorReportCount = 0;
 	valuesPtr->errorReport = NULL;
@@ -1995,7 +1995,7 @@ CWBool CWParseWTPEventRequestMessage(CWProtocolMessage *msgPtr,
 			break;
 		}
 	}
-	CWLog("WTP Event Request Parsed");
+	log_debug("WTP Event Request Parsed");
 	return CW_TRUE;
 }
 
@@ -2119,7 +2119,7 @@ CWBool CWAssembleWTPDataTransferResponse(CWProtocolMessage **messagesPtr, int *f
 	if (messagesPtr == NULL || fragmentsNumPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWLog("Assembling WTP Data Transfer Response...");
+	log_debug("Assembling WTP Data Transfer Response...");
 
 	if (!(CWAssembleMessage(messagesPtr,
 							fragmentsNumPtr,
@@ -2138,7 +2138,7 @@ CWBool CWAssembleWTPDataTransferResponse(CWProtocolMessage **messagesPtr, int *f
 
 		return CW_FALSE;
 
-	CWLog("WTP Data Transfer Response Assembled");
+	log_debug("WTP Data Transfer Response Assembled");
 
 	return CW_TRUE;
 }
@@ -2157,7 +2157,7 @@ CWBool CWAssembleWTPEventResponse(CWProtocolMessage **messagesPtr,
 	if (messagesPtr == NULL || fragmentsNumPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWLog("Assembling WTP Event Response...");
+	log_debug("Assembling WTP Event Response...");
 
 	if (!(CWAssembleMessage(messagesPtr,
 							fragmentsNumPtr,
@@ -2176,7 +2176,7 @@ CWBool CWAssembleWTPEventResponse(CWProtocolMessage **messagesPtr,
 
 		return CW_FALSE;
 
-	CWLog("WTP Event Response Assembled");
+	log_debug("WTP Event Response Assembled");
 
 	return CW_TRUE;
 }
@@ -2200,8 +2200,8 @@ CWBool CWParseChangeStateEventRequestMessage2(CWProtocolMessage *msgPtr,
 
 	offsetTillMessages = msgPtr->offset;
 
-	CWLog("");
-	CWLog("#________ WTP Change State Event (Run) ________#");
+	log_debug("");
+	log_debug("#________ WTP Change State Event (Run) ________#");
 
 	(*valuesPtr)->radioOperationalInfo.radiosCount = 0;
 	(*valuesPtr)->radioOperationalInfo.radios = NULL;
@@ -2214,7 +2214,7 @@ CWBool CWParseChangeStateEventRequestMessage2(CWProtocolMessage *msgPtr,
 
 		CWParseFormatMsgElem(msgPtr, &elemType, &elemLen);
 
-		/*CWDebugLog("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);*/
+		/*log_debug("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);*/
 
 		switch (elemType)
 		{
@@ -2266,7 +2266,7 @@ CWBool CWParseChangeStateEventRequestMessage2(CWProtocolMessage *msgPtr,
 			break;
 		}
 	}
-	CWLog("Change State Event Request Parsed");
+	log_debug("Change State Event Request Parsed");
 	return CW_TRUE;
 }
 
@@ -2320,8 +2320,8 @@ CWBool CWParseEchoRequestMessage(CWProtocolMessage *msgPtr, int len)
 
 	offsetTillMessages = msgPtr->offset;
 
-	CWLog("");
-	CWLog("#________ Echo Request (Run) ________#");
+	log_debug("");
+	log_debug("#________ Echo Request (Run) ________#");
 
 	/* parse message elements */
 	while ((msgPtr->offset - offsetTillMessages) < len)
@@ -2331,7 +2331,7 @@ CWBool CWParseEchoRequestMessage(CWProtocolMessage *msgPtr, int len)
 
 		CWParseFormatMsgElem(msgPtr, &elemType, &elemLen);
 
-		/*CWDebugLog("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);*/
+		/*log_debug("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);*/
 
 		switch (elemType)
 		{
@@ -2343,7 +2343,7 @@ CWBool CWParseEchoRequestMessage(CWProtocolMessage *msgPtr, int len)
 	if ((msgPtr->offset - offsetTillMessages) != len)
 		return CWErrorRaise(CW_ERROR_INVALID_FORMAT, "Garbage at the End of the Message");
 
-	//	CWLog("Echo Request Parsed");
+	//	log_debug("Echo Request Parsed");
 
 	return CW_TRUE;
 }
@@ -2359,7 +2359,7 @@ CWBool CWAssembleEchoResponse(CWProtocolMessage **messagesPtr, int *fragmentsNum
 	if (messagesPtr == NULL || fragmentsNumPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWLog("Assembling Echo Response...");
+	log_debug("Assembling Echo Response...");
 
 	if (!(CWAssembleMessage(messagesPtr,
 							fragmentsNumPtr,
@@ -2378,7 +2378,7 @@ CWBool CWAssembleEchoResponse(CWProtocolMessage **messagesPtr, int *fragmentsNum
 
 		return CW_FALSE;
 
-	CWLog("Echo Response Assembled");
+	log_debug("Echo Response Assembled");
 	return CW_TRUE;
 }
 
@@ -2397,7 +2397,7 @@ CWBool CWAssembleConfigurationUpdateRequest(CWProtocolMessage **messagesPtr,
 	if (messagesPtr == NULL || fragmentsNumPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWLog("Assembling Configuration Update Request...");
+	log_debug("Assembling Configuration Update Request...");
 
 	switch (msgElement)
 	{
@@ -2419,7 +2419,7 @@ CWBool CWAssembleConfigurationUpdateRequest(CWProtocolMessage **messagesPtr,
 	}
 	case CONFIG_UPDATE_REQ_VENDOR_UCI_ELEMENT_TYPE:
 	{
-		CWLog("Assembling UCI Conf Update Request");
+		log_debug("Assembling UCI Conf Update Request");
 		if (!CWProtocolAssembleConfigurationUpdateRequest(&msgElems, &msgElemCount, CW_MSG_ELEMENT_VENDOR_SPEC_PAYLOAD_UCI))
 		{
 			return CW_FALSE;
@@ -2428,7 +2428,7 @@ CWBool CWAssembleConfigurationUpdateRequest(CWProtocolMessage **messagesPtr,
 	}
 	case CONFIG_UPDATE_REQ_VENDOR_WUM_ELEMENT_TYPE:
 	{
-		CWLog("Assembling WUM Conf Update Request");
+		log_debug("Assembling WUM Conf Update Request");
 		if (!CWProtocolAssembleConfigurationUpdateRequest(&msgElems, &msgElemCount, CW_MSG_ELEMENT_VENDOR_SPEC_PAYLOAD_WUM))
 		{
 			return CW_FALSE;
@@ -2453,7 +2453,7 @@ CWBool CWAssembleConfigurationUpdateRequest(CWProtocolMessage **messagesPtr,
 #endif
 		return CW_FALSE;
 
-	CWLog("Configuration Update Request Assembled");
+	log_debug("Configuration Update Request Assembled");
 
 	return CW_TRUE;
 }
@@ -2468,7 +2468,7 @@ CWBool CWAssembleClearConfigurationRequest(CWProtocolMessage **messagesPtr, int 
 	if (messagesPtr == NULL || fragmentsNumPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWLog("Assembling Clear Configuration Request...");
+	log_debug("Assembling Clear Configuration Request...");
 
 	if (!(CWAssembleMessage(messagesPtr,
 							fragmentsNumPtr,
@@ -2486,7 +2486,7 @@ CWBool CWAssembleClearConfigurationRequest(CWProtocolMessage **messagesPtr, int 
 #endif
 		return CW_FALSE;
 
-	CWLog("Clear Configuration Request Assembled");
+	log_debug("Clear Configuration Request Assembled");
 
 	return CW_TRUE;
 }
@@ -2504,7 +2504,7 @@ CWBool CWAssembleStationConfigurationRequest(CWProtocolMessage **messagesPtr, in
 	if (messagesPtr == NULL || fragmentsNumPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWLog("Assembling Station Configuration Request...");
+	log_debug("Assembling Station Configuration Request...");
 
 	int indexRadio = 0, indexWlan = 0, stop = 0;
 	for (indexRadio = 0; indexRadio < WTP_RADIO_MAX; indexRadio++)
@@ -2588,7 +2588,7 @@ CWBool CWAssembleStationConfigurationRequest(CWProtocolMessage **messagesPtr, in
 #endif
 		return CW_FALSE;
 
-	CWLog("Station Configuration Request Assembled");
+	log_debug("Station Configuration Request Assembled");
 
 	return CW_TRUE;
 }
@@ -2647,7 +2647,7 @@ CWBool CWRestartNeighborDeadTimer(int WTPIndex)
 
 	CWThreadSetSignals(SIG_UNBLOCK, 1, CW_SOFT_TIMER_EXPIRED_SIGNAL);
 
-	//	CWDebugLog("NeighborDeadTimer restarted");
+	//	log_debug("NeighborDeadTimer restarted");
 	return CW_TRUE;
 }
 
@@ -2663,7 +2663,7 @@ CWBool CWRestartNeighborDeadTimerForEcho(int WTPIndex)
 
 	CWThreadSetSignals(SIG_UNBLOCK, 1, CW_SOFT_TIMER_EXPIRED_SIGNAL);
 
-	//	CWDebugLog("NeighborDeadTimer restarted for Echo interval");
+	//	log_debug("NeighborDeadTimer restarted for Echo interval");
 	return CW_TRUE;
 }
 
@@ -2695,7 +2695,7 @@ CW_THREAD_RETURN_TYPE CWACReceiveDataChannel(void *arg)
 
 	if (dataSocket == 0)
 	{
-		CWLog("data socket of WTP isn't ready.");
+		log_debug("data socket of WTP isn't ready.");
 		/* critical error, close session */
 		CWErrorHandleLast();
 		CWThreadSetSignals(SIG_UNBLOCK, 1, CW_SOFT_TIMER_EXPIRED_SIGNAL);
@@ -2704,7 +2704,7 @@ CW_THREAD_RETURN_TYPE CWACReceiveDataChannel(void *arg)
 
 	/* Info Socket Dati */
 	struct sockaddr_in *tmpAdd = (struct sockaddr_in *)&(address);
-	CWLog("New DTLS Session Data. %s:%d, socket: %d", inet_ntoa(tmpAdd->sin_addr), ntohs(tmpAdd->sin_port), dataSocket);
+	log_debug("New DTLS Session Data. %s:%d, socket: %d", inet_ntoa(tmpAdd->sin_addr), ntohs(tmpAdd->sin_port), dataSocket);
 
 	/* Sessione DTLS Dati */
 	if (!CWErr(CWSecurityInitSessionServerDataChannel(&(gWTPs[i]),
@@ -2720,7 +2720,7 @@ CW_THREAD_RETURN_TYPE CWACReceiveDataChannel(void *arg)
 	}
 
 	/* Leggo i dati dalla packetList e li riscrivo decifrati */
-	CWLog("CW_REPEAT_FOREVER: CWACReceiveDataChannel()");
+	log_debug("CW_REPEAT_FOREVER: CWACReceiveDataChannel()");
 	CW_REPEAT_FOREVER
 	{
 		countPacketDataList = 0;
@@ -2738,19 +2738,19 @@ CW_THREAD_RETURN_TYPE CWACReceiveDataChannel(void *arg)
 			if (countPacketDataList > 0)
 			{
 				// ... li legge cifrati ...
-				//			CWLog("+++ Thread DTLS Session Data. %s:%d, socket: %d. Ricevuto pacchetto dati.", inet_ntoa(tmpAdd->sin_addr), ntohs(tmpAdd->sin_port), dataSocket);
+				//			log_debug("+++ Thread DTLS Session Data. %s:%d, socket: %d. Ricevuto pacchetto dati.", inet_ntoa(tmpAdd->sin_addr), ntohs(tmpAdd->sin_port), dataSocket);
 				if (!CWErr(CWSecurityReceive(gWTPs[i].sessionData,
 											 gWTPs[i].buf,
 											 CW_BUFFER_SIZE - 1,
 											 &readBytes)))
 				{
-					CWDebugLog("Error during security receive");
+					log_debug("Error during security receive");
 					CWThreadSetSignals(SIG_UNBLOCK, 1, CW_SOFT_TIMER_EXPIRED_SIGNAL);
 					continue;
 				}
 
 				//... e decifrato il pacchetto dati lo mette sulla packetList ufficiale
-				CW_CREATE_OBJECT_SIZE_ERR(pData, readBytes, { CWLog("Out Of Memory"); return NULL; });
+				CW_CREATE_OBJECT_SIZE_ERR(pData, readBytes, { log_debug("Out Of Memory"); return NULL; });
 				memcpy(pData, gWTPs[i].buf, readBytes);
 
 				CWLockSafeList(gWTPs[i].packetReceiveList);

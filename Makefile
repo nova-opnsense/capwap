@@ -77,7 +77,7 @@ _COM_OBJS = 	timerlib.o \
 	./libs/log/log.o \
 	./libs/intro/intro.o \
 
-_CW_OBJS = CWLog.o CWRandom.o CWCommon.o CWConfigFile.o CWErrorHandling.o \
+_CW_OBJS = CWRandom.o CWCommon.o CWConfigFile.o CWErrorHandling.o \
 	CWList.o CWSafeList.o CWNetwork.o CWProtocol.o \
 	CWSecurity.o CWOpenSSLBio.o CWStevens.o CWThread.o CWBinding.o \
 	CW80211InformationElements.o CWTunnel.o CWAVL.o \

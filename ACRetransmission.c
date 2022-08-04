@@ -90,7 +90,7 @@ CWBool CWACSendFragments(int WTPIndex)
 	 */
 	CW_FREE_WTP_MSG_ARRAY(WTPIndex);
 
-	CWLog("Message Sent");
+	log_debug("Message Sent");
 
 	return CW_TRUE;
 }
@@ -116,7 +116,7 @@ __inline__ CWBool CWACSendAcknowledgedPacket(int WTPIndex, int msgType, int seqN
 	gWTPs[WTPIndex].isRetransmitting = CW_TRUE;
 	gWTPs[WTPIndex].responseType = msgType;
 	gWTPs[WTPIndex].responseSeqNum = seqNum;
-	//	CWDebugLog("~~~~~~seq num in Send: %d~~~~~~", gWTPs[WTPIndex].responseSeqNum);
+	//	log_debug("~~~~~~seq num in Send: %d~~~~~~", gWTPs[WTPIndex].responseSeqNum);
 	return CWACResendAcknowledgedPacket(WTPIndex);
 }
 
@@ -125,12 +125,12 @@ void CWACStopRetransmission(int WTPIndex)
 	if (gWTPs[WTPIndex].isRetransmitting)
 	{
 		int i;
-		CWDebugLog("Stop Retransmission");
+		log_debug("Stop Retransmission");
 		gWTPs[WTPIndex].isRetransmitting = CW_FALSE;
 		CWThreadSetSignals(SIG_BLOCK, 1, CW_SOFT_TIMER_EXPIRED_SIGNAL);
 		if (!CWTimerCancel(&(gWTPs[WTPIndex].currentPacketTimer)))
 		{
-			CWDebugLog("Error Cancelling a Timer... possible error!");
+			log_debug("Error Cancelling a Timer... possible error!");
 		}
 		CWThreadSetSignals(SIG_UNBLOCK, 1, CW_SOFT_TIMER_EXPIRED_SIGNAL);
 		gWTPs[WTPIndex].responseType = UNUSED_MSG_TYPE;
@@ -142,6 +142,6 @@ void CWACStopRetransmission(int WTPIndex)
 		}
 
 		CW_FREE_OBJECT(gWTPs[WTPIndex].messages);
-		//		CWDebugLog("~~~~~~ End of Stop Retransmission");
+		//		log_debug("~~~~~~ End of Stop Retransmission");
 	}
 }

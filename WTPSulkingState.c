@@ -54,8 +54,8 @@ CWStateTransition CWWTPEnterSulking()
 {
 	struct timeval timeout, before, after, delta, newTimeout;
 
-	CWLog("\n");
-	CWLog("######### Sulking State #########");
+	log_debug("\n");
+	log_debug("######### Sulking State #########");
 	/*
 	 * wait for Silent Interval and discard
 	 * all the packets that are coming
@@ -65,7 +65,7 @@ CWStateTransition CWWTPEnterSulking()
 
 	gettimeofday(&before, NULL);
 
-	CWLog("CW_REPEAT_FOREVER: CWWTPEnterSulking()");
+	log_debug("CW_REPEAT_FOREVER: CWWTPEnterSulking()");
 	CW_REPEAT_FOREVER
 	{
 
@@ -122,7 +122,7 @@ CWStateTransition CWWTPEnterSulking()
 		}
 	}
 cw_sulk_time_over:
-	CWLog("End of Sulking Period");
+	log_debug("End of Sulking Period");
 cw_error:
 	return CW_ENTER_DISCOVERY;
 }

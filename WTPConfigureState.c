@@ -67,8 +67,8 @@ CWStateTransition CWWTPEnterConfigure()
 	int seqNum;
 	CWProtocolConfigureResponseValues values;
 
-	CWLog("\n");
-	CWLog("######### Configure State #########");
+	log_debug("\n");
+	log_debug("######### Configure State #########");
 
 	/* send Configure Request */
 	seqNum = CWGetSeqNum();
@@ -116,7 +116,7 @@ CWBool CWAssembleConfigureRequest(CWProtocolMessage **messagesPtr,
 									 msgElemCount,
 									 return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
-	CWDebugLog("Assembling Configure Request...");
+	log_debug("Assembling Configure Request...");
 
 	/* Assemble Message Elements */
 	if ((!(CWAssembleMsgElemACName(&(msgElems[++k])))) ||
@@ -197,7 +197,7 @@ CWBool CWAssembleConfigureRequest(CWProtocolMessage **messagesPtr,
 							)))
 		return CW_FALSE;
 
-	CWDebugLog("Configure Request Assembled");
+	log_debug("Configure Request Assembled");
 	return CW_TRUE;
 }
 
@@ -222,7 +222,7 @@ CWBool CWParseConfigureResponseMessage(char *msg,
 	if (msg == NULL || valuesPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Parsing Configure Response...");
+	log_debug("Parsing Configure Response...");
 
 	completeMsg.msg = msg;
 	completeMsg.offset = 0;
@@ -261,7 +261,7 @@ CWBool CWParseConfigureResponseMessage(char *msg,
 		unsigned short int len = 0;	 /* = CWProtocolRetrieve16(&completeMsg); */
 
 		CWParseFormatMsgElem(&completeMsg, &type, &len);
-		/* CWDebugLog("Parsing Message Element: %u, len: %u", type, len); */
+		/* log_debug("Parsing Message Element: %u, len: %u", type, len); */
 
 		if (CWBindingCheckType(type))
 		{
@@ -367,7 +367,7 @@ CWBool CWParseConfigureResponseMessage(char *msg,
 		}
 	}
 
-	CWDebugLog("Configure Response Parsed");
+	log_debug("Configure Response Parsed");
 	return CW_TRUE;
 }
 
@@ -379,12 +379,12 @@ CWBool CWSaveConfigureResponseMessage(CWProtocolConfigureResponseValues *configu
 	if (gACInfoPtr == NULL)
 		return CWErrorRaise(CW_ERROR_NEED_RESOURCE, NULL);
 
-	CWDebugLog("Saving Configure Response...");
+	log_debug("Saving Configure Response...");
 	/*
-		CWDebugLog("###Count:%d", (configureResponse->ACIPv4ListInfo).ACIPv4ListCount);
+		log_debug("###Count:%d", (configureResponse->ACIPv4ListInfo).ACIPv4ListCount);
 		if((gACInfoPtr->ACIPv4ListInfo).ACIPv4List==NULL) {
 
-			CWDebugLog("###NULL");
+			log_debug("###NULL");
 		}
 	*/
 	if ((configureResponse->ACIPv4ListInfo).ACIPv4ListCount > 0)
@@ -446,6 +446,6 @@ CWBool CWSaveConfigureResponseMessage(CWProtocolConfigureResponseValues *configu
 	CW_FREE_OBJECT(configureResponse->radiosDecryptErrorPeriod.radios);
 	CW_FREE_OBJECT(configureResponse->bindingValues);
 
-	CWDebugLog("Configure Response Saved");
+	log_debug("Configure Response Saved");
 	return CW_TRUE;
 }

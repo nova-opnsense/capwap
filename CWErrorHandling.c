@@ -50,14 +50,14 @@ static CWErrorHandlingInfo *gLastErrorDataPtr;
 
 void CWErrorHandlingInitLib()
 {
-	// CWDebugLog("Init Errors ");
+	// log_debug("Init Errors ");
 
 #ifndef CW_SINGLE_THREAD
 	if (!CWThreadCreateSpecific(&gLastError, NULL))
 	{
 		// Elena Agostini - 05/2014
 		fprintf(stderr, "Critical Error, closing the process...");
-		// CWLog("Critical Error, closing the process...");
+		// log_debug("Critical Error, closing the process...");
 		exit(1);
 	}
 #else
@@ -79,7 +79,7 @@ CWBool _CWErrorRaise(CWErrorCode code, const char *msg, const char *fileName, in
 		infoPtr->code = CW_ERROR_NONE;
 		if (!CWThreadSetSpecific(&gLastError, infoPtr))
 		{
-			CWLog("Critical Error, closing the process...");
+			log_debug("Critical Error, closing the process...");
 			exit(1);
 		}
 	}
@@ -89,7 +89,7 @@ CWBool _CWErrorRaise(CWErrorCode code, const char *msg, const char *fileName, in
 
 	if (infoPtr == NULL)
 	{
-		CWLog("Critical Error: something strange has happened, closing the process...");
+		log_debug("Critical Error: something strange has happened, closing the process...");
 		exit(1);
 	}
 
@@ -112,14 +112,14 @@ void CWErrorPrint(CWErrorHandlingInfo *infoPtr, const char *desc, const char *fi
 
 	if (infoPtr->message != NULL && infoPtr->message[0] != '\0')
 	{
-		CWLog("Error: %s. %s .", desc, infoPtr->message);
+		log_debug("Error: %s. %s .", desc, infoPtr->message);
 	}
 	else
 	{
-		CWLog("Error: %s", desc);
+		log_debug("Error: %s", desc);
 	}
-	CWLog("(occurred at line %d in file %s, catched at line %d in file %s).",
-		  infoPtr->line, infoPtr->fileName, line, fileName);
+	log_debug("(occurred at line %d in file %s, catched at line %d in file %s).",
+			  infoPtr->line, infoPtr->fileName, line, fileName);
 }
 
 CWErrorCode CWErrorGetLastErrorCode()
@@ -150,7 +150,7 @@ CWBool _CWErrorHandleLast(const char *fileName, int line)
 
 	if (infoPtr == NULL)
 	{
-		CWLog("No Error Pending");
+		log_debug("No Error Pending");
 		exit((3));
 		return CW_FALSE;
 	}

@@ -72,7 +72,7 @@ CWBool CWParseUCIPayload(CWProtocolMessage *msgPtr, CWVendorUciValues **payloadP
 
 	*payloadPtr = uciPayload;
 
-	CWLog("Parsed UCI Vendor Payload...");
+	log_debug("Parsed UCI Vendor Payload...");
 	return CW_TRUE;
 }
 
@@ -102,7 +102,7 @@ CWBool CWParseWUMPayload(CWProtocolMessage *msgPtr, CWVendorWumValues **payloadP
 
 	*payloadPtr = wumPayload;
 
-	CWLog("Parsed WUM Vendor Payload...");
+	log_debug("Parsed WUM Vendor Payload...");
 	return CW_TRUE;
 }
 
@@ -185,7 +185,7 @@ CWBool WUMPrepareForUpdate(int size)
 {
 	if (wumState.state != WUM_STATE_WAIT)
 	{
-		CWLog("Can't start a new update session; the previous one isn't completed yet.\n");
+		log_debug("Can't start a new update session; the previous one isn't completed yet.\n");
 		return CW_FALSE;
 	}
 
@@ -193,7 +193,7 @@ CWBool WUMPrepareForUpdate(int size)
 
 	if (wumState.cupTmp == NULL)
 	{
-		CWLog("Can't open temp file %s for writing.\n", CUP_TMP_FILE);
+		log_debug("Can't open temp file %s for writing.\n", CUP_TMP_FILE);
 		return CW_FALSE;
 	}
 
@@ -218,13 +218,13 @@ CWBool WUMStoreFragment(CWVendorWumValues *wumValues)
 
 	if (wumState.state != WUM_STATE_BUSY)
 	{
-		CWLog("Received an update fragment, but no update session has been initialized yet.\n");
+		log_debug("Received an update fragment, but no update session has been initialized yet.\n");
 		return CW_FALSE;
 	}
 
 	if (wumValues->_seq_num_ > wumState.total_fragments)
 	{
-		CWLog("Received an update fragment with invalid sequence number.\n");
+		log_debug("Received an update fragment with invalid sequence number.\n");
 		return CW_FALSE;
 	}
 
@@ -232,14 +232,14 @@ CWBool WUMStoreFragment(CWVendorWumValues *wumValues)
 
 	if (fseek(wumState.cupTmp, offset, SEEK_SET) != 0)
 	{
-		CWLog("Can't seek required offset in CUP tmp file.\n");
+		log_debug("Can't seek required offset in CUP tmp file.\n");
 		return CW_FALSE;
 	}
 
 	toWrite = wumValues->_cup_fragment_size_;
 	if (fwrite(wumValues->_cup_, 1, toWrite, wumState.cupTmp) != toWrite)
 	{
-		CWLog("Error while writing CUP tmp file.\n");
+		log_debug("Error while writing CUP tmp file.\n");
 		return CW_FALSE;
 	}
 
@@ -336,7 +336,7 @@ CWBool StartWUA()
 	}
 	else if (pid < 0)
 	{
-		CWLog("Can't fork!");
+		log_debug("Can't fork!");
 		close(fd);
 		return CW_FALSE;
 	}
@@ -354,7 +354,7 @@ CWBool check_free_space(int bytes)
 
 	if (statvfs("/tmp", &diskStat) != 0)
 	{
-		CWLog("Can't stat filesystem!\n");
+		log_debug("Can't stat filesystem!\n");
 		return CW_FALSE;
 	}
 
@@ -384,19 +384,19 @@ CWBool CWWTPSaveWUMValues(CWVendorWumValues *wumPayload, CWProtocolResultCode *r
 		break;
 	case WTP_UPDATE_REQUEST:
 		/* Check if update can be performed */
-		CWLog("Received Update Request - Version %d.%d.%d",
-			  wumPayload->_major_v_, wumPayload->_minor_v_, wumPayload->_revision_v_);
+		log_debug("Received Update Request - Version %d.%d.%d",
+				  wumPayload->_major_v_, wumPayload->_minor_v_, wumPayload->_revision_v_);
 
 		wumPayload->type = WTP_UPDATE_RESPONSE;
 
 		if (!CWWTPCheckVersion(wumPayload))
 		{
-			CWLog("WTP already up to date.\n");
+			log_debug("WTP already up to date.\n");
 			*resultCode = CW_PROTOCOL_FAILURE;
 		}
 		else if (!check_free_space(wumPayload->_pack_size_))
 		{
-			CWLog("No disk space available.\n");
+			log_debug("No disk space available.\n");
 			*resultCode = CW_PROTOCOL_FAILURE;
 		}
 		else if (WUMPrepareForUpdate(wumPayload->_pack_size_) == CW_FALSE)
@@ -444,20 +444,20 @@ CWBool CWWTPSaveWUMValues(CWVendorWumValues *wumPayload, CWProtocolResultCode *r
 			WUMCloseFile();
 			if (!remove(CUP_TMP_FILE))
 			{
-				CWLog("Error while removing cup tmp file.");
+				log_debug("Error while removing cup tmp file.");
 			}
 		}
 		else if (wumState.state == WUM_STATE_READY)
 		{
 			if (!remove(CUP_TMP_FILE))
 			{
-				CWLog("Error while removing cup tmp file.");
+				log_debug("Error while removing cup tmp file.");
 			}
 		}
 		wumState.state = WUM_STATE_WAIT;
 	}
 
-	CWLog("Saved WUM Vendor Payload...");
+	log_debug("Saved WUM Vendor Payload...");
 	return CW_TRUE;
 }
 
@@ -478,7 +478,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 
 	if ((sendSock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
 	{
-		CWLog("[CWSaveUCIValues]: Error on creation of socket.");
+		log_debug("[CWSaveUCIValues]: Error on creation of socket.");
 		return CWErrorRaise(CW_ERROR_GENERAL, NULL);
 	}
 
@@ -488,7 +488,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 
 	if (inet_aton("127.0.0.1", &serv_addr.sin_addr) == 0)
 	{
-		CWLog("[CWSaveUCIValues]: Error on aton function.");
+		log_debug("[CWSaveUCIValues]: Error on aton function.");
 		close(sendSock);
 		return CWErrorRaise(CW_ERROR_GENERAL, NULL);
 	}
@@ -509,14 +509,14 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 		/*Send conf request to uci daemon */
 		if (sendto(sendSock, bufferMessage, sizeof(unsigned char), 0, (struct sockaddr *)&serv_addr, slen) < 0)
 		{
-			CWLog("[CWSaveUCIValues]: Error on sendto function.");
+			log_debug("[CWSaveUCIValues]: Error on sendto function.");
 			close(sendSock);
 			CW_FREE_OBJECT(bufferMessage);
 			return CWErrorRaise(CW_ERROR_GENERAL, NULL);
 		}
 		if (recvfrom(sendSock, &response, sizeof(unsigned int), 0, (struct sockaddr *)&serv_addr, (socklen_t *)&slen) < 0)
 		{
-			CWLog("[CWSaveUCIValues]: Error on recvfrom function.");
+			log_debug("[CWSaveUCIValues]: Error on recvfrom function.");
 			close(sendSock);
 			CW_FREE_OBJECT(bufferMessage);
 			return CWErrorRaise(CW_ERROR_GENERAL, NULL);
@@ -524,14 +524,14 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 
 		if (!ntohl(response))
 		{
-			CWLog("[CWSaveUCIValues]: Error on recvfrom function.");
+			log_debug("[CWSaveUCIValues]: Error on recvfrom function.");
 			close(sendSock);
 			CW_FREE_OBJECT(bufferMessage);
 			return CWErrorRaise(CW_ERROR_GENERAL, NULL);
 		}
 		if (sendto(sendSock, bufferMessage + sizeof(unsigned char), sizeof(unsigned int), 0, (struct sockaddr *)&serv_addr, slen) < 0)
 		{
-			CWLog("[CWSaveUCIValues]: Error on sendto function.");
+			log_debug("[CWSaveUCIValues]: Error on sendto function.");
 			close(sendSock);
 			CW_FREE_OBJECT(bufferMessage);
 			return CWErrorRaise(CW_ERROR_GENERAL, NULL);
@@ -539,7 +539,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 
 		if (recvfrom(sendSock, &response, sizeof(unsigned int), 0, (struct sockaddr *)&serv_addr, (socklen_t *)&slen) < 0)
 		{
-			CWLog("[CWSaveUCIValues]: Error on recvfrom function.");
+			log_debug("[CWSaveUCIValues]: Error on recvfrom function.");
 			close(sendSock);
 			CW_FREE_OBJECT(bufferMessage);
 			return CWErrorRaise(CW_ERROR_GENERAL, NULL);
@@ -547,7 +547,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 
 		if (!ntohl(response))
 		{
-			CWLog("[CWSaveUCIValues]: Error on recvfrom function.");
+			log_debug("[CWSaveUCIValues]: Error on recvfrom function.");
 			close(sendSock);
 			CW_FREE_OBJECT(bufferMessage);
 			return CWErrorRaise(CW_ERROR_GENERAL, NULL);
@@ -556,7 +556,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 		{
 			if (sendto(sendSock, bufferMessage + sizeof(unsigned char) + sizeof(unsigned int), ArgsSize, 0, (struct sockaddr *)&serv_addr, slen) < 0)
 			{
-				CWLog("[CWSaveUCIValues]: Error on sendto function.");
+				log_debug("[CWSaveUCIValues]: Error on sendto function.");
 				close(sendSock);
 				CW_FREE_OBJECT(bufferMessage);
 				return CWErrorRaise(CW_ERROR_GENERAL, NULL);
@@ -564,7 +564,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 
 			if (recvfrom(sendSock, &response, sizeof(unsigned int), 0, (struct sockaddr *)&serv_addr, (socklen_t *)&slen) < 0)
 			{
-				CWLog("[CWSaveUCIValues]: Error on recvfrom function.");
+				log_debug("[CWSaveUCIValues]: Error on recvfrom function.");
 				close(sendSock);
 				CW_FREE_OBJECT(bufferMessage);
 				return CWErrorRaise(CW_ERROR_GENERAL, NULL);
@@ -572,7 +572,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 
 			if (!ntohl(response))
 			{
-				CWLog("[CWSaveUCIValues]: Error on recvfrom function.");
+				log_debug("[CWSaveUCIValues]: Error on recvfrom function.");
 				close(sendSock);
 				CW_FREE_OBJECT(bufferMessage);
 				return CWErrorRaise(CW_ERROR_GENERAL, NULL);
@@ -581,7 +581,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 	}
 	else
 	{
-		CWLog("[CWSaveUCIValues]: Error on malloc function.");
+		log_debug("[CWSaveUCIValues]: Error on malloc function.");
 		close(sendSock);
 		CW_FREE_OBJECT(bufferMessage);
 		return CWErrorRaise(CW_ERROR_GENERAL, NULL);
@@ -590,7 +590,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 	/*Receive result code from uci daemon*/
 	if (recvfrom(sendSock, &responseCode, sizeof(unsigned int), 0, (struct sockaddr *)&serv_addr, (socklen_t *)&slen) < 0)
 	{
-		CWLog("[CWSaveUCIValues]: Error on recvfrom function.");
+		log_debug("[CWSaveUCIValues]: Error on recvfrom function.");
 		close(sendSock);
 		CW_FREE_OBJECT(bufferMessage);
 		return CWErrorRaise(CW_ERROR_GENERAL, NULL);
@@ -600,7 +600,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 
 	if (sendto(sendSock, &response, sizeof(unsigned int), 0, (struct sockaddr *)&serv_addr, slen) < 0)
 	{
-		CWLog("[CWSaveUCIValues]: Error on sendto function.");
+		log_debug("[CWSaveUCIValues]: Error on sendto function.");
 		close(sendSock);
 		CW_FREE_OBJECT(bufferMessage);
 		return CWErrorRaise(CW_ERROR_GENERAL, NULL);
@@ -617,7 +617,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 		/*Receive response length from uci daemon*/
 		if (recvfrom(sendSock, &responseSize, sizeof(unsigned int), 0, (struct sockaddr *)&serv_addr, (socklen_t *)&slen) < 0)
 		{
-			CWLog("[CWSaveUCIValues]: Error on recvfrom function.");
+			log_debug("[CWSaveUCIValues]: Error on recvfrom function.");
 			close(sendSock);
 			CW_FREE_OBJECT(bufferMessage);
 			return CWErrorRaise(CW_ERROR_GENERAL, NULL);
@@ -625,7 +625,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 
 		if (sendto(sendSock, &response, sizeof(unsigned int), 0, (struct sockaddr *)&serv_addr, slen) < 0)
 		{
-			CWLog("[CWSaveUCIValues]: Error on sendto function.");
+			log_debug("[CWSaveUCIValues]: Error on sendto function.");
 			close(sendSock);
 			CW_FREE_OBJECT(bufferMessage);
 			return CWErrorRaise(CW_ERROR_GENERAL, NULL);
@@ -645,14 +645,14 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 				/*Receive from uci daemon the response string*/
 				if (recvfrom(sendSock, bufferMessage, sizeof(unsigned char) * responseSize, 0, (struct sockaddr *)&serv_addr, (socklen_t *)&slen) < 0)
 				{
-					CWLog("[CWSaveUCIValues]: Error on recvfrom function.");
+					log_debug("[CWSaveUCIValues]: Error on recvfrom function.");
 					close(sendSock);
 					CW_FREE_OBJECT(bufferMessage);
 					return CWErrorRaise(CW_ERROR_GENERAL, NULL);
 				}
 				if (sendto(sendSock, &response, sizeof(unsigned int), 0, (struct sockaddr *)&serv_addr, slen) < 0)
 				{
-					CWLog("[CWSaveUCIValues]: Error on sendto function.");
+					log_debug("[CWSaveUCIValues]: Error on sendto function.");
 					close(sendSock);
 					CW_FREE_OBJECT(bufferMessage);
 					return CWErrorRaise(CW_ERROR_GENERAL, NULL);
@@ -665,7 +665,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 			}
 			else
 			{
-				CWLog("[CWSaveUCIValues]: Error on malloc function.");
+				log_debug("[CWSaveUCIValues]: Error on malloc function.");
 				close(sendSock);
 				return CWErrorRaise(CW_ERROR_GENERAL, NULL);
 			}
@@ -677,7 +677,7 @@ CWBool CWWTPSaveUCIValues(CWVendorUciValues *uciPayload, CWProtocolResultCode *r
 		}
 	}
 
-	CWLog("Saved UCI Vendor Payload...");
+	log_debug("Saved UCI Vendor Payload...");
 	close(sendSock);
 	CW_FREE_OBJECT(bufferMessage);
 	return CW_TRUE;

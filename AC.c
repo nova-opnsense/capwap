@@ -136,12 +136,12 @@ int main(int argc, const char *argv[])
 	}
 
 	int daemon_r = daemon(1, 1);
-	CWLog("daemon (%d)", daemon_r);
+	log_debug("daemon (%d)", daemon_r);
 	if (daemon_r < 0)
 		exit(1);
 
 	int chdir_r = chdir(argv[1]);
-	CWLog("chdir  (%d)", chdir_r);
+	log_debug("chdir  (%d)", chdir_r);
 	if (chdir_r != 0)
 		exit(1);
 
@@ -159,7 +159,7 @@ int CWACSemPostForOpenSSLHack(void *s)
 
 	if (!CWThreadTimedSemIsZero(semPtr))
 	{
-		CWLog("This Semaphore's Value should really be 0");
+		log_debug("This Semaphore's Value should really be 0");
 		/* note: we can consider setting the value to 0 and going on,
 		 * that is what we do here
 		 */
@@ -180,19 +180,19 @@ void CWACInit()
 	int i, index = 0;
 	CWNetworkLev4Address *addresses = NULL;
 	struct sockaddr_in *IPv4Addresses = NULL;
-	CWLogInitFile(AC_LOG_FILE_NAME);
+	// CWLogInitFile(AC_LOG_FILE_NAME);
 
 #ifndef CW_SINGLE_THREAD
-	CWDebugLog("Use Threads");
+	log_debug("Use Threads");
 #else
-	CWDebugLog("Don't Use Threads");
+	log_debug("Don't Use Threads");
 #endif
 
 	CWErrorHandlingInitLib();
 
 	if (!CWParseSettingsFile())
 	{
-		CWLog("Can't start AC (1)");
+		log_debug("Can't start AC (1)");
 		exit(1);
 	}
 
@@ -200,12 +200,12 @@ void CWACInit()
 	for (index = 0; index < WTP_MAX_TMP_THREAD_DTLS_DATA; index++)
 		listGenericThreadDTLSData[index] = NULL;
 
-	CWLog("Starting AC");
+	log_debug("Starting AC");
 
 	CWThreadSetSignals(SIG_BLOCK, 1, SIGALRM);
 	if (timer_init() == 0)
 	{
-		CWLog("Can't init timer module");
+		log_debug("Can't init timer module");
 		exit(1);
 	}
 
@@ -221,7 +221,7 @@ void CWACInit()
 	{
 
 		/* error starting */
-		CWLog("Can't start AC (2)");
+		log_debug("Can't start AC (2)");
 		exit(1);
 	}
 
@@ -241,7 +241,7 @@ void CWACInit()
 										 CW_FALSE,
 										 CWACSemPostForOpenSSLHack)))
 		{
-			CWLog("Can't start AC (3)");
+			log_debug("Can't start AC (3)");
 			exit(1);
 		}
 	}
@@ -254,7 +254,7 @@ void CWACInit()
 										 CW_FALSE,
 										 CWACSemPostForOpenSSLHack)))
 		{
-			CWLog("Can't start AC (4)");
+			log_debug("Can't start AC (4)");
 			exit(1);
 		}
 	}
@@ -274,23 +274,23 @@ void CWACInit()
 	// Elena Agostini: Unique AC Tap Interface
 	if (!CWACTapInterfaceInit())
 	{
-		CWLog("Error in AC Tap Interface creation");
+		log_debug("Error in AC Tap Interface creation");
 		exit(-1);
 	}
 	/* store network interface's addresses */
 	gInterfacesCount = CWNetworkCountInterfaceAddresses(&gACSocket);
-	CWLog("Found %d Network Interface(s)", gInterfacesCount);
+	log_debug("Found %d Network Interface(s)", gInterfacesCount);
 
 	if (gInterfacesCount <= 0)
 	{
-		CWLog("Can't start AC (5)");
+		log_debug("Can't start AC (5)");
 		exit(1);
 	}
 
 	CW_CREATE_ARRAY_ERR(gInterfaces,
 						gInterfacesCount,
 						CWProtocolNetworkInterface,
-						CWLog("Out of Memory");
+						log_debug("Out of Memory");
 						return;);
 
 	for (i = 0; i < gInterfacesCount; i++)
@@ -313,7 +313,7 @@ void CWACInit()
 	// Elena Agostini - 11/2014: AVL WTP - STA mutex
 	CWCreateThreadMutex(&(mutexAvlTree));
 
-	CWLog("AC Started");
+	log_debug("AC Started");
 }
 
 void CWACDestroy()
@@ -336,7 +336,7 @@ void CWACDestroy()
 	CW_FREE_OBJECT(gACName);
 	CW_FREE_OBJECT(gInterfaces);
 
-	CWLog("AC Destroyed");
+	log_debug("AC Destroyed");
 }
 
 __inline__ unsigned int CWGetSeqNum()
@@ -347,7 +347,7 @@ __inline__ unsigned int CWGetSeqNum()
 
 	if (!CWThreadMutexLock(&gCreateIDMutex))
 	{
-		CWDebugLog("Error Locking a mutex");
+		log_debug("Error Locking a mutex");
 	}
 
 	r = seqNum;
@@ -370,7 +370,7 @@ __inline__ int CWGetFragmentID()
 	if (!CWThreadMutexLock(&gCreateIDMutex))
 	{
 
-		CWDebugLog("Error Locking a mutex");
+		log_debug("Error Locking a mutex");
 	}
 
 	r = fragID;

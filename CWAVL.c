@@ -308,8 +308,8 @@ struct nodeAVL *AVLdeleteNode(struct nodeAVL *root, unsigned char *staAddr, int 
         }
         else
         {
-            CWLog("AVL find STA[%02x:%02x:%02x:%02x:%02x:%02x] node to delete, but radioID value (%d) is different from input radioID(%d). So AVL doesn't delete node", (int)staAddr[0], (int)staAddr[1], (int)staAddr[2], (int)staAddr[3], (int)staAddr[4], (int)staAddr[5],
-                  root->radioID, radioID);
+            log_debug("AVL find STA[%02x:%02x:%02x:%02x:%02x:%02x] node to delete, but radioID value (%d) is different from input radioID(%d). So AVL doesn't delete node", (int)staAddr[0], (int)staAddr[1], (int)staAddr[2], (int)staAddr[3], (int)staAddr[4], (int)staAddr[5],
+                      root->radioID, radioID);
         }
     }
 
@@ -419,7 +419,7 @@ struct nodeAVL *AVLdeleteNodeWithoutRadioID(struct nodeAVL *root, struct nodeAVL
     if (root == NULL)
         return root;
 
-    CWLog("root != NULL");
+    log_debug("root != NULL");
 
     // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
     root->height = AVLmax(AVLheight(root->left), AVLheight(root->right)) + 1;
@@ -480,14 +480,14 @@ void AVLdisplay_avl(nodeAVL *t)
 {
     if (t == NULL)
         return;
-    CWLog("[%d] - %02x:%02x:%02x:%02x:%02x:%02x", t->index, (int)t->staAddr[0], (int)t->staAddr[1], (int)t->staAddr[2], (int)t->staAddr[3], (int)t->staAddr[4], (int)t->staAddr[5]);
+    log_debug("[%d] - %02x:%02x:%02x:%02x:%02x:%02x", t->index, (int)t->staAddr[0], (int)t->staAddr[1], (int)t->staAddr[2], (int)t->staAddr[3], (int)t->staAddr[4], (int)t->staAddr[5]);
 
     if (t->left != NULL)
-        CWLog("[L: %d] - %02x:%02x:%02x:%02x:%02x:%02x", t->left->index, (int)t->left->staAddr[0], (int)t->left->staAddr[1], (int)t->left->staAddr[2], (int)t->left->staAddr[3], (int)t->left->staAddr[4], (int)t->left->staAddr[5]);
+        log_debug("[L: %d] - %02x:%02x:%02x:%02x:%02x:%02x", t->left->index, (int)t->left->staAddr[0], (int)t->left->staAddr[1], (int)t->left->staAddr[2], (int)t->left->staAddr[3], (int)t->left->staAddr[4], (int)t->left->staAddr[5]);
     if (t->right != NULL)
-        CWLog("[R: %d] - %02x:%02x:%02x:%02x:%02x:%02x", t->right->index, (int)t->right->staAddr[0], (int)t->right->staAddr[1], (int)t->right->staAddr[2], (int)t->right->staAddr[3], (int)t->right->staAddr[4], (int)t->right->staAddr[5]);
+        log_debug("[R: %d] - %02x:%02x:%02x:%02x:%02x:%02x", t->right->index, (int)t->right->staAddr[0], (int)t->right->staAddr[1], (int)t->right->staAddr[2], (int)t->right->staAddr[3], (int)t->right->staAddr[4], (int)t->right->staAddr[5]);
 
-    CWLog("\n");
+    log_debug("\n");
 
     AVLdisplay_avl(t->left);
     AVLdisplay_avl(t->right);
@@ -505,14 +505,14 @@ nodeAVL * AVLremoveWTP(nodeAVL* root, int WTPIndex)
         AVLdeleteNode(struct nodeAVL* root, unsigned char * staAddr, int radioID)
 
     }
-    CWLog("[%d] - %02x:%02x:%02x:%02x:%02x:%02x",t->index, (int)t->staAddr[0], (int)t->staAddr[1], (int)t->staAddr[2], (int)t->staAddr[3], (int)t->staAddr[4], (int)t->staAddr[5]);
+    log_debug("[%d] - %02x:%02x:%02x:%02x:%02x:%02x",t->index, (int)t->staAddr[0], (int)t->staAddr[1], (int)t->staAddr[2], (int)t->staAddr[3], (int)t->staAddr[4], (int)t->staAddr[5]);
 
     if(t->left != NULL)
-        CWLog("[L: %d] - %02x:%02x:%02x:%02x:%02x:%02x",t->left->index, (int)t->left->staAddr[0], (int)t->left->staAddr[1], (int)t->left->staAddr[2], (int)t->left->staAddr[3], (int)t->left->staAddr[4], (int)t->left->staAddr[5]);
+        log_debug("[L: %d] - %02x:%02x:%02x:%02x:%02x:%02x",t->left->index, (int)t->left->staAddr[0], (int)t->left->staAddr[1], (int)t->left->staAddr[2], (int)t->left->staAddr[3], (int)t->left->staAddr[4], (int)t->left->staAddr[5]);
     if(t->right != NULL)
-        CWLog("[R: %d] - %02x:%02x:%02x:%02x:%02x:%02x",t->right->index, (int)t->right->staAddr[0], (int)t->right->staAddr[1], (int)t->right->staAddr[2], (int)t->right->staAddr[3], (int)t->right->staAddr[4], (int)t->right->staAddr[5]);
+        log_debug("[R: %d] - %02x:%02x:%02x:%02x:%02x:%02x",t->right->index, (int)t->right->staAddr[0], (int)t->right->staAddr[1], (int)t->right->staAddr[2], (int)t->right->staAddr[3], (int)t->right->staAddr[4], (int)t->right->staAddr[5]);
 
-    CWLog("\n");
+    log_debug("\n");
 
     AVLdisplay_avl(t->left);
     AVLdisplay_avl(t->right);

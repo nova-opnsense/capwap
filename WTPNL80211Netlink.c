@@ -65,13 +65,13 @@ struct nl_handle *nl_create_handle(struct nl_cb *cb, const char *dbg)
 	handle = nl80211_handle_alloc(cb);
 	if (handle == NULL)
 	{
-		CWLog("nl80211: Failed to allocate netlink callbacks (%s)", dbg);
+		log_debug("nl80211: Failed to allocate netlink callbacks (%s)", dbg);
 		return NULL;
 	}
 
 	if (genl_connect(handle))
 	{
-		CWLog("nl80211: Failed to connect to generic netlink (%s)", dbg);
+		log_debug("nl80211: Failed to connect to generic netlink (%s)", dbg);
 		nl80211_handle_destroy(handle);
 		return NULL;
 	}
@@ -131,19 +131,19 @@ int CW80211InitNlCb(WTPBSSInfo *WTPBSSInfoPtr) // WTPInterfaceInfo * interfaceIn
 	WTPBSSInfoPtr->interfaceInfo->nl_cb = nl_cb_alloc(NL_CB_DEFAULT);
 	if (!WTPBSSInfoPtr->interfaceInfo->nl_cb)
 	{
-		CWLog("nl80211: Failed to alloc cb struct");
+		log_debug("nl80211: Failed to alloc cb struct");
 		return -1;
 	}
 
 	if (nl_cb_set(WTPBSSInfoPtr->interfaceInfo->nl_cb, NL_CB_SEQ_CHECK, NL_CB_CUSTOM, no_seq_check, NULL) != 0)
 	{
-		CWLog("nl80211: Errore nl_cb_set no_seq_check");
+		log_debug("nl80211: Errore nl_cb_set no_seq_check");
 		return -1;
 	}
 
 	if (nl_cb_set(WTPBSSInfoPtr->interfaceInfo->nl_cb, NL_CB_VALID, NL_CB_CUSTOM, CW80211CheckTypeEvent, WTPBSSInfoPtr) != 0)
 	{
-		CWLog("nl80211: Errore nl_cb_set CW80211CheckTypeEvent");
+		log_debug("nl80211: Errore nl_cb_set CW80211CheckTypeEvent");
 		return -1;
 	}
 
@@ -169,12 +169,12 @@ int CW80211CheckTypeEvent(struct nl_msg *msg, void *arg)
 			CW80211EventProcess(WTPBSSInfoPtr, gnlh->cmd, tb, frameBuffer);
 			return NL_SKIP;
 		}
-		CWLog("nl80211: Ignored event (cmd=%d) for foreign interface (ifindex %d)", gnlh->cmd, ifidx);
+		log_debug("nl80211: Ignored event (cmd=%d) for foreign interface (ifindex %d)", gnlh->cmd, ifidx);
 	}
 	else if (tb[NL80211_ATTR_WDEV])
 	{
 		u64 wdev_id = nla_get_u64(tb[NL80211_ATTR_WDEV]);
-		CWLog("nl80211: Process event on P2P device");
+		log_debug("nl80211: Process event on P2P device");
 		/*for (bss = drv->first_bss; bss; bss = bss->next) {
 			if (bss->wdev_id_set && wdev_id == bss->wdev_id) {
 				CW80211EventProcess(bss, gnlh->cmd, tb);
@@ -182,7 +182,7 @@ int CW80211CheckTypeEvent(struct nl_msg *msg, void *arg)
 			}
 		}
 		*/
-		CWLog("nl80211: Ignored event (cmd=%d) for foreign interface (wdev 0x%llx)", gnlh->cmd, (long long unsigned int)wdev_id);
+		log_debug("nl80211: Ignored event (cmd=%d) for foreign interface (wdev 0x%llx)", gnlh->cmd, (long long unsigned int)wdev_id);
 	}
 
 	return NL_SKIP;
@@ -238,7 +238,7 @@ int nl80211_send_recv_cb_input(struct nl80211SocketUnit *nlSockUnit,
 		int res = nl_recvmsgs(nlSockUnit->nl_sock, cb);
 		if (res < 0)
 		{
-			CWLog("nl80211: %s->nl_recvmsgs failed: %d", __func__, res);
+			log_debug("nl80211: %s->nl_recvmsgs failed: %d", __func__, res);
 		}
 	}
 
@@ -280,7 +280,7 @@ int send_and_recv(struct nl80211SocketUnit *global,
 		int res = nl_recvmsgs(nl_handle, cb);
 		if (res < 0)
 		{
-			CWLog("nl80211: %s->nl_recvmsgs failed: %d", __func__, res);
+			log_debug("nl80211: %s->nl_recvmsgs failed: %d", __func__, res);
 		}
 	}
 out:
@@ -296,7 +296,7 @@ int netlink_create_socket(struct nl80211SocketUnit *nlSockUnit)
 	nlSockUnit->sockNetlink = socket(PF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 	if (nlSockUnit->sockNetlink < 0)
 	{
-		CWLog("netlink: Failed to open netlink socket: %s", strerror(errno));
+		log_debug("netlink: Failed to open netlink socket: %s", strerror(errno));
 		//	netlink_deinit(netlink);
 		return -1;
 	}
@@ -306,7 +306,7 @@ int netlink_create_socket(struct nl80211SocketUnit *nlSockUnit)
 	local.nl_groups = RTMGRP_LINK;
 	if (bind(nlSockUnit->sockNetlink, (struct sockaddr *)&local, sizeof(local)) < 0)
 	{
-		CWLog("netlink: Failed to bind netlink socket: %s", strerror(errno));
+		log_debug("netlink: Failed to bind netlink socket: %s", strerror(errno));
 		//	netlink_deinit(netlink);
 		return -1;
 	}
@@ -366,10 +366,10 @@ CWBool netlink_send_oper_ifla(int sock, int ifindex, int linkmode, int operstate
 	ret = send(sock, &req, req.hdr.nlmsg_len, 0);
 	if (ret < 0)
 	{
-		CWLog("netlink: Sending operstate IFLA failed: %s (assume operstate is not supported)", strerror(errno));
+		log_debug("netlink: Sending operstate IFLA failed: %s (assume operstate is not supported)", strerror(errno));
 	}
 
-	CWLog("netlink: Operstate: ifindex=%d linkmode=%d, operstate=%d", ifindex, linkmode, operstate);
+	log_debug("netlink: Operstate: ifindex=%d linkmode=%d, operstate=%d", ifindex, linkmode, operstate);
 
 	return ret < 0 ? CW_FALSE : CW_TRUE;
 }
@@ -392,7 +392,7 @@ CWBool CWSetNewBridge(int sock, char *bridgeName)
 	// Set up bridge
 	if (ioctl(sock, SIOCBRADDBR, bridgeName) < 0)
 	{
-		CWLog("Could not add bridge %s: %s", bridgeName, strerror(errno));
+		log_debug("Could not add bridge %s: %s", bridgeName, strerror(errno));
 		// return CW_FALSE;
 	}
 	return CW_TRUE;
@@ -405,10 +405,10 @@ CWBool CWAddNewBridgeInterface(int sock, char *bridgeName, int wlanID)
 	memset(&ifr, 0, sizeof(ifr));
 	strncpy(ifr.ifr_name, bridgeName, IFNAMSIZ);
 	ifr.ifr_ifindex = wlanID;
-	CWLog("Aggiungo a %s ifface %d", bridgeName, wlanID);
+	log_debug("Aggiungo a %s ifface %d", bridgeName, wlanID);
 	if (ioctl(sock, SIOCBRADDIF, &ifr) < 0)
 	{
-		CWLog("Could not add interface %d into bridge %s: %s", wlanID, bridgeName, strerror(errno));
+		log_debug("Could not add interface %d into bridge %s: %s", wlanID, bridgeName, strerror(errno));
 		return CW_FALSE;
 	}
 
@@ -420,7 +420,7 @@ CWBool CWDelBridge(int sock, char *bridgeName)
 
 	if (ioctl(sock, SIOCBRDELBR, bridgeName) < 0)
 	{
-		CWLog("Could not remove bridge %s: %s", bridgeName, strerror(errno));
+		log_debug("Could not remove bridge %s: %s", bridgeName, strerror(errno));
 		return CW_FALSE;
 	}
 
@@ -436,7 +436,7 @@ CWBool CWDelBridgeInterface(int sock, char *bridgeName, int wlanID)
 	ifr.ifr_ifindex = wlanID;
 	if (ioctl(sock, SIOCBRDELIF, &ifr) < 0)
 	{
-		CWLog("Could not remove interface %d from bridge %s: %s", wlanID, bridgeName, strerror(errno));
+		log_debug("Could not remove interface %d from bridge %s: %s", wlanID, bridgeName, strerror(errno));
 		return CW_FALSE;
 	}
 

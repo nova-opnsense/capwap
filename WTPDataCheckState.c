@@ -59,11 +59,11 @@ CWStateTransition CWWTPEnterDataCheck()
 
 	int seqNum;
 
-	CWLog("\n");
-	CWLog("######### Data Check State #########");
+	log_debug("\n");
+	log_debug("######### Data Check State #########");
 
-	CWLog("\n");
-	CWLog("#________ Change State Event (Data Check) ________#");
+	log_debug("\n");
+	log_debug("#________ Change State Event (Data Check) ________#");
 
 	/* Send Change State Event Request */
 	seqNum = CWGetSeqNum();
@@ -93,7 +93,7 @@ CWStateTransition CWWTPEnterDataCheck()
 
 	struct sockaddr_in *tmpAdd = (struct sockaddr_in *)&(gACInfoPtr->preferredAddress);
 	tmpAdd->sin_port = htons(5247);
-	CWLog("[DTLS] WTP Run Handshake with %s:%d", inet_ntoa(tmpAdd->sin_addr), ntohs(tmpAdd->sin_port));
+	log_debug("[DTLS] WTP Run Handshake with %s:%d", inet_ntoa(tmpAdd->sin_addr), ntohs(tmpAdd->sin_port));
 
 	CWNetworkLev4Address *gACAddressDataChannel = (CWNetworkLev4Address *)tmpAdd;
 
@@ -111,7 +111,7 @@ CWStateTransition CWWTPEnterDataCheck()
 		return CW_FALSE;
 	}
 
-	CWLog("[DTLS] OK now assemble first KeepAlive");
+	log_debug("[DTLS] OK now assemble first KeepAlive");
 
 	/*
 	 * If handshake ok, first KeepAlive DTLS to AC
@@ -134,7 +134,7 @@ CWStateTransition CWWTPEnterDataCheck()
 	{
 		int i;
 
-		CWDebugLog("Failure Assembling KeepAlive Request");
+		log_debug("Failure Assembling KeepAlive Request");
 		if (messages)
 			for (i = 0; i < fragmentsNum; i++)
 			{
@@ -149,7 +149,7 @@ CWStateTransition CWWTPEnterDataCheck()
 	{
 		if (!(CWSecuritySend(gWTPSessionData, messages[i].msg, messages[i].offset)))
 		{
-			CWLog("Failure sending  KeepAlive Request");
+			log_debug("Failure sending  KeepAlive Request");
 			int k;
 			for (k = 0; k < fragmentsNum; k++)
 			{
@@ -167,12 +167,12 @@ CWStateTransition CWWTPEnterDataCheck()
 	}
 	CW_FREE_OBJECT(messages);
 
-	CWLog("Send KeepAlive");
+	log_debug("Send KeepAlive");
 
 	if (!CWReceiveDataMessage(&msgPtr))
 	{
 		CW_FREE_PROTOCOL_MESSAGE(msgPtr);
-		CWDebugLog("Failure Receiving DTLS Data Channel");
+		log_debug("Failure Receiving DTLS Data Channel");
 		return CW_ENTER_RESET;
 	}
 
@@ -207,7 +207,7 @@ CWBool CWAssembleChangeStateEventRequest(CWProtocolMessage **messagesPtr,
 									 msgElemCount,
 									 return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 
-	CWLog("Assembling Change State Event Request...");
+	log_debug("Assembling Change State Event Request...");
 
 	/* Assemble Message Elements */
 	if (!(CWAssembleMsgElemRadioOperationalState(-1, &(msgElems[++k]))) ||
@@ -242,7 +242,7 @@ CWBool CWAssembleChangeStateEventRequest(CWProtocolMessage **messagesPtr,
 							)))
 		return CW_FALSE;
 
-	CWLog("Change State Event Request Assembled");
+	log_debug("Change State Event Request Assembled");
 	return CW_TRUE;
 }
 
@@ -258,7 +258,7 @@ CWBool CWParseChangeStateEventResponseMessage(char *msg,
 	if (msg == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWLog("Parsing Change State Event Response...");
+	log_debug("Parsing Change State Event Response...");
 
 	completeMsg.msg = msg;
 	completeMsg.offset = 0;
@@ -281,13 +281,13 @@ CWBool CWParseChangeStateEventResponseMessage(char *msg,
 		return CWErrorRaise(CW_ERROR_INVALID_FORMAT,
 							"Change State Event Response must carry no message elements");
 
-	CWLog("Change State Event Response Parsed");
+	log_debug("Change State Event Response Parsed");
 	return CW_TRUE;
 }
 
 CWBool CWSaveChangeStateEventResponseMessage(void *changeStateEventResp)
 {
-	CWDebugLog("Saving Change State Event Response...");
-	CWDebugLog("Change State Event Response Saved");
+	log_debug("Saving Change State Event Response...");
+	log_debug("Change State Event Response Saved");
 	return CW_TRUE;
 }

@@ -55,7 +55,7 @@ CWBool CWAssembleWTPVendorPayloadUCI(CWProtocolMessage *msgPtr)
 	CWProtocolVendorSpecificValues *valuesPtr;
 	CWVendorUciValues *uciPtr;
 
-	CWLog("Assembling Protocol Configuration Update Request [VENDOR CASE]...");
+	log_debug("Assembling Protocol Configuration Update Request [VENDOR CASE]...");
 
 	if (msgPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
@@ -93,7 +93,7 @@ CWBool CWAssembleWTPVendorPayloadUCI(CWProtocolMessage *msgPtr)
 		return CW_FALSE;
 		break;
 	}
-	CWLog("Assembling Protocol Configuration Update Request [VENDOR CASE]: Message Assembled.");
+	log_debug("Assembling Protocol Configuration Update Request [VENDOR CASE]: Message Assembled.");
 
 	return CWAssembleMsgElem(msgPtr, CW_MSG_ELEMENT_VENDOR_SPEC_PAYLOAD_CW_TYPE);
 }
@@ -105,7 +105,7 @@ CWBool CWAssembleWTPVendorPayloadWUM(CWProtocolMessage *msgPtr)
 	CWProtocolVendorSpecificValues *valuesPtr;
 	CWVendorWumValues *wumPtr;
 
-	CWLog("Assembling Protocol Configuration Update Request [VENDOR CASE]...");
+	log_debug("Assembling Protocol Configuration Update Request [VENDOR CASE]...");
 
 	if (msgPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
@@ -139,7 +139,7 @@ CWBool CWAssembleWTPVendorPayloadWUM(CWProtocolMessage *msgPtr)
 			CW_CREATE_PROTOCOL_MESSAGE(*msgPtr, sizeof(short) + sizeof(char) + 2 * sizeof(int) + wumPtr->_cup_fragment_size_, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 			break;
 		default:
-			CWLog("Error! unknown WUM message type!!!");
+			log_debug("Error! unknown WUM message type!!!");
 			return CW_FALSE;
 		}
 
@@ -164,7 +164,7 @@ CWBool CWAssembleWTPVendorPayloadWUM(CWProtocolMessage *msgPtr)
 		return CW_FALSE;
 		break;
 	}
-	CWLog("Assembling Protocol Configuration Update Request [VENDOR CASE]: Message Assembled.");
+	log_debug("Assembling Protocol Configuration Update Request [VENDOR CASE]: Message Assembled.");
 
 	return CWAssembleMsgElem(msgPtr, CW_MSG_ELEMENT_VENDOR_SPEC_PAYLOAD_CW_TYPE);
 }

@@ -48,8 +48,8 @@ CWBool ACEnterDataCheck(int WTPIndex, CWProtocolMessage *msgPtr)
 	int seqNum;
 	CWProtocolChangeStateEventRequestValues *changeStateEvent;
 
-	CWLog("\n");
-	CWDebugLog("######### Status Event #########");
+	log_debug("\n");
+	log_debug("######### Status Event #########");
 
 	/* Destroy ChangeStatePending timer */
 	if (!CWErr(CWTimerCancel(&(gWTPs[WTPIndex].currentTimer))))
@@ -71,7 +71,7 @@ CWBool ACEnterDataCheck(int WTPIndex, CWProtocolMessage *msgPtr)
 		return CW_FALSE;
 	}
 
-	CWLog("Change State Event Received");
+	log_debug("Change State Event Received");
 
 	if (!(CWSaveChangeStateEventRequestMessage(changeStateEvent, &(gWTPs[WTPIndex].WTPProtocolManager))))
 		return CW_FALSE;
@@ -99,7 +99,7 @@ CWBool ACEnterDataCheck(int WTPIndex, CWProtocolMessage *msgPtr)
 		CWCloseThread();
 	}*/
 
-	CWLog("Change State Event Response Sent");
+	log_debug("Change State Event Response Sent");
 
 	gWTPs[WTPIndex].currentState = CW_ENTER_RUN;
 	gWTPs[WTPIndex].subState = CW_WAITING_REQUEST;
@@ -121,7 +121,7 @@ CWBool CWParseChangeStateEventRequestMessage(char *msg,
 	if (msg == NULL || seqNumPtr == NULL || valuesPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Parsing Change State Event Request...");
+	log_debug("Parsing Change State Event Request...");
 
 	completeMsg.msg = msg;
 	completeMsg.offset = 0;
@@ -149,7 +149,7 @@ CWBool CWParseChangeStateEventRequestMessage(char *msg,
 
 		CWParseFormatMsgElem(&completeMsg, &elemType, &elemLen);
 
-		/*CWDebugLog("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);*/
+		/*log_debug("Parsing Message Element: %u, elemLen: %u", elemType, elemLen);*/
 
 		switch (elemType)
 		{
@@ -200,7 +200,7 @@ CWBool CWParseChangeStateEventRequestMessage(char *msg,
 			break;
 		}
 	}
-	CWDebugLog("Change State Event Request Parsed");
+	log_debug("Change State Event Request Parsed");
 
 	return CW_TRUE;
 }
@@ -219,7 +219,7 @@ CWBool CWAssembleChangeStateEventResponse(CWProtocolMessage **messagesPtr,
 	if (messagesPtr == NULL || fragmentsNumPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Assembling Change State Event Response...");
+	log_debug("Assembling Change State Event Response...");
 	/*CW_CREATE_ARRAY_ERR(msgElems,
 	 * 		      msgElemCount,
 	 * 		      CWProtocolMessage,
@@ -241,6 +241,6 @@ CWBool CWAssembleChangeStateEventResponse(CWProtocolMessage **messagesPtr,
 #endif
 		return CW_FALSE;
 
-	CWDebugLog("Change State Event Response Assembled");
+	log_debug("Change State Event Response Assembled");
 	return CW_TRUE;
 }

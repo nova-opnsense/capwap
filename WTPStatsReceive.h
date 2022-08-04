@@ -44,7 +44,7 @@
 #define PACKET_SIZE 65536
 
 #define EXIT_THREAD                                             \
-	CWLog("ERROR Handling Stats: application will be closed!"); \
+	log_debug("ERROR Handling Stats: application will be closed!"); \
 	close(sock);                                                \
 	exit(1);
 

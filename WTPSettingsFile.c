@@ -124,7 +124,7 @@ CWBool CWParseSettingsFile()
 			CW_CREATE_STRING_ERR(wtpLogFile, offset, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 			strncpy(wtpLogFile, startValue, offset);
 			wtpLogFile[offset] = '\0';
-			CWLog(": %s", wtpLogFile);
+			log_debug(": %s", wtpLogFile);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -186,7 +186,7 @@ CWBool CWParseSettingsFile()
 			CW_CREATE_STRING_ERR(gInterfaceName, offset, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 			strncpy(gInterfaceName, startValue, offset);
 			gInterfaceName[offset] = '\0';
-			CWLog(": %s", gInterfaceName);
+			log_debug(": %s", gInterfaceName);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -202,7 +202,7 @@ CWBool CWParseSettingsFile()
 			CW_CREATE_STRING_ERR(gInterfaceName, offset, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 			strncpy(gInterfaceName, startValue, offset);
 			gInterfaceName[offset] = '\0';
-			CWLog(": %s", gInterfaceName);
+			log_debug(": %s", gInterfaceName);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -218,7 +218,7 @@ CWBool CWParseSettingsFile()
 			CW_CREATE_STRING_ERR(gEthInterfaceName, offset, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 			strncpy(gEthInterfaceName, startValue, offset);
 			gEthInterfaceName[offset] = '\0';
-			CWLog(": %s", gEthInterfaceName);
+			log_debug(": %s", gEthInterfaceName);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -235,7 +235,7 @@ CWBool CWParseSettingsFile()
 			CW_CREATE_STRING_ERR(gBridgeInterfaceName, offset, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 			strncpy(gBridgeInterfaceName, startValue, offset);
 			gBridgeInterfaceName[offset] = '\0';
-			CWLog(": %s", gBridgeInterfaceName);
+			log_debug(": %s", gBridgeInterfaceName);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -251,7 +251,7 @@ CWBool CWParseSettingsFile()
 			CW_CREATE_STRING_ERR(gRadioInterfaceName_0, offset, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 			strncpy(gRadioInterfaceName_0, startValue, offset);
 			gRadioInterfaceName_0[offset] = '\0';
-			CWLog(": %s", gRadioInterfaceName_0);
+			log_debug(": %s", gRadioInterfaceName_0);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -267,7 +267,7 @@ CWBool CWParseSettingsFile()
 			CW_CREATE_STRING_ERR(gBaseMACInterfaceName, offset, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 			strncpy(gBaseMACInterfaceName, startValue, offset);
 			gBaseMACInterfaceName[offset] = '\0';
-			CWLog(": %s", gBaseMACInterfaceName);
+			log_debug(": %s", gBaseMACInterfaceName);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -284,7 +284,7 @@ CWBool CWParseSettingsFile()
 			strncpy(reversion, startValue, offset);
 			reversion[offset] = '\0';
 			gBoardReversionNo = atoi(reversion);
-			CWLog(": %d", gBoardReversionNo);
+			log_debug(": %d", gBoardReversionNo);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -300,7 +300,7 @@ CWBool CWParseSettingsFile()
 			strncpy(port_str, startValue, offset);
 			port_str[offset] = '\0';
 			gHostapd_port = atoi(port_str);
-			CWLog(": %d", gHostapd_port);
+			log_debug(": %d", gHostapd_port);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -315,7 +315,7 @@ CWBool CWParseSettingsFile()
 			CW_CREATE_STRING_ERR(gHostapd_unix_path, offset, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 			strncpy(gHostapd_unix_path, startValue, offset);
 			gHostapd_unix_path[offset] = '\0';
-			CWLog(": %s", gHostapd_unix_path);
+			log_debug(": %s", gHostapd_unix_path);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -337,7 +337,7 @@ CWBool CWParseSettingsFile()
 			strncpy(port_str, startValue, offset);
 			port_str[offset] = '\0';
 			qosStaticFreq = atoi(port_str);
-			CWLog("qosStaticFreq: %d", qosStaticFreq);
+			log_debug("qosStaticFreq: %d", qosStaticFreq);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -354,7 +354,7 @@ CWBool CWParseSettingsFile()
 			strncpy(port_str, startValue, offset);
 			port_str[offset] = '\0';
 			qosStaticBitRate = atoi(port_str);
-			CWLog("qosStaticBitRate: %d", qosStaticBitRate);
+			log_debug("qosStaticBitRate: %d", qosStaticBitRate);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -371,7 +371,7 @@ CWBool CWParseSettingsFile()
 			strncpy(port_str, startValue, offset);
 			port_str[offset] = '\0';
 			qosStaticFrag = atoi(port_str);
-			CWLog("qosStaticFrag: %d", qosStaticFrag);
+			log_debug("qosStaticFrag: %d", qosStaticFrag);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -388,7 +388,7 @@ CWBool CWParseSettingsFile()
 			strncpy(port_str, startValue, offset);
 			port_str[offset] = '\0';
 			qosStaticTxPower = atoi(port_str);
-			CWLog("qosStaticTxPower: %d", qosStaticTxPower);
+			log_debug("qosStaticTxPower: %d", qosStaticTxPower);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -405,7 +405,7 @@ CWBool CWParseSettingsFile()
 			strncpy(port_str, startValue, offset);
 			port_str[offset] = '\0';
 			qosStaticCwMin = atoi(port_str);
-			CWLog("qosStaticCwMin: %d", qosStaticCwMin);
+			log_debug("qosStaticCwMin: %d", qosStaticCwMin);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -422,7 +422,7 @@ CWBool CWParseSettingsFile()
 			strncpy(port_str, startValue, offset);
 			port_str[offset] = '\0';
 			qosStaticCwMax = atoi(port_str);
-			CWLog("qosStaticCwMax: %d", qosStaticCwMax);
+			log_debug("qosStaticCwMax: %d", qosStaticCwMax);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -439,7 +439,7 @@ CWBool CWParseSettingsFile()
 			strncpy(port_str, startValue, offset);
 			port_str[offset] = '\0';
 			qosStaticAifs = atoi(port_str);
-			CWLog("qosStaticAifs: %d", qosStaticAifs);
+			log_debug("qosStaticAifs: %d", qosStaticAifs);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -456,7 +456,7 @@ CWBool CWParseSettingsFile()
 			strncpy(port_str, startValue, offset);
 			port_str[offset] = '\0';
 			qosStaticWmeCwMin = atoi(port_str);
-			CWLog("qosStaticWmeCwMin: %d", qosStaticWmeCwMin);
+			log_debug("qosStaticWmeCwMin: %d", qosStaticWmeCwMin);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -473,7 +473,7 @@ CWBool CWParseSettingsFile()
 			strncpy(port_str, startValue, offset);
 			port_str[offset] = '\0';
 			qosStaticWmeCwMax = atoi(port_str);
-			CWLog("qosStaticWmeCwMax: %d", qosStaticWmeCwMax);
+			log_debug("qosStaticWmeCwMax: %d", qosStaticWmeCwMax);
 			CW_FREE_OBJECT(line);
 			continue;
 		}
@@ -490,7 +490,7 @@ CWBool CWParseSettingsFile()
 			strncpy(port_str, startValue, offset);
 			port_str[offset] = '\0';
 			qosStaticWmeAifsn = atoi(port_str);
-			CWLog("qosStaticAifsn: %d", qosStaticWmeAifsn);
+			log_debug("qosStaticAifsn: %d", qosStaticWmeAifsn);
 			CW_FREE_OBJECT(line);
 			continue;
 		}

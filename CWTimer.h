@@ -296,14 +296,14 @@ int _setimr(unsigned int timeout,     /* time to wait in 10msec ticks */
         {
                 if (!timer_inuse(t))
                 {
-                        //                        CWDebugLog("Found free timer");
+                        //                        log_debug("Found free timer");
                         free_timer = t;
                         break;
                 }
         }
         if (t == &timerq[CW_TIMER_MAX])
         {
-                CWDebugLog("Free timer not found");
+                log_debug("Free timer not found");
                 enable_interrupts() return -1; // out of timers
         }
 
@@ -313,7 +313,7 @@ int _setimr(unsigned int timeout,     /* time to wait in 10msec ticks */
 
         if (!next_timer)
         {
-                //		CWDebugLog("First Timer\n");
+                //		log_debug("First Timer\n");
                 /* no timers set at all, so this is shortest */
                 free_timer->event = event;
                 free_timer->timeout = timeout;
@@ -324,7 +324,7 @@ int _setimr(unsigned int timeout,     /* time to wait in 10msec ticks */
         else if ((timeout + current_time()) <
                  (next_timer->timeout + timer_set_timestamp))
         {
-                //				CWDebugLog("Shorter Timer\n");
+                //				log_debug("Shorter Timer\n");
                 /* new timer is shorter than current one, so */
                 /* cancel current timer and set up new one */
                 /* not sure if the next setitimer() is actually necessary */
@@ -339,14 +339,14 @@ int _setimr(unsigned int timeout,     /* time to wait in 10msec ticks */
         else
         {
                 /* new timer is longer, than current one */
-                //		CWDebugLog("Longer Timer (%d)\n", timeout);
+                //		log_debug("Longer Timer (%d)\n", timeout);
                 free_timer->event = event;
                 free_timer->timeout = timeout + (current_time() - timer_set_timestamp);
                 free_timer->ast = ast;
                 free_timer->myArg = myArg;
         }
 
-        CWDebugLog("timer set, index:%d, timeout:%d", *idPtr, timerq[*idPtr].timeout);
+        log_debug("timer set, index:%d, timeout:%d", *idPtr, timerq[*idPtr].timeout);
         enable_interrupts();
         return (TRUE);
 }
@@ -381,12 +381,12 @@ int _cantim(CWTimerID *idPtr)
 /* this routine is executed when an alarm signal occurs */
 void clk_isr()
 {
-        CWDebugLog("Signal Timer Expired received");
+        log_debug("Signal Timer Expired received");
         /* the following condition could be set up,
         if the interrupt was delivered while we were in cantim, cancelling
         the last timer */
         // printf("\n\n\n%d\n\n", pthread_self());
-        CWDebugLog("Subtract %d from timers", current_time() - timer_set_timestamp);
+        log_debug("Subtract %d from timers", current_time() - timer_set_timestamp);
         update_all_timers_by(current_time() - timer_set_timestamp);
         if (next_timer == 0)
                 return;
@@ -398,22 +398,22 @@ void update_all_timers_by(unsigned int time)
 {
         struct timer *t;
         int id;
-        CWDebugLog("Update Timers");
+        log_debug("Update Timers");
         for (id = 0, t = timerq; t < &timerq[CW_TIMER_MAX]; t++, id++)
         {
                 if (t->timeout)
                 {
-                        //			CWDebugLog("~~~~~~~~~timer set, index:%d, timeout:%d~~~~~~~~~~~~", id, t->timeout);
+                        //			log_debug("~~~~~~~~~timer set, index:%d, timeout:%d~~~~~~~~~~~~", id, t->timeout);
                         if (time < t->timeout)
                         {
-                                //	CWDebugLog("timeout(%d) - time(%d)\n", t->timeout, time);
+                                //	log_debug("timeout(%d) - time(%d)\n", t->timeout, time);
                                 t->timeout -= time;
-                                //	CWDebugLog("timeout(%d)\n", t->timeout);
+                                //	log_debug("timeout(%d)\n", t->timeout);
                         }
                         else
                         {
-                                //	CWDebugLog("(%d) %d vs %d\n", t, t->timeout, time);
-                                //				CWDebugLog("~~~~~~~è un segnale mio!~~~~~~~~~");
+                                //	log_debug("(%d) %d vs %d\n", t, t->timeout, time);
+                                //				log_debug("~~~~~~~è un segnale mio!~~~~~~~~~");
                                 t->timeout = 0;
                                 (t->ast)((void *)t->myArg, id);
                                 //	printf("%d vs %d\n", t->timeout, time);
@@ -447,7 +447,7 @@ void start_timer(t) struct timer *t;
         timer_set_timestamp = current_time();
         timer_value.it_value.tv_sec = SEC(next_timer->timeout);
         timer_value.it_value.tv_usec = USEC(next_timer->timeout);
-        //	CWDebugLog("Start System Timer (%d,%d)", timer_value.it_value.tv_sec, timer_value.it_value.tv_usec);
+        //	log_debug("Start System Timer (%d,%d)", timer_value.it_value.tv_sec, timer_value.it_value.tv_usec);
         if (-1 == setitimer(TIMER_INTERVAL_TYPE, &timer_value, (struct itimerval *)0))
         {
                 perror("start_timer: setitimer");

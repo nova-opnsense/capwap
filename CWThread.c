@@ -270,7 +270,7 @@ CWBool CWThreadSemWait(CWThreadSem *semPtr)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 #endif
 
-		// CWDebugLog("Sem Wait");
+		// log_debug("Sem Wait");
 
 #ifdef CW_USE_NAMED_SEMAPHORES
 	while (sem_wait(semPtr->semPtr) < 0)
@@ -472,7 +472,7 @@ CWBool CWThreadTimedSemSetValue(CWThreadTimedSem *semPtr, int value)
 	timeout.tv_usec = 0;
 
 	// first, remove all the pending packets
-	CWLog("CW_REPEAT_FOREVER: CWThreadTimedSemSetValue()");
+	log_debug("CW_REPEAT_FOREVER: CWThreadTimedSemSetValue()");
 	CW_REPEAT_FOREVER
 	{
 		char dummy;
@@ -548,7 +548,7 @@ CWBool CWThreadTimedSemWait(CWThreadTimedSem *semPtr, time_t sec, time_t nsec)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 #endif
 
-	CWDebugLog("Sem Timed Wait");
+	log_debug("Sem Timed Wait");
 
 	time(&t);
 
@@ -568,7 +568,7 @@ CWBool CWThreadTimedSemWait(CWThreadTimedSem *semPtr, time_t sec, time_t nsec)
 		}
 		else if (errno == ETIMEDOUT)
 		{
-			CWDebugLog("sem_timedwait expired");
+			log_debug("sem_timedwait expired");
 			return CWErrorRaise(CW_ERROR_TIME_EXPIRED, NULL);
 		}
 		else
@@ -586,7 +586,7 @@ CWBool CWThreadTimedSemWait(CWThreadTimedSem *semPtr, time_t sec, time_t nsec)
 	if (semPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Timed Sem Wait");
+	log_debug("Timed Sem Wait");
 
 	FD_ZERO(&fset);
 	FD_SET((*semPtr)[0], &fset);
@@ -594,13 +594,13 @@ CWBool CWThreadTimedSemWait(CWThreadTimedSem *semPtr, time_t sec, time_t nsec)
 	timeout.tv_sec = sec;
 	timeout.tv_usec = nsec / 1000;
 
-	CWDebugLog("Timed Sem Wait Before Select");
+	log_debug("Timed Sem Wait Before Select");
 	while ((r = select(((*semPtr)[0]) + 1, &fset, NULL, NULL, &timeout)) <= 0)
 	{
-		CWDebugLog("Timed Sem Wait Select error");
+		log_debug("Timed Sem Wait Select error");
 		if (r == 0)
 		{
-			CWDebugLog("Timed Sem Wait Timeout");
+			log_debug("Timed Sem Wait Timeout");
 			return CWErrorRaise(CW_ERROR_TIME_EXPIRED, NULL);
 		}
 		else if (errno == EINTR)
@@ -612,7 +612,7 @@ CWBool CWThreadTimedSemWait(CWThreadTimedSem *semPtr, time_t sec, time_t nsec)
 		CWErrorRaiseSystemError(CW_ERROR_GENERAL);
 	}
 
-	CWDebugLog("Timed Sem Wait After Select");
+	log_debug("Timed Sem Wait After Select");
 
 	// ready to read
 
@@ -635,13 +635,13 @@ CWBool CWThreadTimedSemWait(CWThreadTimedSem *semPtr, time_t sec, time_t nsec)
 	timeout.tv_sec = 2;
 	timeout.tv_usec = 0;
 
-	CWDebugLog("Timed Sem Wait Before Select 2");
+	log_debug("Timed Sem Wait Before Select 2");
 	while ((r = select(((*semPtr)[0]) + 1, &fset, NULL, NULL, &timeout)) <= 0)
 	{
-		CWDebugLog("Timed Sem Wait Select error 2");
+		log_debug("Timed Sem Wait Select error 2");
 		if (r == 0)
 		{
-			CWDebugLog("Timed Sem Wait Timeout 2");
+			log_debug("Timed Sem Wait Timeout 2");
 			return CWErrorRaise(CW_ERROR_TIME_EXPIRED, NULL);
 		}
 		else if (errno == EINTR)
@@ -653,7 +653,7 @@ CWBool CWThreadTimedSemWait(CWThreadTimedSem *semPtr, time_t sec, time_t nsec)
 		CWErrorRaiseSystemError(CW_ERROR_GENERAL);
 	}
 
-	CWDebugLog("Timed Sem Wait After Select 2");
+	log_debug("Timed Sem Wait After Select 2");
 
 	// read ack
 
@@ -666,7 +666,7 @@ CWBool CWThreadTimedSemWait(CWThreadTimedSem *semPtr, time_t sec, time_t nsec)
 
 #endif
 
-	CWDebugLog("End of Timed Sem Wait");
+	log_debug("End of Timed Sem Wait");
 
 	return CW_TRUE;
 }
@@ -684,7 +684,7 @@ CWBool CWThreadTimedSemPost(CWThreadTimedSem *semPtr)
 	if (semPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
-	CWDebugLog("Timed Sem Post");
+	log_debug("Timed Sem Post");
 
 	while (send((*semPtr)[1], &dummy, 1, 0) < 0)
 	{
@@ -701,15 +701,15 @@ CWBool CWThreadTimedSemPost(CWThreadTimedSem *semPtr)
 	timeout.tv_sec = 2;
 	timeout.tv_usec = 0;
 
-	CWDebugLog("Timed Sem Post Before Select");
+	log_debug("Timed Sem Post Before Select");
 	while ((r = select(((*semPtr)[1]) + 1, &fset, NULL, NULL, &timeout)) <= 0)
 	{
-		CWDebugLog("Timed Sem Post Select Error");
+		log_debug("Timed Sem Post Select Error");
 		if (r == 0)
 		{ // timeout, server is not responding
 			// note: this is not an error in a traditional semaphore, btw it's an error
 			// according to our logic
-			CWDebugLog("Timed Sem Post Timeout");
+			log_debug("Timed Sem Post Timeout");
 			return CWErrorRaise(CW_ERROR_GENERAL, "Nobody is Waiting on this Sem");
 		}
 		else if (errno == EINTR)
@@ -721,7 +721,7 @@ CWBool CWThreadTimedSemPost(CWThreadTimedSem *semPtr)
 		CWErrorRaiseSystemError(CW_ERROR_GENERAL);
 	}
 
-	CWDebugLog("Timed Sem Post After Select");
+	log_debug("Timed Sem Post After Select");
 
 	while (read((*semPtr)[1], &dummy, 1) < 0)
 	{
@@ -738,7 +738,7 @@ CWBool CWThreadTimedSemPost(CWThreadTimedSem *semPtr)
 		CWErrorRaiseSystemError(CW_ERROR_SENDING);
 	}
 
-	CWDebugLog("End of Sem Post");
+	log_debug("End of Sem Post");
 
 	return CW_TRUE;
 #endif
@@ -752,7 +752,7 @@ CWBool CWThreadCreateSpecific(CWThreadSpecific *specPtr, void (*destructor)(void
 
 	if (pthread_key_create(specPtr, destructor) != 0)
 	{
-		CWDebugLog("Error pthread key create");
+		log_debug("Error pthread key create");
 		return CW_FALSE;
 	}
 
@@ -794,7 +794,7 @@ CWBool CWThreadSetSpecific(CWThreadSpecific *specPtr, void *valPtr)
 // terminate the calling thread
 void CWExitThread()
 {
-	CWLog("*** Exit Thread ***");
+	log_debug("*** Exit Thread ***");
 
 	pthread_exit((void *)0);
 }
@@ -854,7 +854,7 @@ void CWHandleTimer(CWTimerArg arg)
 	int signalToRaise = a->signalToRaise;
 
 	CWThreadSendSignal(requestedThreadPtr, signalToRaise);
-	CWDebugLog("Timer Expired, Sent Signal(%d) to Thread: %d", signalToRaise, requestedThreadPtr);
+	log_debug("Timer Expired, Sent Signal(%d) to Thread: %d", signalToRaise, requestedThreadPtr);
 
 	CW_FREE_OBJECT(a->requestedThreadPtr);
 	CW_FREE_OBJECT(a);
@@ -867,7 +867,7 @@ CWBool CWTimerRequest(int sec, CWThread *threadPtr, CWTimerID *idPtr, int signal
 
 	CWThreadTimerArg *arg;
 
-	//	CWDebugLog("Timer Request");
+	//	log_debug("Timer Request");
 	if (sec < 0 || threadPtr == NULL || idPtr == NULL)
 		return CWErrorRaise(CW_ERROR_WRONG_ARG, NULL);
 
@@ -876,7 +876,7 @@ CWBool CWTimerRequest(int sec, CWThread *threadPtr, CWTimerID *idPtr, int signal
 	CW_COPY_MEMORY(arg->requestedThreadPtr, threadPtr, sizeof(CWThread));
 	arg->signalToRaise = signalToRaise;
 
-	//	CWDebugLog("Timer Request: thread(%d), signal(%d)", *(arg->requestedThreadPtr), arg->signalToRaise);
+	//	log_debug("Timer Request: thread(%d), signal(%d)", *(arg->requestedThreadPtr), arg->signalToRaise);
 
 	if ((*idPtr = timer_add(sec, 0, &CWHandleTimer, arg)) == -1)
 	{
