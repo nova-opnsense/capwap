@@ -52,6 +52,7 @@ void intro_nova()
 
 void intro_now()
 {
+    printf("\n\n\n\n\n");
     time_t now = time(NULL);
     struct tm *info = localtime(&now);
     char buf[64];
