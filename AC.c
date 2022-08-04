@@ -43,8 +43,8 @@
 #include "../dmalloc-5.5.0/dmalloc.h"
 #endif
 
-#include "./utils/log/log.h"
-#include "./utils/intro/intro.h"
+#include "./libs/log/log.h"
+#include "./libs/intro/intro.h"
 
 /*_________________________________________________________*/
 /*  *******************___VARIABLES___*******************  */
@@ -126,6 +126,7 @@ int main(int argc, const char *argv[])
 {
 	/* Daemon mode */
 
+	intro_now();
 	intro_noc();
 
 	if (argc <= 1)

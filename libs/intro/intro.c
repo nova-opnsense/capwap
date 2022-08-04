@@ -49,3 +49,13 @@ void intro_nova()
     printf("\n");
 #endif
 }
+
+void intro_now()
+{
+    time_t now = time(NULL);
+    struct tm *info = localtime(&now);
+    char buf[64];
+
+    buf[strftime(buf, sizeof(buf), "[CW] %Y/%m/%d %H:%M:%S", info)] = '\0';
+    printf("%s\n", buf);
+}
