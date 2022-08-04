@@ -65,6 +65,7 @@ CFLAGS += -fgnu89-inline
 # Capwap Debugging
 CFLAGS += -DCW_DEBUGGING
 CFLAGS += -DWRITE_STD_OUTPUT
+CFLAGS += -DLOG_USE_COLOR
 #CFLAGS += -DSOFTMAC
 CFLAGS += -DOPENSSL_NO_KRB5
 
@@ -85,6 +86,8 @@ AC_OBJS = AC.o ACConfigFile.o ACMainLoop.o ACDiscoveryState.o ACJoinState.o \
 	ACBinding.o ACInterface.o ACSettingsFile.o timerlib.o tap.o \
 	ACIEEEConfigurationState.o CW80211InformationElements.o CWTunnel.o CWAVL.o \
 	./HostapdHeaders/utils/os_unix.o \
+	./utils/log/log.o \
+	./utils/intro/intro.o \
 
 # list of generated object files for WTP.
 WTP_OBJS = WTP.o WTPFrameReceive.o WTPFreqStatsReceive.o WTPStatsReceive.o WTPConfigFile.o WTPProtocol.o WTPProtocol_User.o \
@@ -94,7 +97,9 @@ WTP_OBJS = WTP.o WTPFrameReceive.o WTPFreqStatsReceive.o WTPStatsReceive.o WTPCo
 	WTPDriverInteraction.o WTPSettingsFile.o timerlib.o \
 	WTPRadio.o WTPNL80211DriverCallback.o WTPNL80211Driver.o WTPNL80211Netlink.o WTPIEEEConfigurationState.o CW80211ManagementFrame.o CW80211InformationElements.o CWTunnel.o CWAVL.o \
 	./HostapdHeaders/utils/os_unix.o \
-	
+	./utils/log/log.o \
+	./utils/intro/intro.o \
+
 WUA_OBJS = WUA.o
  
 AC_SRCS = $(AC_OBJS:.o=.c) 

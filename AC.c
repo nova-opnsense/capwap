@@ -43,6 +43,9 @@
 #include "../dmalloc-5.5.0/dmalloc.h"
 #endif
 
+#include "./utils/log/log.h"
+#include "./utils/intro/intro.h"
+
 /*_________________________________________________________*/
 /*  *******************___VARIABLES___*******************  */
 CWThreadMutex gCreateIDMutex;
@@ -122,14 +125,8 @@ char *ACTap_name;
 int main(int argc, const char *argv[])
 {
 	/* Daemon mode */
-	printf("\n");
-	printf("    ███╗░░██╗░█████╗░██╗░░░██╗░█████╗░\n");
-	printf("    ████╗░██║██╔══██╗██║░░░██║██╔══██╗\n");
-	printf("    ██╔██╗██║██║░░██║╚██╗░██╔╝███████║\n");
-	printf("    ██║╚████║██║░░██║░╚████╔╝░██╔══██║\n");
-	printf("    ██║░╚███║╚█████╔╝░░╚██╔╝░░██║░░██║\n");
-	printf("    ╚═╝░░╚══╝░╚════╝░░░░╚═╝░░░╚═╝░░╚═╝\n");
-	printf("\n");
+
+	intro_noc();
 
 	if (argc <= 1)
 	{
