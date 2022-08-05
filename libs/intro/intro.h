@@ -11,6 +11,10 @@
 
 void intro_noc();
 void intro_nova();
+
+void intro_ac();
+void intro_wtp();
+
 void intro_now();
 void intro_ver();
 

@@ -42,6 +42,7 @@ static struct
 
 static FILE *logFile = NULL;
 static bool isFileError = false;
+static char *prefix = "[CW]";
 
 static const char *level_strings[] = {
     "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
@@ -54,16 +55,16 @@ static const char *level_colors[] = {
 static void stdout_callback(log_Event *ev)
 {
     char buf[32];
-    buf[strftime(buf, sizeof(buf), "[CW] %Y-%m-%d %H:%M:%S", ev->time)] = '\0';
+    buf[strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ev->time)] = '\0';
 #ifdef LOG_USE_COLOR
     fprintf(
-        ev->udata, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
-        buf, level_colors[ev->level], level_strings[ev->level],
+        ev->udata, "%s %s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
+        prefix, buf, level_colors[ev->level], level_strings[ev->level],
         ev->file, ev->line);
 #else
     fprintf(
-        ev->udata, "%s %-5s %s:%d: ",
-        buf, level_strings[ev->level], ev->file, ev->line);
+        ev->udata, "%s %s %-5s %s:%d: ",
+        prefix, buf, level_strings[ev->level], ev->file, ev->line);
 #endif
     vfprintf(ev->udata, ev->fmt, ev->ap);
     fprintf(ev->udata, "\n");
@@ -73,10 +74,10 @@ static void stdout_callback(log_Event *ev)
 static void file_callback(log_Event *ev)
 {
     char buf[64];
-    buf[strftime(buf, sizeof(buf), "[CW] %Y-%m-%d %H:%M:%S", ev->time)] = '\0';
+    buf[strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ev->time)] = '\0';
     fprintf(
-        ev->udata, "%s %-5s %s:%d: ",
-        buf, level_strings[ev->level], ev->file, ev->line);
+        ev->udata, "%s %s %-5s %s:%d: ",
+        prefix, buf, level_strings[ev->level], ev->file, ev->line);
     vfprintf(ev->udata, ev->fmt, ev->ap);
     fprintf(ev->udata, "\n");
     fflush(ev->udata);
@@ -117,6 +118,11 @@ void log_set_level(int level)
 void log_set_quiet(bool enable)
 {
     L.quiet = enable;
+}
+
+void log_set_prefix(char *pr)
+{
+    prefix = pr;
 }
 
 int log_add_callback(log_LogFn fn, void *udata, int level)

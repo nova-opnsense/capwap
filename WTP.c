@@ -740,27 +740,42 @@ cw_failure:
 
 int main(int argc, const char *argv[])
 {
-
 	/* Daemon Mode */
-
 	pid_t pid;
 
+	log_set_prefix("[CW][WTP]");
+
+	intro_now();
+	intro_ver();
+	intro_wtp();
+
 	if (argc <= 1)
-		printf("Usage: WTP working_path\n");
+	{
+		log_info("Usage: WTP working_path");
+		log_fatal("Bye!");
+		exit(1);
+	}
 
 	if ((pid = fork()) < 0)
+	{
+		log_fatal("fork failed: %d", pid);
 		exit(1);
+	}
 	else if (pid != 0)
+	{
+		log_info("fork succeed: %d", pid);
 		exit(0);
+	}
 	else
 	{
 		setsid();
-		if (chdir(argv[1]) != 0)
+		int chdir_r = chdir(argv[1]);
+		if (chdir_r != 0)
 		{
-			printf("chdir Faile\n");
+			log_fatal("chdir failed: %d", chdir_r);
 			exit(1);
 		}
-		fclose(stdout);
+		// fclose(stdout);
 	}
 
 	CWStateTransition nextState = CW_ENTER_DISCOVERY;
@@ -821,7 +836,7 @@ int main(int argc, const char *argv[])
 	CWSetMutexSafeList(gPacketReceiveDataList, &gInterfaceMutexData);
 	CWSetConditionSafeList(gPacketReceiveDataList, &gInterfaceWaitData);
 
-	log_debug("Starting WTP...");
+	log_info("Starting WTP...");
 
 	CWRandomInitLib();
 

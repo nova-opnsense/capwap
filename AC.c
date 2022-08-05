@@ -126,9 +126,11 @@ int main(int argc, const char *argv[])
 {
 	/* Daemon mode */
 
+	log_set_prefix("[CW][AC]");
+
 	intro_now();
 	intro_ver();
-	intro_noc();
+	intro_ac();
 
 	if (argc <= 1)
 	{
@@ -206,7 +208,7 @@ void CWACInit()
 	for (index = 0; index < WTP_MAX_TMP_THREAD_DTLS_DATA; index++)
 		listGenericThreadDTLSData[index] = NULL;
 
-	log_debug("Starting AC");
+	log_info("Starting AC...");
 
 	CWThreadSetSignals(SIG_BLOCK, 1, SIGALRM);
 	if (timer_init() == 0)
