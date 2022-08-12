@@ -318,72 +318,72 @@ CWBool CWReceiveDataMessage(CWProtocolMessage *msgPtr)
 				{
 				case CW_ERROR_SUCCESS:
 				{
-					log_debug("ERROR: Success");
+					log_error("ERROR: Success");
 					break;
 				}
 				case CW_ERROR_OUT_OF_MEMORY:
 				{
-					log_debug("ERROR: Out of Memory");
+					log_error("ERROR: Out of Memory");
 					break;
 				}
 				case CW_ERROR_WRONG_ARG:
 				{
-					log_debug("ERROR: Wrong Argument");
+					log_error("ERROR: Wrong Argument");
 					break;
 				}
 				case CW_ERROR_INTERRUPTED:
 				{
-					log_debug("ERROR: Interrupted");
+					log_error("ERROR: Interrupted");
 					break;
 				}
 				case CW_ERROR_NEED_RESOURCE:
 				{
-					log_debug("ERROR: Need Resource");
+					log_error("ERROR: Need Resource");
 					break;
 				}
 				case CW_ERROR_COMUNICATING:
 				{
-					log_debug("ERROR: Comunicating");
+					log_error("ERROR: Comunicating");
 					break;
 				}
 				case CW_ERROR_CREATING:
 				{
-					log_debug("ERROR: Creating");
+					log_error("ERROR: Creating");
 					break;
 				}
 				case CW_ERROR_GENERAL:
 				{
-					log_debug("ERROR: General");
+					log_error("ERROR: General");
 					break;
 				}
 				case CW_ERROR_OPERATION_ABORTED:
 				{
-					log_debug("ERROR: Operation Aborted");
+					log_error("ERROR: Operation Aborted");
 					break;
 				}
 				case CW_ERROR_SENDING:
 				{
-					log_debug("ERROR: Sending");
+					log_error("ERROR: Sending");
 					break;
 				}
 				case CW_ERROR_RECEIVING:
 				{
-					log_debug("ERROR: Receiving");
+					log_error("ERROR: Receiving");
 					break;
 				}
 				case CW_ERROR_INVALID_FORMAT:
 				{
-					log_debug("ERROR: Invalid Format");
+					log_error("ERROR: Invalid Format");
 					break;
 				}
 				case CW_ERROR_TIME_EXPIRED:
 				{
-					log_debug("ERROR: Time Expired");
+					log_error("ERROR: Time Expired");
 					break;
 				}
 				case CW_ERROR_NONE:
 				{
-					log_debug("ERROR: None");
+					log_error("ERROR: None");
 					break;
 				}
 				}
@@ -794,7 +794,8 @@ int main(int argc, const char *argv[])
 	if (!CWParseSettingsFile())
 	{
 		// Elena: fprintf
-		fprintf(stderr, "Can't start WTP");
+		// fprintf(stderr, "Can't start WTP");
+		log_fatal("Can't start WTP (1)");
 		exit(1);
 	}
 
@@ -805,21 +806,21 @@ int main(int argc, const char *argv[])
 	/* Capwap receive packets list */
 	if (!CWErr(CWCreateSafeList(&gPacketReceiveList)))
 	{
-		log_debug("Can't start WTP");
+		log_fatal("Can't start WTP (2)");
 		exit(1);
 	}
 
 	/* Capwap receive packets list */
 	if (!CWErr(CWCreateSafeList(&gPacketReceiveDataList)))
 	{
-		log_debug("Can't start WTP");
+		log_fatal("Can't start WTP (3)");
 		exit(1);
 	}
 
 	/* Capwap receive frame list */
 	if (!CWErr(CWCreateSafeList(&gFrameList)))
 	{
-		log_debug("Can't start WTP");
+		log_fatal("Can't start WTP (4)");
 		exit(1);
 	}
 
@@ -844,7 +845,7 @@ int main(int argc, const char *argv[])
 
 	if (timer_init() == 0)
 	{
-		log_debug("Can't init timer module");
+		log_fatal("Can't init timer module");
 		exit(1);
 	}
 
@@ -856,14 +857,14 @@ int main(int argc, const char *argv[])
 	if (!CWErr(CWSecurityInitLib()) || !CWErr(CWWTPLoadConfiguration()))
 	{
 #endif
-		log_debug("Can't start WTP");
+		log_fatal("Can't start WTP (5)");
 		exit(1);
 	}
 
 	log_debug("Init WTP Radio Info");
 	if (!CWWTPInitConfiguration())
 	{
-		log_debug("Error Init Configuration");
+		log_fatal("Error Init Configuration");
 		exit(1);
 	}
 
@@ -872,7 +873,7 @@ int main(int argc, const char *argv[])
 	CWThread thread_receiveFrame;
 	if (!CWErr(CWCreateThread(&thread_receiveFrame, CWWTPReceiveFrame, NULL)))
 	{
-		log_debug("Error starting Thread that receive binding frame");
+		log_fatal("Error starting Thread that receive binding frame");
 		exit(1);
 	}
 #endif
@@ -880,7 +881,7 @@ int main(int argc, const char *argv[])
 	/*
 		CWThread thread_receiveStats;
 		if(!CWErr(CWCreateThread(&thread_receiveStats, CWWTPReceiveStats, NULL))) {
-			log_debug("Error starting Thread that receive stats on monitoring interface");
+			log_fatal("Error starting Thread that receive stats on monitoring interface");
 			exit(1);
 		}
 	*/
@@ -892,7 +893,7 @@ int main(int argc, const char *argv[])
 	/*
 		CWThread thread_receiveFreqStats;
 		if(!CWErr(CWCreateThread(&thread_receiveFreqStats, CWWTPReceiveFreqStats, NULL))) {
-			log_debug("Error starting Thread that receive frequency stats on monitoring interface");
+			log_fatal("Error starting Thread that receive frequency stats on monitoring interface");
 			exit(1);
 		}
 		*/
@@ -965,7 +966,7 @@ CWBool CWWTPLoadConfiguration()
 	/* get saved preferences */
 	if (!CWErr(CWParseConfigFile()))
 	{
-		log_debug("Can't Read Config File");
+		log_fatal("Can't Read Config File");
 		exit(1);
 	}
 

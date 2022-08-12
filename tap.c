@@ -50,7 +50,7 @@ int tun_alloc(char *dev, int flags)
     /* try to create the device */
     if ((err = ioctl(fd, TUNSETIFF, (void *)&ifr)) < 0)
     {
-        log_debug("Err to creater tap device");
+        log_error("Error to create tap device");
         close(fd);
         return err;
     }

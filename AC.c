@@ -200,7 +200,7 @@ void CWACInit()
 
 	if (!CWParseSettingsFile())
 	{
-		log_debug("Can't start AC (1)");
+		log_fatal("Can't start AC (1)");
 		exit(1);
 	}
 
@@ -213,7 +213,7 @@ void CWACInit()
 	CWThreadSetSignals(SIG_BLOCK, 1, SIGALRM);
 	if (timer_init() == 0)
 	{
-		log_debug("Can't init timer module");
+		log_fatal("Can't init timer module");
 		exit(1);
 	}
 
@@ -229,7 +229,7 @@ void CWACInit()
 	{
 
 		/* error starting */
-		log_debug("Can't start AC (2)");
+		log_fatal("Can't start AC (2)");
 		exit(1);
 	}
 
@@ -249,7 +249,7 @@ void CWACInit()
 										 CW_FALSE,
 										 CWACSemPostForOpenSSLHack)))
 		{
-			log_debug("Can't start AC (3)");
+			log_fatal("Can't start AC (3)");
 			exit(1);
 		}
 	}
@@ -262,7 +262,7 @@ void CWACInit()
 										 CW_FALSE,
 										 CWACSemPostForOpenSSLHack)))
 		{
-			log_debug("Can't start AC (4)");
+			log_fatal("Can't start AC (4)");
 			exit(1);
 		}
 	}
@@ -282,7 +282,7 @@ void CWACInit()
 	// Elena Agostini: Unique AC Tap Interface
 	if (!CWACTapInterfaceInit())
 	{
-		log_debug("Error in AC Tap Interface creation");
+		log_fatal("Error in AC Tap Interface creation");
 		exit(-1);
 	}
 	/* store network interface's addresses */
@@ -291,7 +291,7 @@ void CWACInit()
 
 	if (gInterfacesCount <= 0)
 	{
-		log_debug("Can't start AC (5)");
+		log_fatal("Can't start AC (5)");
 		exit(1);
 	}
 
@@ -315,6 +315,7 @@ void CWACInit()
 
 	if (!CWErr(CWCreateThreadMutex(&gCreateIDMutex)))
 	{
+		log_fatal("Can't start AC (6)");
 		exit(1);
 	}
 

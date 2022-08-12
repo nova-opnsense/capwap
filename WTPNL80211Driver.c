@@ -22,7 +22,7 @@ CWBool nl80211CmdGetPhyInfo(int indexPhy, struct WTPSinglePhyInfo *singlePhyInfo
 	int ret = nl80211_send_recv_cb_input(&(globalNLSock), msg, CB_getPhyInfo, singlePhyInfo);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Get phy info error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Get phy info error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 
@@ -59,7 +59,7 @@ CWBool nl80211CmdSetNewInterface(int indexPhy, WTPInterfaceInfo *interfaceInfo)
 	int ret = nl80211_send_recv_cb_input(&(globalNLSock), msg, CB_setNewInterface, interfaceInfo);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Set new interface error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Set new interface error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 
@@ -69,7 +69,7 @@ CWBool nl80211CmdSetNewInterface(int indexPhy, WTPInterfaceInfo *interfaceInfo)
 	CW_CREATE_ARRAY_CALLOC_ERR(interfaceInfo->MACaddr, MAC_ADDR_LEN, char, return CWErrorRaise(CW_ERROR_OUT_OF_MEMORY, NULL););
 	getInterfaceMacAddr(interfaceInfo->ifName, interfaceInfo->MACaddr);
 
-	log_debug("[NL80211 INFO] Interface %s created", interfaceInfo->ifName);
+	log_info("[NL80211 INFO] Interface %s created", interfaceInfo->ifName);
 	return CW_TRUE;
 
 nla_put_failure:
@@ -109,7 +109,7 @@ CWBool nl80211CmdSetNewMonitorInterface(int indexPhy, WTPInterfaceInfo *interfac
 	int ret = nl80211_send_recv_cb_input(&(globalNLSock), msg, CB_setNewInterface, interfaceInfo);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Create monitor interface error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Create monitor interface error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 
@@ -144,7 +144,7 @@ CWBool nl80211CmdDelInterface(int indexPhy, char *ifName)
 	int ret = nl80211_send_recv_cb_input(&(globalNLSock), msg, NULL, NULL);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Del interface error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Del interface error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 
@@ -177,7 +177,7 @@ CWBool nl80211CmdSetInterfaceAPType(char *interface)
 	int ret = nl80211_send_recv_cb_input(&(globalNLSock), msg, NULL, NULL);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Set AP interface error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Set AP interface error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 	msg = NULL;
@@ -208,7 +208,7 @@ CWBool nl80211CmdSetInterfaceSTAType(char *interface)
 	int ret = nl80211_send_recv_cb_input(&(globalNLSock), msg, NULL, NULL);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Set STA interface error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Set STA interface error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 	msg = NULL;
@@ -242,7 +242,7 @@ CWBool nl80211CmdSetChannelInterface(char *interface, int channel)
 	int ret = nl80211_send_recv_cb_input(&(globalNLSock), msg, NULL, NULL);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Set channel interface error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Set channel interface error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 
@@ -274,7 +274,7 @@ CWBool nl80211_get_channel_width(char *interface)
 	int ret = nl80211_send_recv_cb_input(&(globalNLSock), msg, CBget_channel_width, NULL);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Get Channel width error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Get Channel width error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 
@@ -303,7 +303,7 @@ CWBool nl80211CmdGetChannelInterface(char *interface, int *channel)
 	int ret = nl80211_send_recv_cb_input(&(globalNLSock), msg, CB_getChannelInterface, channel);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Get channel interface error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Get channel interface error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 
@@ -446,7 +446,7 @@ CWBool nl80211CmdStartAP(WTPInterfaceInfo *interfaceInfo)
 	int ret = nl80211_send_recv_cb_input(&(globalNLSock), msg, NULL, NULL);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Start AP beacon error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Start AP beacon error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 
@@ -457,7 +457,7 @@ CWBool nl80211CmdStartAP(WTPInterfaceInfo *interfaceInfo)
 	return CW_TRUE;
 
 nla_put_failure:
-	log_debug("failure");
+	log_error("failure");
 	nlmsg_free(msg);
 	return CW_FALSE;
 }
@@ -525,7 +525,7 @@ CWBool nl80211CmdNewStation(WTPBSSInfo *infoBSS, WTPSTAInfo staInfo)
 	int ret = nl80211_send_recv_cb_input(&(infoBSS->BSSNLSock), msg, NULL, NULL);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Add new STA error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Add new STA error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 
@@ -610,7 +610,7 @@ CWBool nl80211CmdSetStation(WTPBSSInfo *infoBSS, WTPSTAInfo staInfo)
 	int ret = nl80211_send_recv_cb_input(&(infoBSS->BSSNLSock), msg, NULL, NULL);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Set update STA error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Set update STA error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 
@@ -639,7 +639,7 @@ CWBool nl80211CmdDelStation(WTPBSSInfo *infoBSS, unsigned char *macAddress)
 	int ret = nl80211_send_recv_cb_input(&(infoBSS->BSSNLSock), msg, NULL, NULL);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Del STA error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Del STA error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 
@@ -694,7 +694,7 @@ NLA_PUT_U8(msg, NL80211_ATTR_BSS_SHORT_SLOT_TIME, 1);
 	int ret = nl80211_send_recv_cb_input(&(globalNLSock), msg, NULL, NULL);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Set BSS error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Set BSS error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 	msg = NULL;
@@ -731,7 +731,7 @@ CWBool nl80211CmdStopAP(char *ifName)
 	int ret = nl80211_send_recv_cb_input(&(globalNLSock), msg, NULL, NULL);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] STOP AP error: %d, %s", ret, strerror(-ret));
+		log_error("[NL80211 ERROR] STOP AP error: %d, %s", ret, strerror(-ret));
 		return CW_FALSE;
 	}
 
@@ -761,7 +761,7 @@ int nl80211GetTxqParams(struct nl80211SocketUnit *nlSockUnit, WTPQosValues *qosV
 
 	if (nl80211_send_recv_cb_input(nlSockUnit, msg, CB_getQoSValues, qosValues) == 0)
 	{
-		log_debug("[NL80211] ERROR: nl80211_send_recv_cb_input");
+		log_error("[NL80211 ERROR]: nl80211_send_recv_cb_input");
 		return 0;
 	}
 
@@ -829,7 +829,7 @@ int CW80211SetAPTypeFrame(WTPInterfaceInfo *interfaceInfo, WTPBSSInfo *WTPBSSInf
 
 out_err:
 	nl_destroy_handles(&interfaceInfo->nl_mgmt);
-	log_debug("[NL80211 ERROR] Set AP Type Frame error");
+	log_error("[NL80211 ERROR] Set AP Type Frame error");
 	return -1;
 }
 
@@ -875,7 +875,7 @@ int nl80211_register_frame(WTPInterfaceInfo *interfaceInfo,
 	ret = send_and_recv(&(globalNLSock), nl_handle, msg, NULL, NULL);
 	if (ret != 0)
 	{
-		log_debug("[NL80211 ERROR] Register frame command failed (type=%u): ret=%d (%s)", type, ret, strerror(-ret));
+		log_error("[NL80211 ERROR] Register frame command failed (type=%u): ret=%d (%s)", type, ret, strerror(-ret));
 		return CW_FALSE;
 	}
 
@@ -958,7 +958,7 @@ CWBool CW80211SendFrame(WTPBSSInfo *WTPBSSInfoPtr, unsigned int freq, unsigned i
 	msg = NULL;
 	if (ret)
 	{
-		log_debug("[NL80211 ERROR]: Frame command failed: ret=%d (%s) (freq=%u wait=%u) nl_geterror: %s", ret, strerror(-ret), freq, wait, nl_geterror(ret));
+		log_error("[NL80211 ERROR]: Frame command failed: ret=%d (%s) (freq=%u wait=%u) nl_geterror: %s", ret, strerror(-ret), freq, wait, nl_geterror(ret));
 		goto nla_put_failure;
 	}
 	//	log_debug("nl80211: Frame TX command accepted%s; cookie 0x%llx", no_ack ? " (no ACK)" : "", (long long unsigned int) cookie);

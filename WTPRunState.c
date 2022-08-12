@@ -280,7 +280,6 @@ manager_data_failure:
  */
 CW_THREAD_RETURN_TYPE CWWTPManageDataPacket(void *arg)
 {
-
 	int n, readBytes;
 	struct sockaddr_ll rawSockaddr;
 	CWProtocolMessage msgPtr;
@@ -367,7 +366,7 @@ CW_THREAD_RETURN_TYPE CWWTPManageDataPacket(void *arg)
 			if (!CWReceiveDataMessage(&msgPtr))
 			{
 				CW_FREE_PROTOCOL_MESSAGE(msgPtr);
-				log_debug("Failure Receiving Data Message");
+				log_error("Failure Receiving Data Message");
 				break;
 				// continue;
 			}
@@ -416,7 +415,7 @@ CW_THREAD_RETURN_TYPE CWWTPManageDataPacket(void *arg)
 
 				if ((gRawSockLocal = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) < 0)
 				{
-					log_debug("THR FRAME: Error creating socket");
+					log_error("THR FRAME: Error creating socket");
 					CWExitThread();
 				}
 
@@ -428,7 +427,7 @@ CW_THREAD_RETURN_TYPE CWWTPManageDataPacket(void *arg)
 
 				if ((bind(gRawSockLocal, (struct sockaddr *)&addr, sizeof(addr))) < 0)
 				{
-					log_debug("THR FRAME: Error binding socket");
+					log_error("THR FRAME: Error binding socket");
 					CWExitThread();
 				}
 
@@ -462,7 +461,7 @@ CW_THREAD_RETURN_TYPE CWWTPManageDataPacket(void *arg)
 
 					if (rawInjectSocket < 0)
 					{
-						log_debug("ERROR INJECT SOCKET. You must restart WTP");
+						log_error("ERROR INJECT SOCKET. You must restart WTP");
 						return CW_FALSE;
 					}
 
@@ -644,7 +643,7 @@ CWStateTransition CWWTPEnterRun()
 							  (void *)gWTPDataSocket)))
 	{
 
-		log_debug("Error starting Thread that receive DTLS DATA packet");
+		log_error("Error starting Thread that receive DTLS DATA packet");
 		CWNetworkCloseSocket(gWTPDataSocket);
 		// Elena Agostini - 07/2014
 		goto CLEAR_RUN_STATE;
@@ -655,6 +654,7 @@ CWStateTransition CWWTPEnterRun()
 
 	if (!CWErr(CWStartEchoRequestTimer()))
 	{
+		log_error("Error starting echo request timer");
 		goto CLEAR_RUN_STATE; // return CW_ENTER_RESET;
 	}
 
@@ -684,13 +684,13 @@ CWStateTransition CWWTPEnterRun()
 
 		if (gWTPDataChannelLocalFlag == CW_TRUE)
 		{
-			log_debug("Data Channel is dead... restart Discovery State\n");
+			log_error("Data Channel is dead... restart Discovery State\n");
 			break;
 		}
 
 		if (gWTPExitRunEchoLocal == CW_TRUE)
 		{
-			log_debug("Max Num Retransmit Echo Request reached. We consider peer dead..\n");
+			log_error("Max Num Retransmit Echo Request reached. We consider peer dead..\n");
 			break;
 		}
 
@@ -715,7 +715,7 @@ CWStateTransition CWWTPEnterRun()
 
 				if (CWErrorGetLastErrorCode() == CW_ERROR_TIME_EXPIRED)	{
 
-					log_debug("No Message from AC for a long time... restart Discovery State");
+					log_error("No Message from AC for a long time... restart Discovery State");
 					break;
 				}
 				continue;
@@ -729,7 +729,6 @@ CWStateTransition CWWTPEnterRun()
 
 		if (bReceivePacket)
 		{
-
 			CWProtocolMessage msg;
 
 			msg_len = msg.offset;
@@ -738,25 +737,22 @@ CWStateTransition CWWTPEnterRun()
 
 			if (!(CWReceiveMessage(&msg)))
 			{
-
 				CW_FREE_PROTOCOL_MESSAGE(msg);
-				log_debug("Failure Receiving Response");
+				log_error("Failure Receiving Response");
 				break;
 			}
 			if (!CWErr(CWWTPManageGenericRunMessage(&msg)))
 			{
-
 				if (CWErrorGetLastErrorCode() == CW_ERROR_INVALID_FORMAT)
 				{
-
 					/* Log and ignore message */
 					CWErrorHandleLast();
-					log_debug("--> Received something different from a valid Run Message");
+					log_warn("--> Received something different from a valid Run Message");
 				}
 				else
 				{
 					CW_FREE_PROTOCOL_MESSAGE(msg);
-					log_debug("--> Critical Error Managing Generic Run Message... we enter RESET State");
+					log_error("--> Critical Error Managing Generic Run Message... we enter RESET State");
 					// wtpInRunState=0;
 					break;
 					// return CW_ENTER_RESET;
@@ -2410,7 +2406,6 @@ CWBool CWParseWTPEventResponseMessage(char *msg, int len, int seqNum, void *valu
 /*  *******************___SAVE FUNCTIONS___*******************  */
 CWBool CWSaveWTPEventResponseMessage(void *WTPEventResp)
 {
-
 	log_debug("Saving WTP Event Response...");
 	log_debug("WTP Response Saved");
 	return CW_TRUE;
